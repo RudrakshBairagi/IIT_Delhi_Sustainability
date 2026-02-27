@@ -38,10 +38,10 @@
 </p>
 
 ### The Problem
-Every year, students discard tons of usable furniture, textbooks, and electronics during move-out. Existing solutions are either too broad (Facebook Marketplace) or inconvenient (Recycling centers).
+Every year, students discard tons of usable furniture, textbooks, and electronics during move-out. Everyday household trash—bottles, paper, e-waste—ends up in landfills despite having real monetary value. Existing solutions are either too broad (Facebook Marketplace), inconvenient (Recycling centers), or offer no financial incentive to students.
 
 ### The Solution
-ReLoop closes the loop by providing a trusted, student-only platform where every sustainable action—scanning a bottle, selling a book, or upcycling a shirt—is verified and rewarded.
+ReLoop lets students **earn real money from their day-to-day trash**. Using our **Smart Trash Bags** system, students register a recycling bag, fill it with segregated waste, and earn **EcoCoins** (convertible to ₹) when it's collected. Every sustainable action—scanning a bottle, selling a book, upcycling a shirt, or filling a Smart Bag—is tracked, verified, and rewarded. The more you recycle, the more you earn.
 
 > **📝 Note on Commit History:** This repository has a limited number of commits because it builds upon the same model/codebase that was originally submitted during the **initial round of the Symbiosis Skill Hack hackathon**, developed by **Team WhyZeroOne**. The core architecture and features were carried forward from that submission, with iterative improvements made on top of it.
 
