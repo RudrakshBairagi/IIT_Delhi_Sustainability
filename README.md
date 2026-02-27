@@ -13,7 +13,7 @@
     Turn waste into value. Scan, Trade, Upcycle.
     <br />
     <br />
-    <a href="#live-demo"><strong>View Live Demo »</strong></a>
+    <a href="https://reloop-nextjs-flame.vercel.app/"><strong>View Live Demo »</strong></a>
     <br />
     <br />
     <a href="#key-features">Key Features</a>
@@ -111,8 +111,8 @@ To run ReLoop locally on your machine, follow these steps.
 
 1.  **Clone the repo**
     ```sh
-    git clone https://github.com/your-username/reloop.git
-    cd reloop/reloop-nextjs
+    git clone https://github.com/RudrakshBairagi/reloop-main-app.git
+    cd reloop-main-app
     ```
 
 2.  **Install dependencies**
@@ -138,9 +138,7 @@ To run ReLoop locally on your machine, follow these steps.
 
 ## 📱 Live Demo
 
-Check out the live deployment here:
-<!-- Replace with actual link -->
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/)
+🔗 **[https://reloop-nextjs-flame.vercel.app/](https://reloop-nextjs-flame.vercel.app/)**
 
 _Note: The app includes a "Demo Mode" toggle in Settings that populates it with realistic mock data, so you can test the full flow without a backend._
 
