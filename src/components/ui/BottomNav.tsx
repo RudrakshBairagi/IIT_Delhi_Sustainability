@@ -6,9 +6,8 @@ import { usePathname } from 'next/navigation';
 const navItems = [
     { href: '/', icon: 'home', label: 'Home' },
     { href: '/marketplace', icon: 'storefront', label: 'Market' },
-    { href: '/rewards', icon: 'redeem', label: 'Rewards' },
-    { href: '/missions', icon: 'assignment', label: 'Missions' },
-    { href: '/community', icon: 'auto_fix_high', label: 'DIY' },
+    { href: '/community', icon: 'lightbulb', label: 'DIY' },
+    { href: '/messages', icon: 'chat', label: 'Chat' },
 ];
 
 export function BottomNav() {
