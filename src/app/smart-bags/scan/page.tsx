@@ -12,7 +12,7 @@ import Link from 'next/link';
 export default function ScanBagPage() {
     const router = useRouter();
     const { user, isDemo } = useAuth();
-    const [scanning, setScanning] = useState(false);
+    const [scanning, setScanning] = useState(true);
     const [scannedQR, setScannedQR] = useState<string | null>(null);
     const [registering, setRegistering] = useState(false);
     const [error, setError] = useState('');
@@ -33,11 +33,10 @@ export default function ScanBagPage() {
         if (!scanning || scannedQR) return;
 
         const initScanner = async () => {
-            await new Promise(resolve => setTimeout(resolve, 100));
+            await new Promise(resolve => setTimeout(resolve, 500)); // slightly longer delay to ensure DOM is fully ready
             const qrReaderEl = document.getElementById('qr-reader');
             if (!qrReaderEl) {
                 setCameraError('Scanner element not found. Please try again.');
-                setScanning(false);
                 return;
             }
 
@@ -67,12 +66,6 @@ export default function ScanBagPage() {
 
         initScanner();
     }, [scanning, isDemo, scannedQR]);
-
-    const handleScan = async () => {
-        setError('');
-        setCameraError('');
-        setScanning(true);
-    };
 
     const handleManualSubmit = () => {
         if (manualInput.trim()) {
@@ -224,15 +217,7 @@ export default function ScanBagPage() {
                     <div className="absolute bottom-4 right-4 w-8 h-8 border-b-4 border-r-4 border-[#c8ffe0] rounded-br-md z-20" />
 
                     <div className="w-full h-full rounded-xl overflow-hidden bg-[#dbe5e2] relative">
-                        {scanning ? (
-                            <div id="qr-reader" className="w-full h-full object-cover" />
-                        ) : (
-                            <img
-                                src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&h=800&fit=crop"
-                                alt="Scanner placeholder"
-                                className={`w-full h-full object-cover transition-all duration-500 brightness-90 grayscale-[20%] group-hover:brightness-100`}
-                            />
-                        )}
+                        <div id="qr-reader" className="w-full h-full object-cover [&>video]:object-cover" />
                         {scanning && (
                             <motion.div
                                 animate={{ y: ['0%', '100%', '0%'] }}
@@ -252,26 +237,11 @@ export default function ScanBagPage() {
                 {/* Status */}
                 <div className="mt-8 text-center space-y-2">
                     <h2 className="text-2xl font-extrabold tracking-tight">
-                        {scanning ? 'Scanning...' : 'Ready to Scan'}
+                        Scanning...
                     </h2>
                     <p className="text-[#565d5c] text-sm max-w-[280px] mx-auto font-medium">
-                        {scanning ? 'Point your camera at the QR code on your REBAG' : 'Tap the camera button to start scanning your REBAG'}
+                        Point your camera at the QR code on your REBAG
                     </p>
-                </div>
-
-                {/* Action Button */}
-                <div className="mt-12">
-                    <button
-                        onClick={handleScan}
-                        disabled={scanning}
-                        className="w-20 h-20 bg-gradient-to-br from-[#29664c] to-[#1b5a40] text-white rounded-full flex items-center justify-center shadow-[0_20px_40px_rgba(41,102,76,0.25)] active:scale-90 transition-transform duration-200 disabled:opacity-80"
-                    >
-                        {scanning ? (
-                            <motion.span animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }} className="material-symbols-outlined text-4xl">refresh</motion.span>
-                        ) : (
-                            <span className="material-symbols-outlined text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>photo_camera</span>
-                        )}
-                    </button>
                 </div>
 
                 {/* Manual Entry */}
