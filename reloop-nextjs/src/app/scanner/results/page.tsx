@@ -36,7 +36,7 @@ export default function ScanResultPage() {
 
     // Hide global nav for full immersion
     useEffect(() => {
-        setActions({ label: '', onClick: () => { }, hidden: true });
+        setActions({ label: '', onClick: () => { }, hidden: true } as any);
         return () => reset();
     }, [setActions, reset]);
 
