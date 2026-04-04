@@ -317,44 +317,35 @@ export default function RewardsPage() {
                 animate="visible"
                 variants={containerVariants}
             >
-                {/* Hero: Wallet Card */}
+                {/* Hero: Wallet Card — matches Impact page hero */}
                 <motion.section
                     variants={itemVariants}
-                    className="relative overflow-hidden rounded-xl p-8 text-on-primary shadow-[0_20px_40px_rgba(41,68,58,0.15)]"
+                    className="rounded-xl p-8 text-white shadow-[8px_8px_0px_0px_#b9f9d6] border-2 border-[#29664c] relative overflow-hidden"
                     style={{ background: 'linear-gradient(135deg, #29664c 0%, #1b5a40 100%)' }}
                 >
-                    <div className="relative z-10">
-                        <span className="text-xs font-bold uppercase tracking-[0.1em] opacity-80">YOUR BALANCE</span>
-                        <div className="mt-1 flex items-baseline gap-2">
-                            <h2 className="text-5xl font-extrabold tracking-tighter">{authUser.coins}</h2>
-                            <span className="text-xl font-bold opacity-90">Eco Coins</span>
+                    <div className="flex justify-between items-start mb-6">
+                        <div>
+                            <p className="text-xs font-bold uppercase tracking-[0.2em] opacity-80 mb-2">Your Balance</p>
+                            <h2 className="text-6xl font-extrabold tracking-tighter">{authUser.coins} <span className="text-2xl font-bold opacity-80">Coins</span></h2>
+                            <p className="mt-1 text-sm font-medium opacity-60">≈ ₹{Math.round(authUser.coins * 0.5)} Value</p>
                         </div>
-                        <p className="mt-1 text-sm font-medium opacity-70">≈ ₹{Math.round(authUser.coins * 0.5)} Value</p>
-
-                        {/* Tier Progress */}
-                        <div className="mt-10 space-y-3">
-                            <div className="flex justify-between items-end">
-                                <div>
-                                    <span className="block text-[10px] font-black tracking-widest opacity-60 uppercase">CURRENT STATUS</span>
-                                    <span className="text-lg font-extrabold tracking-tight">SILVER TIER</span>
-                                </div>
-                                <div className="text-right">
-                                    <span className="text-xs font-bold opacity-70">550 to GOLD</span>
-                                </div>
-                            </div>
-                            <div className="h-3 w-full bg-black/20 rounded-full overflow-hidden">
-                                <motion.div
-                                    className="h-full bg-secondary-fixed-dim rounded-full shadow-[0_0_12px_rgba(146,247,195,0.4)]"
-                                    initial={{ width: 0 }}
-                                    animate={{ width: '65%' }}
-                                    transition={{ delay: 0.5, duration: 1, ease: 'easeOut' }}
-                                />
-                            </div>
+                        <div className="bg-[#92f7c3] text-[#005e3e] px-4 py-2 rounded-full text-[10px] font-extrabold uppercase tracking-wider whitespace-nowrap">
+                            Silver Tier
                         </div>
                     </div>
-                    {/* Decorative */}
-                    <div className="absolute -right-4 -top-4 w-40 h-40 opacity-20 pointer-events-none">
-                        <span className="material-symbols-outlined text-[10rem]" style={{ fontVariationSettings: "'FILL' 1" }}>military_tech</span>
+                    <div className="space-y-1">
+                        <div className="flex justify-between text-[10px] font-extrabold uppercase opacity-60">
+                            <span>Progress</span>
+                            <span>550 to Gold</span>
+                        </div>
+                        <div className="w-full h-3 rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(27,90,64,0.3)' }}>
+                            <motion.div
+                                className="h-full bg-[#83e8b5] rounded-full"
+                                initial={{ width: 0 }}
+                                animate={{ width: '65%' }}
+                                transition={{ delay: 0.5, duration: 1, ease: 'easeOut' }}
+                            />
+                        </div>
                     </div>
                 </motion.section>
 
