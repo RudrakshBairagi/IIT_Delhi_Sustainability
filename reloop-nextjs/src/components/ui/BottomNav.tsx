@@ -16,6 +16,12 @@ export function BottomNav() {
     const pathname = usePathname();
     const { primaryAction } = useNavStore();
 
+    // Hide nav on auth pages
+    const authRoutes = ['/login', '/register', '/onboarding'];
+    if (authRoutes.some(route => pathname.startsWith(route))) {
+        return null;
+    }
+
     return (
         <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md z-50 px-4 pb-6">
             <div className="bg-dark dark:bg-dark-surface dark:border dark:border-gray-700 rounded-[2rem] px-4 py-3 flex items-center justify-between gap-2 shadow-2xl transition-all">

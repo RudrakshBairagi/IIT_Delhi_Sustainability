@@ -66,28 +66,24 @@ export default function HomePage() {
 
   return (
     <motion.div
-      className="min-h-screen bg-background"
+      className="min-h-screen bg-gradient-to-b from-sky-200 to-white dark:from-dark-bg dark:to-dark-surface pb-28"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
     >
       {/* Header - Compact */}
-      <motion.header className="px-5 py-3" variants={itemVariants}>
+      <motion.header className="sticky top-0 z-40 bg-sky-200/95 dark:bg-dark-bg/95 backdrop-blur-md px-5 py-3 border-b-2 border-transparent" variants={itemVariants}>
         <div className="flex items-center justify-between">
-          <div>
-            <p className="text-xs text-gray-500 dark:text-gray-400 font-bold mb-0.5 ml-1">Welcome back,</p>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-[900] text-dark dark:text-white tracking-tight">{user.name.split(' ')[0]}</h1>
-              {/* Header Stats Pill - Compact */}
-              <div className="flex items-center gap-2 bg-white dark:bg-dark-surface border-2 border-dark dark:border-gray-600 rounded-full px-2 py-0.5 shadow-sm scale-90 origin-left">
-                <StreakBadge streak={streak} />
-                <div className="w-px h-3 bg-gray-300 dark:bg-gray-600 mx-1"></div>
-                <span className="text-[10px] font-black text-primary">⚡ {user.xp} XP</span>
-              </div>
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-black uppercase italic tracking-tighter text-dark dark:text-white">ReLoop</h1>
+            <div className="flex items-center gap-2 bg-white dark:bg-dark-surface neo-border rounded-full px-3 py-1 shadow-brutal-sm">
+              <StreakBadge streak={streak} />
+              <div className="w-px h-3 bg-gray-300 dark:bg-gray-600" />
+              <span className="text-xs font-black text-primary">⚡ {user.xp}</span>
             </div>
           </div>
           <Link href="/profile" className="relative group">
-            <div className="w-12 h-12 rounded-full border-2 border-dark dark:border-gray-600 overflow-hidden shadow-brutal-sm bg-gray-200 dark:bg-gray-700 group-hover:scale-105 transition-transform relative">
+            <div className="w-11 h-11 rounded-full neo-border overflow-hidden shadow-brutal-sm bg-gray-200 dark:bg-gray-700 group-hover:scale-105 transition-transform relative">
               <Image
                 src={user.avatar || 'https://ui-avatars.com/api/?name=User'}
                 alt="Profile"
@@ -95,7 +91,6 @@ export default function HomePage() {
                 className="object-cover"
               />
             </div>
-            {/* Level Icon - Compact */}
             <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-primary rounded-full border-2 border-dark flex items-center justify-center z-10">
               <span className="text-[8px] font-black text-dark">{user.level}</span>
             </div>
@@ -169,36 +164,40 @@ export default function HomePage() {
           </div>
         </motion.div>
 
-        {/* Quick Actions - 4 Column Grid (Added Charity) */}
+        {/* Quick Actions - Compact Grid */}
         <motion.div variants={itemVariants}>
-          <p className="font-extrabold text-dark dark:text-white text-sm mb-2 ml-1">Quick Actions</p>
-          <div className="grid grid-cols-4 gap-2">
-            <Link href="/marketplace" className="group relative">
-              <div className="absolute inset-0 bg-dark rounded-xl translate-x-0.5 translate-y-0.5"></div>
-              <div className="relative bg-card-yellow border-2 border-dark dark:border-gray-600 rounded-xl p-2 flex flex-col items-center gap-1 group-hover:-translate-y-0.5 transition-transform">
-                <span className="material-symbols-outlined text-2xl text-dark dark:text-white">storefront</span>
-                <span className="text-[9px] font-[800] text-dark dark:text-white uppercase tracking-wide">Shop</span>
+          <p className="font-black text-dark dark:text-white text-sm uppercase tracking-tight mb-2 ml-1">Quick Actions</p>
+          <div className="grid grid-cols-2 gap-2">
+            <Link href="/marketplace" className="relative h-20 rounded-xl bg-[#F4A261] neo-border shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all cursor-pointer overflow-hidden group">
+              <div className="relative h-full flex items-center gap-3 px-3 z-10">
+                <div className="w-10 h-10 rounded-full bg-dark flex items-center justify-center text-white border-2 border-white shrink-0">
+                  <span className="material-symbols-outlined text-lg">storefront</span>
+                </div>
+                <p className="text-dark text-sm font-black uppercase leading-tight tracking-tight">Shop<br />Items</p>
               </div>
             </Link>
-            <Link href="/rewards" className="group relative">
-              <div className="absolute inset-0 bg-dark rounded-xl translate-x-0.5 translate-y-0.5"></div>
-              <div className="relative bg-card-pink border-2 border-dark dark:border-gray-600 rounded-xl p-2 flex flex-col items-center gap-1 group-hover:-translate-y-0.5 transition-transform">
-                <span className="material-symbols-outlined text-2xl text-dark dark:text-white">redeem</span>
-                <span className="text-[9px] font-[800] text-dark dark:text-white uppercase tracking-wide">Rewards</span>
+            <Link href="/rewards" className="relative h-20 rounded-xl bg-[#2A9D8F] neo-border shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all cursor-pointer overflow-hidden group">
+              <div className="relative h-full flex items-center gap-3 px-3 z-10">
+                <div className="w-10 h-10 rounded-full bg-dark flex items-center justify-center text-white border-2 border-white shrink-0">
+                  <span className="material-symbols-outlined text-lg">redeem</span>
+                </div>
+                <p className="text-white text-sm font-black uppercase leading-tight tracking-tight">Redeem<br />Rewards</p>
               </div>
             </Link>
-            <Link href="/impact" className="group relative">
-              <div className="absolute inset-0 bg-dark rounded-xl translate-x-0.5 translate-y-0.5"></div>
-              <div className="relative bg-card-green border-2 border-dark dark:border-gray-600 rounded-xl p-2 flex flex-col items-center gap-1 group-hover:-translate-y-0.5 transition-transform">
-                <span className="material-symbols-outlined text-2xl text-dark dark:text-white">eco</span>
-                <span className="text-[9px] font-[800] text-dark dark:text-white uppercase tracking-wide">Impact</span>
+            <Link href="/community" className="relative h-20 rounded-xl bg-[#9B5DE5] neo-border shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all cursor-pointer overflow-hidden group">
+              <div className="relative h-full flex items-center gap-3 px-3 z-10">
+                <div className="w-10 h-10 rounded-full bg-dark flex items-center justify-center text-white border-2 border-white shrink-0">
+                  <span className="material-symbols-outlined text-lg">palette</span>
+                </div>
+                <p className="text-white text-sm font-black uppercase leading-tight tracking-tight">DIY<br />Community</p>
               </div>
             </Link>
-            <Link href="/charity" className="group relative">
-              <div className="absolute inset-0 bg-dark rounded-xl translate-x-0.5 translate-y-0.5"></div>
-              <div className="relative bg-card-blue border-2 border-dark dark:border-gray-600 rounded-xl p-2 flex flex-col items-center gap-1 group-hover:-translate-y-0.5 transition-transform">
-                <span className="material-symbols-outlined text-2xl text-dark dark:text-white">volunteer_activism</span>
-                <span className="text-[9px] font-[800] text-dark dark:text-white uppercase tracking-wide">Charity</span>
+            <Link href="/charity" className="relative h-20 rounded-xl bg-[#E76F51] neo-border shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all cursor-pointer overflow-hidden group">
+              <div className="relative h-full flex items-center gap-3 px-3 z-10">
+                <div className="w-10 h-10 rounded-full bg-dark flex items-center justify-center text-white border-2 border-white shrink-0">
+                  <span className="material-symbols-outlined text-lg">volunteer_activism</span>
+                </div>
+                <p className="text-white text-sm font-black uppercase leading-tight tracking-tight">Give<br />Back</p>
               </div>
             </Link>
           </div>

@@ -36,21 +36,17 @@ export default function ScannerPage() {
         setErrorMessage(null);
 
         try {
-            // Check if camera API is available (requires secure context)
             if (!navigator.mediaDevices?.getUserMedia) {
                 setCameraState('denied');
                 setErrorMessage('Camera requires HTTPS. Tap Gallery to take a photo instead.');
                 return;
             }
 
-            // Explicitly request camera permission
             const stream = await navigator.mediaDevices.getUserMedia({
                 video: { facingMode: 'environment' }
             });
 
-            // Stop the test stream - Webcam component will request its own
             stream.getTracks().forEach(track => track.stop());
-
             setCameraState('ready');
         } catch (err: any) {
             console.error('Camera error:', err);
@@ -63,7 +59,6 @@ export default function ScannerPage() {
             } else if (err.name === 'NotReadableError') {
                 setErrorMessage('Camera is in use by another app.');
             } else if (err.name === 'TypeError' || err.message?.includes('secure')) {
-                // HTTPS requirement - provide helpful alternatives
                 setErrorMessage('Camera requires HTTPS. Use localhost, ngrok, or tap Gallery to take a photo.');
             } else {
                 setErrorMessage('Camera unavailable. Tap Gallery to take or select a photo.');
@@ -85,8 +80,6 @@ export default function ScannerPage() {
             const result = await ScannerService.analyzeImage(imageSrc);
 
             if (result.success) {
-                // In a real app, the backend would return if a mission was completed
-                // For now, we just redirect to results
                 const params = new URLSearchParams();
                 params.set('result', JSON.stringify(result));
                 router.push(`/scanner/results?${params.toString()}`);
@@ -101,7 +94,6 @@ export default function ScannerPage() {
         }
     }, [router]);
 
-    // Register nav action for capture
     useEffect(() => {
         setActions({
             label: 'Capture',
@@ -146,118 +138,149 @@ export default function ScannerPage() {
     };
 
     return (
-        <div className="min-h-screen bg-dark flex flex-col">
-            {/* Header */}
-            <header className="flex items-center justify-between p-4 bg-dark text-white z-10">
-                <Link
-                    href="/"
-                    className="w-10 h-10 flex items-center justify-center bg-dark-surface rounded-xl border border-white/10"
-                >
-                    <span className="material-symbols-outlined text-xl">arrow_back</span>
-                </Link>
-                <h1 className="font-black uppercase tracking-wider text-white">Scan Item</h1>
-                <div className="w-10 h-10 flex items-center justify-center bg-dark-surface rounded-xl border border-white/10">
-                    <span className="material-symbols-outlined text-xl">flash_on</span>
+        <div className="min-h-screen bg-sky flex flex-col p-4 gap-4">
+            {/* Floating Pill Header */}
+            <header className="z-20 w-full pt-2">
+                <div className="flex justify-between items-center bg-white neo-border rounded-full px-5 py-3 shadow-brutal-sm">
+                    <Link
+                        href="/"
+                        className="flex items-center justify-center text-dark hover:bg-gray-100 rounded-full p-1 transition-colors"
+                    >
+                        <span className="material-symbols-outlined" style={{ fontSize: 28 }}>arrow_back</span>
+                    </Link>
+                    <div className="text-sm font-black uppercase tracking-widest text-dark">Scan Item</div>
+                    <button className="flex items-center justify-center text-dark hover:bg-gray-100 rounded-full p-1 transition-colors">
+                        <span className="material-symbols-outlined" style={{ fontSize: 28 }}>flash_on</span>
+                    </button>
                 </div>
             </header>
 
-            {/* Camera View */}
-            <div className="flex-1 relative overflow-hidden mx-4 my-2 rounded-3xl border-2 border-white/20 bg-dark-surface">
-                {/* Idle State - Show Start Button */}
-                {cameraState === 'idle' && (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
-                        <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mb-4">
-                            <span className="material-symbols-outlined text-4xl text-primary">photo_camera</span>
-                        </div>
-                        <h2 className="text-white font-bold text-lg mb-2">Ready to Scan</h2>
-                        <p className="text-white/60 text-sm mb-6">Tap below to start the camera and scan items</p>
-                        <button
-                            onClick={requestCamera}
-                            className="px-8 py-4 bg-primary text-dark font-bold rounded-2xl shadow-brutal active:scale-95 transition-transform"
-                        >
-                            Start Camera
-                        </button>
-                    </div>
-                )}
+            {/* Camera Viewport */}
+            <main className="relative z-10 flex-grow w-full">
+                <div className="absolute inset-0 w-full h-full">
+                    <div className="relative w-full h-full rounded-[2.5rem] border-4 border-dark overflow-hidden bg-dark shadow-brutal">
 
-                {/* Requesting State */}
-                {cameraState === 'requesting' && (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                        <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4" />
-                        <p className="text-white/60 font-medium">Requesting camera access...</p>
-                    </div>
-                )}
+                        {/* Idle State */}
+                        {cameraState === 'idle' && (
+                            <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-dark-surface">
+                                <div className="w-24 h-24 bg-primary/20 rounded-full flex items-center justify-center mb-6 neo-border">
+                                    <span className="material-symbols-outlined text-5xl text-primary">photo_camera</span>
+                                </div>
+                                <h2 className="text-white font-black text-2xl mb-2 uppercase tracking-tight">Ready to Scan</h2>
+                                <p className="text-white/60 text-sm mb-8 max-w-xs">Tap below to start the camera and identify recyclable items</p>
+                                <button
+                                    onClick={requestCamera}
+                                    className="px-10 py-4 bg-primary text-dark font-black rounded-full neo-border shadow-brutal active:shadow-none active:translate-x-1 active:translate-y-1 transition-all uppercase tracking-wider"
+                                >
+                                    Start Camera
+                                </button>
+                            </div>
+                        )}
 
-                {/* Camera Ready - Show Webcam */}
-                {cameraState === 'ready' && (
-                    <>
-                        <WebcamCapture
-                            ref={webcamRef}
-                            onUserMediaError={() => {
-                                setCameraState('error');
-                                setErrorMessage('Camera stopped unexpectedly.');
-                            }}
-                            className="absolute inset-0 w-full h-full object-cover"
-                        />
+                        {/* Requesting State */}
+                        {cameraState === 'requesting' && (
+                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-dark-surface">
+                                <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4" />
+                                <p className="text-white/60 font-bold uppercase tracking-wider">Requesting camera access...</p>
+                            </div>
+                        )}
 
-                        {/* Scan Frame */}
-                        {!isAnalyzing && (
-                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                <div className="w-56 h-56 border-4 border-primary rounded-3xl relative">
-                                    <div className="absolute -top-1 -left-1 w-10 h-10 border-t-4 border-l-4 border-primary rounded-tl-2xl" />
-                                    <div className="absolute -top-1 -right-1 w-10 h-10 border-t-4 border-r-4 border-primary rounded-tr-2xl" />
-                                    <div className="absolute -bottom-1 -left-1 w-10 h-10 border-b-4 border-l-4 border-primary rounded-bl-2xl" />
-                                    <div className="absolute -bottom-1 -right-1 w-10 h-10 border-b-4 border-r-4 border-primary rounded-br-2xl" />
+                        {/* Camera Ready - Show Webcam */}
+                        {cameraState === 'ready' && (
+                            <>
+                                <WebcamCapture
+                                    ref={webcamRef}
+                                    onUserMediaError={() => {
+                                        setCameraState('error');
+                                        setErrorMessage('Camera stopped unexpectedly.');
+                                    }}
+                                    className="absolute inset-0 w-full h-full object-cover"
+                                />
+
+                                {/* Dark Overlay */}
+                                <div className="absolute inset-0 bg-black/20 pointer-events-none" />
+
+                                {/* Scan Frame Corners - Animated */}
+                                {!isAnalyzing && (
+                                    <div className="absolute inset-8 pointer-events-none animate-pulse">
+                                        <div className="absolute top-0 left-0 w-12 h-12 border-l-4 border-t-4 border-primary rounded-tl-xl" style={{ boxShadow: '2px 2px 0px 0px rgba(0,0,0,0.5)' }} />
+                                        <div className="absolute top-0 right-0 w-12 h-12 border-r-4 border-t-4 border-primary rounded-tr-xl" style={{ boxShadow: '-2px 2px 0px 0px rgba(0,0,0,0.5)' }} />
+                                        <div className="absolute bottom-0 left-0 w-12 h-12 border-l-4 border-b-4 border-primary rounded-bl-xl" style={{ boxShadow: '2px -2px 0px 0px rgba(0,0,0,0.5)' }} />
+                                        <div className="absolute bottom-0 right-0 w-12 h-12 border-r-4 border-b-4 border-primary rounded-br-xl" style={{ boxShadow: '-2px -2px 0px 0px rgba(0,0,0,0.5)' }} />
+                                    </div>
+                                )}
+
+                                {/* Scanning Laser Line */}
+                                {!isAnalyzing && (
+                                    <div
+                                        className="absolute left-4 right-4 h-1 bg-primary rounded-full z-20"
+                                        style={{
+                                            boxShadow: '0 0 15px rgba(37, 244, 120, 0.8)',
+                                            animation: 'scan 3s ease-in-out infinite'
+                                        }}
+                                    />
+                                )}
+
+                                {/* Grid Overlay */}
+                                <div
+                                    className="absolute inset-0 opacity-10 pointer-events-none"
+                                    style={{
+                                        backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
+                                        backgroundSize: '40px 40px'
+                                    }}
+                                />
+                            </>
+                        )}
+
+                        {/* Error/Denied State */}
+                        {(cameraState === 'denied' || cameraState === 'error') && (
+                            <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-dark-surface">
+                                <div className="w-24 h-24 bg-card-coral/30 rounded-full flex items-center justify-center mb-6 neo-border border-card-coral">
+                                    <span className="material-symbols-outlined text-5xl text-card-coral">videocam_off</span>
+                                </div>
+                                <h2 className="text-white font-black text-2xl mb-2 uppercase">Camera Unavailable</h2>
+                                <p className="text-white/60 text-sm mb-6 max-w-xs">{errorMessage}</p>
+                                <div className="flex gap-3">
+                                    <button
+                                        onClick={requestCamera}
+                                        className="px-6 py-3 bg-white/10 text-white font-bold rounded-full border-2 border-white/20 active:scale-95 transition-transform"
+                                    >
+                                        Try Again
+                                    </button>
+                                    <button
+                                        onClick={() => fileInputRef.current?.click()}
+                                        className="px-6 py-3 bg-primary text-dark font-bold rounded-full neo-border shadow-brutal-sm active:shadow-none active:translate-x-1 active:translate-y-1 transition-all"
+                                    >
+                                        Use Gallery
+                                    </button>
                                 </div>
                             </div>
                         )}
-                    </>
-                )}
 
-                {/* Error/Denied State */}
-                {(cameraState === 'denied' || cameraState === 'error') && (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
-                        <div className="w-20 h-20 bg-card-coral/20 rounded-full flex items-center justify-center mb-4">
-                            <span className="material-symbols-outlined text-4xl text-card-coral">videocam_off</span>
-                        </div>
-                        <h2 className="text-white font-bold text-lg mb-2">Camera Unavailable</h2>
-                        <p className="text-white/60 text-sm mb-4 max-w-xs">{errorMessage}</p>
-                        <div className="flex gap-3">
-                            <button
-                                onClick={requestCamera}
-                                className="px-6 py-3 bg-white/10 text-white font-bold rounded-xl active:scale-95 transition-transform"
-                            >
-                                Try Again
-                            </button>
-                            <button
-                                onClick={() => fileInputRef.current?.click()}
-                                className="px-6 py-3 bg-primary text-dark font-bold rounded-xl active:scale-95 transition-transform"
-                            >
-                                Use Gallery
-                            </button>
-                        </div>
+                        {/* Error Message Toast */}
+                        {errorMessage && cameraState === 'ready' && (
+                            <div className="absolute bottom-4 left-4 right-4 bg-card-coral text-dark p-4 rounded-2xl text-center font-bold neo-border z-30">
+                                {errorMessage}
+                            </div>
+                        )}
                     </div>
-                )}
-
-                {/* Error Message Toast */}
-                {errorMessage && cameraState === 'ready' && (
-                    <div className="absolute bottom-4 left-4 right-4 bg-card-coral text-dark p-4 rounded-2xl text-center font-bold border-2 border-dark z-30">
-                        {errorMessage}
-                    </div>
-                )}
-            </div>
+                </div>
+            </main>
 
             {/* Bottom Controls */}
-            <div className="bg-dark p-6 space-y-4">
-                {/* Tips */}
-                <p className="text-white/60 text-sm text-center">
-                    {cameraState === 'ready'
-                        ? 'Point camera at an item and tap Capture'
-                        : 'Upload an image or start the camera to scan'}
-                </p>
+            <footer className="relative z-20 w-full flex flex-col items-center gap-4 pb-4">
+                {/* Tip Pill */}
+                <div className="bg-white neo-border rounded-full px-6 py-2 shadow-brutal-sm transform transition-transform hover:-translate-y-1">
+                    <div className="flex items-center gap-2">
+                        <span className="material-symbols-outlined text-dark" style={{ fontSize: 20 }}>info</span>
+                        <p className="text-dark text-sm font-bold">
+                            {cameraState === 'ready' ? 'Tip: Hold steady' : 'Tip: Start camera or use gallery'}
+                        </p>
+                    </div>
+                </div>
 
-                {/* Action Buttons */}
-                <div className="flex gap-3">
+                {/* Capture Button */}
+                <div className="w-full px-2">
                     <input
                         type="file"
                         ref={fileInputRef}
@@ -266,22 +289,50 @@ export default function ScannerPage() {
                         capture="environment"
                         className="hidden"
                     />
+
+                    {cameraState === 'ready' ? (
+                        <button
+                            onClick={capture}
+                            disabled={isAnalyzing}
+                            className="group relative w-full flex items-center justify-center h-16 bg-primary border-4 border-dark rounded-full shadow-brutal active:shadow-none active:translate-x-1 active:translate-y-1 transition-all duration-150 overflow-hidden disabled:opacity-50"
+                        >
+                            <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <span className="relative z-10 text-dark text-lg font-black tracking-widest uppercase flex items-center gap-2">
+                                <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>photo_camera</span>
+                                {isAnalyzing ? 'Analyzing...' : 'Tap to Capture'}
+                            </span>
+                        </button>
+                    ) : (
+                        <button
+                            onClick={() => fileInputRef.current?.click()}
+                            className="group relative w-full flex items-center justify-center h-16 bg-primary border-4 border-dark rounded-full shadow-brutal active:shadow-none active:translate-x-1 active:translate-y-1 transition-all duration-150 overflow-hidden"
+                        >
+                            <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <span className="relative z-10 text-dark text-lg font-black tracking-widest uppercase flex items-center gap-2">
+                                <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>photo_library</span>
+                                Upload from Gallery
+                            </span>
+                        </button>
+                    )}
+                </div>
+
+                {/* Secondary Links */}
+                <div className="flex gap-6 mt-1">
                     <button
                         onClick={() => fileInputRef.current?.click()}
-                        className="flex-1 bg-dark-surface text-white py-3 rounded-2xl font-bold border border-white/10 flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                        className="text-dark/60 font-bold text-xs uppercase hover:text-dark transition-colors"
                     >
-                        <span className="material-symbols-outlined text-lg">photo_library</span>
                         Gallery
                     </button>
+                    <div className="w-1 h-4 bg-dark/20" />
                     <button
                         onClick={() => router.push('/scanner/history')}
-                        className="flex-1 bg-orange text-dark py-3 rounded-2xl font-bold border-2 border-dark flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                        className="text-dark/60 font-bold text-xs uppercase hover:text-dark transition-colors"
                     >
-                        <span className="material-symbols-outlined text-lg">history</span>
                         History
                     </button>
                 </div>
-            </div>
+            </footer>
 
             {/* Scanning Overlay */}
             {isAnalyzing && <ScanningOverlay />}
@@ -291,7 +342,15 @@ export default function ScannerPage() {
                 mission={completedMission}
                 onClose={() => setCompletedMission(null)}
             />
+
+            {/* Scan Animation Keyframes */}
+            <style jsx>{`
+                @keyframes scan {
+                    0% { top: 10%; opacity: 0.5; }
+                    50% { top: 90%; opacity: 1; }
+                    100% { top: 10%; opacity: 0.5; }
+                }
+            `}</style>
         </div>
     );
 }
-

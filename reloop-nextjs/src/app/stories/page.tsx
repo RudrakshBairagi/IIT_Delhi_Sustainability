@@ -1,227 +1,233 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import DemoManager from '@/lib/demo-manager';
-import { Story } from '@/types';
-import { PageHeader } from '@/components/ui/PageHeader';
 
-const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.06 } },
-};
-
-const itemVariants = {
-    hidden: { y: 15, opacity: 0 },
-    visible: { y: 0, opacity: 1, transition: { type: 'spring' as const, stiffness: 300, damping: 24 } },
-};
+// Varied story types: trade, charity, impact, leaderboard
+const stories = [
+    {
+        id: '1',
+        type: 'trade',
+        title: 'The Textbook Swap',
+        icon: 'handshake',
+        impactIcon: 'eco',
+        impactText: '5kg CO2 Saved',
+        author: 'Priya & Arjun',
+        quote: '"Saved ₹500 and kept these books out of the landfill! Thanks so much, Priya! 📚"',
+        image: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=200&h=200&fit=crop',
+        bgColor: 'from-emerald-400 to-teal-600',
+    },
+    {
+        id: '2',
+        type: 'charity',
+        title: 'Donated to Akshaya Patra',
+        icon: 'volunteer_activism',
+        impactIcon: 'favorite',
+        impactText: '20 Meals Funded',
+        author: 'Sneha M.',
+        quote: '"Used my ReCoins to donate! Every bit helps. Feels good to give back to the community. 💚"',
+        image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop',
+        bgColor: 'from-pink-400 to-rose-600',
+    },
+    {
+        id: '3',
+        type: 'leaderboard',
+        title: 'Hit Top 10!',
+        icon: 'trophy',
+        impactIcon: 'trending_up',
+        impactText: 'Rank #8 Overall',
+        author: 'Rahul K.',
+        quote: '"Just made it to the campus Top 10! 🏆 Started recycling just 2 months ago. You can do it too!"',
+        image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop',
+        bgColor: 'from-amber-400 to-orange-600',
+    },
+    {
+        id: '4',
+        type: 'impact',
+        title: 'My Yearly Wrapped',
+        icon: 'bar_chart',
+        impactIcon: 'cloud_off',
+        impactText: '120kg CO2 Saved',
+        author: 'Ananya P.',
+        quote: '"Can\'t believe my yearly stats! 🌍 Saved 120kg CO2 and planted 15 trees. Let\'s keep going!"',
+        image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop',
+        bgColor: 'from-sky-400 to-blue-600',
+    },
+    {
+        id: '5',
+        type: 'trade',
+        title: 'Vintage Kurta Find',
+        icon: 'checkroom',
+        impactIcon: 'water_drop',
+        impactText: '700L Water Saved',
+        author: 'Vikram S.',
+        quote: '"Why buy new? This kurta fits perfectly and has so much character. #ThriftWin"',
+        image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop',
+        bgColor: 'from-violet-400 to-purple-600',
+    },
+];
 
 export default function StoriesPage() {
-    const [stories, setStories] = useState<Story[]>([]);
-    const [goals, setGoals] = useState<{ id: string; title: string; target: number; current: number; reward: string; icon: string }[]>([]);
-    const [filter, setFilter] = useState<'all' | 'charity' | 'art' | 'recycling'>('all');
-    const [showContributeModal, setShowContributeModal] = useState(false);
-    const [storyTitle, setStoryTitle] = useState('');
-    const [storyText, setStoryText] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const router = useRouter();
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [progress, setProgress] = useState(0);
+    const [isPaused, setIsPaused] = useState(false);
 
+    const currentStory = stories[currentIndex];
+    const STORY_DURATION = 5000; // 5 seconds per story
+
+    // Auto-advance stories
     useEffect(() => {
-        setStories(DemoManager.getSuccessStories());
-        setGoals(DemoManager.getCommunityGoals());
-    }, []);
+        if (isPaused) return;
 
-    const filteredStories = filter === 'all' ? stories : stories.filter(s => s.category === filter);
+        const interval = setInterval(() => {
+            setProgress((prev) => {
+                if (prev >= 100) {
+                    goToNext();
+                    return 0;
+                }
+                return prev + (100 / (STORY_DURATION / 100));
+            });
+        }, 100);
 
-    const filterTabs = [
-        { key: 'all', label: 'All' },
-        { key: 'charity', label: 'Charity' },
-        { key: 'art', label: 'Art' },
-        { key: 'recycling', label: 'Recycle' },
-    ];
+        return () => clearInterval(interval);
+    }, [currentIndex, isPaused]);
 
-    const handleSubmitStory = async () => {
-        if (!storyTitle.trim() || !storyText.trim()) return;
-        setIsSubmitting(true);
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        setIsSubmitting(false);
-        setShowContributeModal(false);
-        setStoryTitle('');
-        setStoryText('');
-        // In a real app, we would post to backend here
-        // For now just show success animation or toast if we had one
+    const goToNext = useCallback(() => {
+        if (currentIndex < stories.length - 1) {
+            setCurrentIndex((prev) => prev + 1);
+            setProgress(0);
+        } else {
+            router.push('/');
+        }
+    }, [currentIndex, router]);
+
+    const goToPrev = useCallback(() => {
+        if (currentIndex > 0) {
+            setCurrentIndex((prev) => prev - 1);
+            setProgress(0);
+        }
+    }, [currentIndex]);
+
+    const handleTap = (e: React.MouseEvent) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const isLeftSide = x < rect.width / 3;
+
+        if (isLeftSide) {
+            goToPrev();
+        } else {
+            goToNext();
+        }
+    };
+
+    const getTypeLabel = (type: string) => {
+        switch (type) {
+            case 'trade': return '🔄 Trade';
+            case 'charity': return '💝 Charity';
+            case 'leaderboard': return '🏆 Achievement';
+            case 'impact': return '🌍 Impact';
+            default: return '';
+        }
     };
 
     return (
-        <div className="min-h-screen bg-background">
-            <PageHeader
-                title="Giving Back"
-                subtitle="Community impact stories"
-                backHref="/"
-            />
+        <div
+            className="fixed inset-0 bg-black z-50 select-none"
+            onClick={handleTap}
+            onMouseDown={() => setIsPaused(true)}
+            onMouseUp={() => setIsPaused(false)}
+            onTouchStart={() => setIsPaused(true)}
+            onTouchEnd={() => setIsPaused(false)}
+        >
+            {/* Progress Bars */}
+            <div className="absolute top-0 left-0 right-0 z-50 flex gap-1 p-3 pt-safe">
+                {stories.map((_, index) => (
+                    <div key={index} className="flex-1 h-1 bg-white/30 rounded-full overflow-hidden">
+                        <div
+                            className="h-full bg-white rounded-full transition-all duration-100"
+                            style={{
+                                width: index < currentIndex ? '100%' : index === currentIndex ? `${progress}%` : '0%'
+                            }}
+                        />
+                    </div>
+                ))}
+            </div>
 
-            <motion.div
-                className="px-5 pb-28 space-y-4"
-                initial="hidden"
-                animate="visible"
-                variants={containerVariants}
+            {/* Close Button */}
+            <button
+                onClick={(e) => {
+                    e.stopPropagation();
+                    router.push('/');
+                }}
+                className="absolute top-12 right-4 z-50 w-10 h-10 flex items-center justify-center rounded-full bg-black/30 backdrop-blur-sm"
             >
-                {/* Community Goals - Compact */}
-                <motion.div variants={itemVariants}>
-                    <div className="flex items-center justify-between mb-2">
-                        <p className="font-bold text-dark dark:text-white text-sm">🎯 Community Goals</p>
-                        <button
-                            onClick={() => setShowContributeModal(true)}
-                            className="bg-primary text-dark text-xs font-bold px-3 py-1 rounded-full border border-dark shadow-sm active:scale-95 transition-transform"
-                        >
-                            + Contribute
-                        </button>
-                    </div>
-                    <div className="space-y-2">
-                        {goals.map((goal) => {
-                            const progress = Math.round((goal.current / goal.target) * 100);
-                            return (
-                                <div
-                                    key={goal.id}
-                                    className="bg-white dark:bg-dark-surface rounded-xl border-2 border-dark shadow-brutal-sm p-3"
-                                >
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <span className="text-lg">{goal.icon}</span>
-                                        <p className="font-bold text-dark dark:text-white text-sm flex-1">{goal.title}</p>
-                                        <span className="text-xs font-bold text-dark/60 dark:text-white/60">
-                                            {goal.current}/{goal.target}
-                                        </span>
-                                    </div>
-                                    <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full border border-dark overflow-hidden">
-                                        <div
-                                            className="h-full bg-primary transition-all"
-                                            style={{ width: `${progress}%` }}
-                                        />
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </motion.div>
+                <span className="material-symbols-outlined text-white text-2xl">close</span>
+            </button>
 
-                {/* Filter Tabs */}
-                <motion.div variants={itemVariants} className="flex gap-2 overflow-x-auto no-scrollbar">
-                    {filterTabs.map((tab) => (
-                        <button
-                            key={tab.key}
-                            onClick={() => setFilter(tab.key as typeof filter)}
-                            className={filter === tab.key ? 'tab-pill-active' : 'tab-pill-inactive'}
-                        >
-                            {tab.label}
-                        </button>
-                    ))}
-                </motion.div>
-
-                {/* Stories Feed */}
-                <motion.div variants={containerVariants} className="space-y-3">
-                    {filteredStories.map((story) => (
-                        <motion.div
-                            key={story.id}
-                            variants={itemVariants}
-                            className="bg-white dark:bg-dark-surface rounded-2xl border-2 border-dark shadow-brutal-sm overflow-hidden"
-                        >
-                            <img
-                                src={story.image}
-                                alt={story.title}
-                                className="w-full h-32 object-cover"
+            {/* Story Content */}
+            <AnimatePresence mode="wait">
+                <motion.div
+                    key={currentStory.id}
+                    initial={{ opacity: 0, scale: 1.1 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.3 }}
+                    className={`absolute inset-0 bg-gradient-to-b ${currentStory.bgColor}`}
+                >
+                    {/* Author Header */}
+                    <div className="absolute top-16 left-0 right-0 px-5 z-40">
+                        <div className="flex items-center gap-3">
+                            <div
+                                className="w-12 h-12 rounded-full border-2 border-white bg-cover bg-center"
+                                style={{ backgroundImage: `url('${currentStory.image}')` }}
                             />
-                            <div className="p-4">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <img
-                                        src={story.authorAvatar}
-                                        alt={story.author}
-                                        className="w-7 h-7 rounded-full border border-dark"
-                                    />
-                                    <div className="flex-1">
-                                        <p className="font-bold text-dark dark:text-white text-sm">{story.author}</p>
-                                        <p className="text-[10px] text-dark/50 dark:text-white/50">{story.campus}</p>
-                                    </div>
-                                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${story.category === 'charity' ? 'bg-purple-100 text-purple-800' :
-                                        story.category === 'art' ? 'bg-pink-100 text-pink-800' :
-                                            'bg-green-100 text-green-800'
-                                        }`}>
-                                        {story.category}
-                                    </span>
-                                </div>
-                                <h3 className="font-bold text-dark dark:text-white text-sm">{story.title}</h3>
-                                <p className="text-xs text-dark/60 dark:text-white/60 mt-1 line-clamp-2">{story.excerpt}</p>
-
-                                <div className="flex gap-2 mt-2">
-                                    <span className="bg-card-green px-2 py-0.5 rounded border border-dark text-[10px] font-bold">
-                                        {story.co2Saved}kg CO₂
-                                    </span>
-                                    {story.itemsTraded > 1 && (
-                                        <span className="bg-card-blue px-2 py-0.5 rounded border border-dark text-[10px] font-bold">
-                                            {story.itemsTraded} items
-                                        </span>
-                                    )}
-                                </div>
+                            <div>
+                                <p className="text-white font-black text-sm">{currentStory.author}</p>
+                                <p className="text-white/70 text-xs font-bold">{getTypeLabel(currentStory.type)}</p>
                             </div>
-                        </motion.div>
-                    ))}
+                        </div>
+                    </div>
+
+                    {/* Main Content - Centered */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center px-8">
+                        {/* Icon Badge */}
+                        <div className="w-24 h-24 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center mb-6 border-2 border-white/30">
+                            <span className="material-symbols-outlined text-white text-5xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+                                {currentStory.icon}
+                            </span>
+                        </div>
+
+                        {/* Title */}
+                        <h1 className="text-4xl font-black text-white uppercase text-center tracking-tight mb-4 leading-tight">
+                            {currentStory.title}
+                        </h1>
+
+                        {/* Impact Pill */}
+                        <div className="flex items-center gap-2 bg-white/20 backdrop-blur-md rounded-full px-5 py-2 border border-white/30 mb-8">
+                            <span className="material-symbols-outlined text-white text-lg">{currentStory.impactIcon}</span>
+                            <span className="text-white font-bold uppercase tracking-wide text-sm">{currentStory.impactText}</span>
+                        </div>
+
+                        {/* Quote Card */}
+                        <div className="bg-white/95 rounded-3xl p-6 max-w-sm shadow-2xl">
+                            <p className="text-dark text-lg font-medium leading-relaxed text-center">
+                                {currentStory.quote}
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Bottom Gradient */}
+                    <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/50 to-transparent" />
+
+                    {/* Navigation Hints */}
+                    <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-2">
+                        <span className="text-white/50 text-xs font-bold uppercase tracking-wider">
+                            Tap to continue
+                        </span>
+                    </div>
                 </motion.div>
-            </motion.div>
-
-            {/* Contribute Modal */}
-            <AnimatePresence>
-                {showContributeModal && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center p-5 bg-dark/80 backdrop-blur-sm"
-                    >
-                        <motion.div
-                            initial={{ scale: 0.9, y: 20 }}
-                            animate={{ scale: 1, y: 0 }}
-                            exit={{ scale: 0.9, y: 20 }}
-                            className="bg-white dark:bg-dark-surface w-full max-w-sm rounded-2xl border-2 border-dark shadow-brutal p-5"
-                        >
-                            <h2 className="text-xl font-black text-dark dark:text-white mb-4">Share Your Story</h2>
-                            <div className="space-y-3">
-                                <div>
-                                    <label className="text-xs font-bold text-dark/50 dark:text-white/50 mb-1 block">Title</label>
-                                    <input
-                                        type="text"
-                                        value={storyTitle}
-                                        onChange={(e) => setStoryTitle(e.target.value)}
-                                        placeholder="e.g. My first upcycling project"
-                                        className="w-full h-11 rounded-xl bg-gray-50 dark:bg-dark-bg border-2 border-dark px-4 font-bold focus:outline-none focus:ring-2 focus:ring-primary"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="text-xs font-bold text-dark/50 dark:text-white/50 mb-1 block">Story</label>
-                                    <textarea
-                                        value={storyText}
-                                        onChange={(e) => setStoryText(e.target.value)}
-                                        placeholder="Tell us what you did..."
-                                        className="w-full h-32 rounded-xl bg-gray-50 dark:bg-dark-bg border-2 border-dark p-4 font-medium focus:outline-none focus:ring-2 focus:ring-primary resize-none"
-                                    />
-                                </div>
-                                <div className="flex gap-2 pt-2">
-                                    <button
-                                        onClick={() => setShowContributeModal(false)}
-                                        className="flex-1 h-12 rounded-xl bg-gray-100 dark:bg-dark-bg font-bold text-dark dark:text-white"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        onClick={handleSubmitStory}
-                                        disabled={isSubmitting || !storyTitle.trim() || !storyText.trim()}
-                                        className="flex-1 h-12 rounded-xl bg-primary border-2 border-dark shadow-brutal-sm font-bold text-dark disabled:opacity-50 disabled:cursor-not-allowed"
-                                    >
-                                        {isSubmitting ? 'Posting...' : 'Post Story'}
-                                    </button>
-                                </div>
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                )}
             </AnimatePresence>
         </div>
     );

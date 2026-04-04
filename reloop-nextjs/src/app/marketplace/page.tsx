@@ -7,7 +7,7 @@ import { DBService } from '@/lib/firebase/db';
 import DemoManager from '@/lib/demo-manager';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { Listing } from '@/types';
-import { useRouter } from 'next/navigation';
+import { ListingCard } from '@/components/marketplace/ListingCard';
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -20,13 +20,18 @@ const itemVariants = {
 };
 
 const CATEGORIES = ['All', 'Electronics', 'Books', 'Clothing', 'Home'];
+const SORT_OPTIONS = [
+    { value: 'newest', label: 'Newest' },
+    { value: 'price-asc', label: 'Price: Low to High' },
+    { value: 'price-desc', label: 'Price: High to Low' },
+];
 
 export default function MarketplacePage() {
     const [listings, setListings] = useState<Listing[]>([]);
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
+    const [sortBy, setSortBy] = useState('newest');
     const [isLoading, setIsLoading] = useState(true);
-    const router = useRouter();
 
     const { isDemo } = useAuth();
 
@@ -50,7 +55,6 @@ export default function MarketplacePage() {
         loadListings();
 
         if (isDemo) {
-            // Subscribe to DemoManager for real-time updates
             const unsubscribe = DemoManager.subscribe(() => {
                 setListings([...DemoManager.getMockListings()]);
             });
@@ -58,14 +62,26 @@ export default function MarketplacePage() {
         }
     }, [isDemo]);
 
-    // Filter by category first, then by search query
-    const filteredListings = listings.filter(l => {
-        const matchesCategory = selectedCategory === 'All' || l.category.toLowerCase().includes(selectedCategory.toLowerCase());
-        const matchesSearch = !searchQuery ||
-            l.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            l.description?.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesCategory && matchesSearch;
-    });
+    // Filter and sort listings
+    const filteredListings = listings
+        .filter(l => {
+            const matchesCategory = selectedCategory === 'All' || l.category.toLowerCase().includes(selectedCategory.toLowerCase());
+            const matchesSearch = !searchQuery ||
+                l.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                l.description?.toLowerCase().includes(searchQuery.toLowerCase());
+            return matchesCategory && matchesSearch;
+        })
+        .sort((a, b) => {
+            switch (sortBy) {
+                case 'price-asc':
+                    return a.price - b.price;
+                case 'price-desc':
+                    return b.price - a.price;
+                case 'newest':
+                default:
+                    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+            }
+        });
 
     return (
         <div className="min-h-screen bg-background">
@@ -102,17 +118,28 @@ export default function MarketplacePage() {
                     </span>
                 </div>
 
-                {/* Categories */}
-                <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-                    {CATEGORIES.map((cat) => (
-                        <button
-                            key={cat}
-                            onClick={() => setSelectedCategory(cat)}
-                            className={selectedCategory === cat ? 'tab-pill-active' : 'tab-pill-inactive'}
-                        >
-                            {cat}
-                        </button>
-                    ))}
+                {/* Categories + Sort */}
+                <div className="flex items-center justify-between gap-3">
+                    <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1 flex-1">
+                        {CATEGORIES.map((cat) => (
+                            <button
+                                key={cat}
+                                onClick={() => setSelectedCategory(cat)}
+                                className={selectedCategory === cat ? 'tab-pill-active' : 'tab-pill-inactive'}
+                            >
+                                {cat}
+                            </button>
+                        ))}
+                    </div>
+                    <select
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                        className="shrink-0 text-xs font-bold bg-white dark:bg-dark-surface border-2 border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 focus:outline-none focus:border-primary transition-colors"
+                    >
+                        {SORT_OPTIONS.map((opt) => (
+                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                        ))}
+                    </select>
                 </div>
             </motion.header>
 
@@ -131,52 +158,25 @@ export default function MarketplacePage() {
                             <span className="material-symbols-outlined text-4xl text-gray-300">inventory_2</span>
                         </div>
                         <p className="text-gray-500 dark:text-gray-400 font-medium">No items found</p>
-                        <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Try a different category</p>
+                        <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Try a different category or search term</p>
+                        <Link
+                            href="/sell"
+                            className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-primary text-dark font-bold rounded-xl border-2 border-dark shadow-brutal-sm hover:scale-105 active:scale-95 transition-transform"
+                        >
+                            <span className="material-symbols-outlined text-lg">add</span>
+                            List an item
+                        </Link>
                     </motion.div>
                 ) : (
                     <motion.div
-                        className="grid grid-cols-2 gap-3"
+                        className="grid grid-cols-2 gap-4"
                         initial="hidden"
                         animate="visible"
                         variants={containerVariants}
                     >
                         {filteredListings.map((listing) => (
                             <motion.div key={listing.id} variants={itemVariants}>
-                                <Link href={`/marketplace/${listing.id}`}>
-                                    <div className="bg-white dark:bg-dark-surface rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm overflow-hidden hover:-translate-y-1 transition-transform">
-                                        <div className="aspect-square bg-gray-100 dark:bg-dark-bg relative">
-                                            <img
-                                                src={listing.images[0]}
-                                                alt={listing.title}
-                                                className="w-full h-full object-cover"
-                                            />
-                                            {/* Price Badge */}
-                                            <span className="absolute top-2 right-2 px-2 py-1 bg-primary rounded-lg text-xs font-bold text-dark flex items-center gap-1 border border-dark">
-                                                🪙 {listing.price}
-                                            </span>
-                                            {/* Top Impact Badge */}
-                                            {listing.isTopImpact && (
-                                                <span className="absolute top-2 left-2 px-2 py-1 bg-white/90 backdrop-blur-sm rounded-lg text-xs font-bold text-dark flex items-center gap-1 border border-dark">
-                                                    <span className="material-symbols-outlined material-symbols-filled text-primary" style={{ fontSize: 12 }}>eco</span>
-                                                </span>
-                                            )}
-                                        </div>
-                                        <div className="p-3">
-                                            <h3 className="font-bold text-sm text-dark dark:text-white truncate">{listing.title}</h3>
-                                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">{listing.condition}</p>
-                                            <div className="flex items-center gap-2 mt-2">
-                                                <div className="w-5 h-5 rounded-full border border-gray-200 dark:border-gray-700 overflow-hidden bg-gray-100">
-                                                    <img
-                                                        src={listing.seller.avatar}
-                                                        alt={listing.seller.name}
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                </div>
-                                                <span className="text-xs text-gray-500 dark:text-gray-400">{listing.seller.name}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Link>
+                                <ListingCard listing={listing} />
                             </motion.div>
                         ))}
                     </motion.div>

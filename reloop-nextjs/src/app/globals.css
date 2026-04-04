@@ -3,22 +3,23 @@
 
 @theme {
   /* Stitch Design Color Palette */
-  --color-primary: #4ce68a;
-  --color-primary-dark: #3bc475;
+  --color-primary: #25f478;
+  --color-primary-dark: #1acb55;
   --color-background: #f6f8f7;
   --color-background-light: #e0f2fe;
   --color-background-blue: #dbeafe;
+  --color-sky: #e0f7ff;
 
-  /* Dark theme colors */
-  --color-dark: #111714;
-  --color-dark-bg: #1a1a2e;
-  --color-dark-surface: #24243e;
+  /* Dark theme colors - Forest Green Palette */
+  --color-dark: #000000;
+  --color-dark-bg: #102217;
+  --color-dark-surface: #1b2e23;
 
   /* Accent colors */
   --color-accent-blue: #e0f2fe;
   --color-accent-orange: #fbbf24;
   --color-accent-pink: #fda4af;
-  --color-accent-purple: #c4b5fd;
+  --color-accent-yellow: #fef9c3;
 
   /* Card colors for tags */
   --color-card-green: #dcfce7;
@@ -27,12 +28,13 @@
   --color-card-blue: #e0f2fe;
   --color-card-coral: #fecaca;
 
-  /* Shadows */
+  /* Neo-Brutalist Shadows */
   --shadow-soft: 0 8px 30px rgb(0 0 0 / 0.06);
   --shadow-card: 0 4px 20px rgb(0 0 0 / 0.08);
   --shadow-button: 0 4px 12px rgb(0 0 0 / 0.15);
   --shadow-brutal: 4px 4px 0px 0px #000;
   --shadow-brutal-sm: 3px 3px 0px 0px #000;
+  --shadow-brutal-lg: 6px 6px 0px 0px #000;
 
   /* Border radius */
   --radius-sm: 0.75rem;
@@ -52,12 +54,12 @@
 .dark {
   --bg-main: var(--color-dark-bg);
   --text-main: #e8ede9;
-  --border-main: rgba(255, 255, 255, 0.15);
+  --border-main: rgba(37, 244, 120, 0.2);
 
   /* Override theme tokens for automatic dark mode on utility classes */
-  --color-background: #0f1f17;
-  --color-background-light: #162a1f;
-  --color-background-blue: #162a1f;
+  --color-background: #102217;
+  --color-background-light: #1b2e23;
+  --color-background-blue: #1b2e23;
 
   /* Card accent colors — muted dark versions */
   --color-card-green: #1a3a28;
@@ -69,11 +71,12 @@
   /* Accent colors — muted */
   --color-accent-blue: #1a2833;
 
-  /* Shadows — stronger for dark bg */
-  --shadow-soft: 0 8px 30px rgb(0 0 0 / 0.3);
-  --shadow-card: 0 4px 20px rgb(0 0 0 / 0.4);
-  --shadow-brutal: 4px 4px 0px 0px rgba(255, 255, 255, 0.1);
-  --shadow-brutal-sm: 3px 3px 0px 0px rgba(255, 255, 255, 0.1);
+  /* Shadows — glowing green for dark bg */
+  --shadow-soft: 0 8px 30px rgb(0 0 0 / 0.4);
+  --shadow-card: 0 4px 20px rgb(0 0 0 / 0.5);
+  --shadow-brutal: 4px 4px 0px 0px rgba(37, 244, 120, 0.15);
+  --shadow-brutal-sm: 3px 3px 0px 0px rgba(37, 244, 120, 0.15);
+  --shadow-brutal-lg: 6px 6px 0px 0px rgba(37, 244, 120, 0.15);
 }
 
 
@@ -117,13 +120,22 @@ body {
   background: linear-gradient(180deg, #1a3a28 0%, #153322 50%, #0f1f17 100%);
 }
 
-/* Button styles */
+/* Neo-Brutalist Button styles */
 .btn-primary {
-  @apply h-14 rounded-full bg-dark text-white font-bold tracking-wide shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center gap-2;
+  @apply h-14 rounded-full bg-primary text-dark font-extrabold tracking-wide uppercase border-[3px] border-dark shadow-brutal hover:-translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2;
 }
 
 .dark .btn-primary {
-  @apply bg-primary text-dark;
+  @apply bg-primary text-dark border-primary/30;
+}
+
+/* Neo border utility */
+.neo-border {
+  border: 3px solid #000000;
+}
+
+.dark .neo-border {
+  border-color: rgba(37, 244, 120, 0.3);
 }
 
 .btn-secondary {

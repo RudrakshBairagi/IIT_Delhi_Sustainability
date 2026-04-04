@@ -263,7 +263,7 @@ class DemoManagerService {
 
     // ===== LISTINGS (Mock) =====
     private _mockListings = [
-        { id: 'listing-1', title: 'Vintage Desk Lamp', description: 'Beautiful brass lamp', price: 75, category: 'Home', condition: 'Good', status: 'available' as const, images: ['https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400'], seller: { id: 'user-1', name: 'Emma', avatar: 'https://ui-avatars.com/api/?name=Emma' }, isTopImpact: true, co2Saved: 15, createdAt: new Date() },
+        { id: 'listing-1', title: 'Vintage Desk Lamp', description: 'Beautiful brass lamp', price: 75, category: 'Home', condition: 'Good', status: 'available' as const, images: ['https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400'], seller: { id: 'user-1', name: 'Emma', avatar: 'https://ui-avatars.com/api/?name=Emma' }, isTopImpact: true, co2Saved: 15, createdAt: new Date() },
         { id: 'listing-2', title: 'MacBook Pro 2019', description: 'Great condition laptop', price: 200, category: 'Electronics', condition: 'Like New', status: 'available' as const, images: ['https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400'], seller: { id: 'user-2', name: 'John', avatar: 'https://ui-avatars.com/api/?name=John' }, isTopImpact: false, co2Saved: 30, createdAt: new Date() },
     ];
 
