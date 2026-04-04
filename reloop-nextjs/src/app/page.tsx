@@ -209,12 +209,12 @@ export default function HomePage() {
               </div>
               <p className="font-extrabold text-lg leading-tight uppercase tracking-tighter">Sorted<br/>Waste</p>
             </div>
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-outline-variant/10 space-y-4 group cursor-pointer transition-shadow hover:shadow-md">
+            <Link href="/rewards" className="bg-white p-6 rounded-xl shadow-sm border border-outline-variant/10 space-y-4 group cursor-pointer transition-shadow hover:shadow-md block">
               <div className="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center group-hover:bg-primary-container transition-colors">
-                <span className="material-symbols-outlined text-primary">local_drink</span>
+                <span className="material-symbols-outlined text-primary">redeem</span>
               </div>
-              <p className="font-extrabold text-lg leading-tight uppercase tracking-tighter">Zero<br/>Plastic</p>
-            </div>
+              <p className="font-extrabold text-lg leading-tight uppercase tracking-tighter">My<br/>Rewards</p>
+            </Link>
             <div className="bg-white p-6 rounded-xl shadow-sm border border-outline-variant/10 space-y-4 group cursor-pointer transition-shadow hover:shadow-md">
               <div className="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center group-hover:bg-primary-container transition-colors">
                 <span className="material-symbols-outlined text-primary">electric_bike</span>
