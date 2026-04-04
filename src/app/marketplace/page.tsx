@@ -84,19 +84,19 @@ export default function MarketplacePage() {
         return filtered;
     };
 
-    const filteredListings = getFilteredListings();
+    const staticListings = DemoManager.getMockListings();
 
     return (
         <div className="bg-warm-sand text-on-surface min-h-screen pb-32 font-['Plus_Jakarta_Sans']">
             {/* TopAppBar */}
             <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 h-20 bg-warm-sand/80 dark:bg-[#1a1c1b]/80 backdrop-blur-3xl shadow-[0_40px_64px_-10px_rgba(41,48,47,0.06)]">
                 <div className="flex items-center gap-4">
-                    <span className="material-symbols-outlined text-[#29664c] dark:text-[#b9f9d6] cursor-pointer active:scale-95 transition-transform" onClick={() => router.push('/')}>arrow_back</span>
+                    <button onClick={() => router.push('/')} className="material-symbols-outlined text-[#29664c] dark:text-[#b9f9d6] cursor-pointer active:scale-95 transition-transform hover:bg-[#eaf2f0] p-2 rounded-full">arrow_back</button>
                     <h1 className="font-extrabold tracking-tight text-2xl text-[#29664c] dark:text-[#b9f9d6] tracking-[-2%]">RELOOP</h1>
                 </div>
                 <div className="flex items-center gap-2 bg-primary-container px-4 py-2 rounded-lg active:scale-95 transition-transform cursor-pointer">
                     <span className="material-symbols-outlined text-on-primary-container text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>monetization_on</span>
-                    <span className="font-bold text-sm text-on-primary-container">{user?.coins || 0} Coins</span>
+                    <span className="font-bold text-sm text-on-primary-container">{(typeof user !== 'undefined' && user?.coins) || 0} Coins</span>
                 </div>
             </header>
 
@@ -115,8 +115,6 @@ export default function MarketplacePage() {
                             className="w-full h-16 pl-14 pr-6 bg-surface-container-high border-none rounded-xl font-bold text-sm tracking-wide focus:ring-2 focus:ring-primary-container transition-all placeholder:text-outline/60" 
                             placeholder="SEARCH ECO ITEMS..." 
                             type="text"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
                 </section>
@@ -126,8 +124,7 @@ export default function MarketplacePage() {
                     {CATEGORIES.map(cat => (
                         <button 
                             key={cat}
-                            onClick={() => setSelectedCategory(cat)}
-                            className={`whitespace-nowrap px-8 py-3 rounded-xl font-bold text-[10px] uppercase tracking-[5%] active:scale-95 transition-all ${selectedCategory === cat ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container'}`}
+                            className={`whitespace-nowrap px-8 py-3 rounded-xl font-bold text-[10px] uppercase tracking-[5%] active:scale-95 transition-all ${cat === 'ALL ITEMS' ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container'}`}
                         >
                             {cat}
                         </button>
@@ -152,21 +149,21 @@ export default function MarketplacePage() {
                             initial="hidden"
                             animate="visible"
                         >
-                            {filteredListings.length === 0 ? (
+                            {staticListings.length === 0 ? (
                                 <div className="col-span-full py-12 flex flex-col items-center justify-center text-center">
                                     <span className="material-symbols-outlined text-5xl text-outline mb-4">search_off</span>
                                     <h3 className="font-extrabold text-lg">No Items Found</h3>
-                                    <p className="text-sm font-medium text-on-surface-variant">Try adjusting your filters or search query</p>
+                                    <p className="text-sm font-medium text-on-surface-variant">No demo items available</p>
                                 </div>
                             ) : (
-                                filteredListings.map(listing => (
+                                staticListings.map((listing: any) => (
                                     <motion.div key={listing.id} variants={itemVariants} className="flex">
                                         <Link href={`/marketplace/${listing.id}`} className="flex flex-col group cursor-pointer bg-white p-3 rounded-xl border border-outline-variant/10 shadow-sm transition-all hover:shadow-md w-full h-full">
                                             <div className="relative aspect-square rounded-lg overflow-hidden mb-4 bg-surface-container shadow-sm group-hover:shadow-md transition-all duration-500">
                                                 <img 
                                                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
-                                                    alt={listing.title} 
-                                                    src={listing.images && listing.images.length > 0 ? listing.images[0] : 'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=400&fit=crop'}
+                                                    alt={listing.title || 'Item'} 
+                                                    src={(listing.images && listing.images.length > 0) ? listing.images[0] : 'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=400&fit=crop'}
                                                 />
                                                 {listing.condition && (
                                                     <div className="absolute top-2 left-2">
@@ -177,7 +174,7 @@ export default function MarketplacePage() {
                                                 )}
                                             </div>
                                             <div className="px-1 flex flex-col justify-between flex-grow">
-                                                <h4 className="font-extrabold text-sm text-on-surface leading-tight uppercase line-clamp-2">{listing.title}</h4>
+                                                <h4 className="font-extrabold text-sm text-on-surface leading-tight uppercase line-clamp-2">{listing.title || 'Untitled Item'}</h4>
                                                 <div className="flex items-center justify-between mt-3 pt-3 border-t border-outline-variant/10">
                                                     <div className="flex items-center gap-1">
                                                         <span className="material-symbols-outlined text-secondary text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>monetization_on</span>
