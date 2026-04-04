@@ -179,7 +179,7 @@ export default function HomePage() {
 
         {/* Stats Bento Grid */}
         <motion.section variants={itemVariants} className="grid grid-cols-2 gap-4">
-          <Link href="/impact?tab=leaderboard" className="block">
+          <Link href="/leaderboard" className="block">
             <div className="bg-surface-container-low p-6 rounded-xl space-y-4 h-full">
               <div className="flex items-center gap-2 text-primary">
                 <span className="material-symbols-outlined text-lg">leaderboard</span>

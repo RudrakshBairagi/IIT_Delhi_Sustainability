@@ -238,5 +238,18 @@ export const DBService = {
 
     async getUnreadNotificationCount(userId: string): Promise<number> {
         return DemoManager.getMockNotifications().filter(n => !n.read).length;
+    },
+
+    async getLeaderboard(limit: number = 20): Promise<any[]> {
+        return DemoManager.getLeaderboard().slice(0, limit);
+    },
+
+    async getUserRank(userId: string): Promise<{ rank: number; percentile: number }> {
+        const board = DemoManager.getLeaderboard();
+        const mockUser = DemoManager.getMockUser();
+        const idx = board.findIndex(u => u.name === mockUser.name);
+        const rank = idx >= 0 ? idx + 1 : board.length + 1;
+        const percentile = Math.round((rank / board.length) * 100);
+        return { rank, percentile };
     }
 };
