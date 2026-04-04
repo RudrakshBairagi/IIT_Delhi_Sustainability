@@ -86,18 +86,31 @@ export default function MarketplacePage() {
     }, [isDemo]);
 
     const getFilteredListings = () => {
-        let filtered = listings.filter(l => l.seller?.id !== currentUserId);
+        if (!listings || !Array.isArray(listings)) return [];
+        
+        let filtered = listings.filter(l => l && l.seller?.id !== currentUserId);
 
         filtered = filtered.filter(l => {
-            const matchesCategory = selectedCategory === 'ALL ITEMS' || l.category.toUpperCase().includes(selectedCategory);
+            const catStr = l.category ? String(l.category).toUpperCase() : '';
+            const matchesCategory = selectedCategory === 'ALL ITEMS' || catStr.includes(selectedCategory);
+            
+            const titleStr = l.title ? String(l.title).toLowerCase() : '';
+            const descStr = l.description ? String(l.description).toLowerCase() : '';
+            const searchStr = searchQuery ? searchQuery.toLowerCase() : '';
+            
             const matchesSearch = !searchQuery ||
-                l.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                l.description?.toLowerCase().includes(searchQuery.toLowerCase());
+                titleStr.includes(searchStr) ||
+                descStr.includes(searchStr);
+                
             return matchesCategory && matchesSearch;
         });
 
-        // Default sort by newest
-        filtered = filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        // Default sort by newest, safely handling missing dates
+        filtered = filtered.sort((a, b) => {
+            const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+            const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+            return (timeB || 0) - (timeA || 0);
+        });
 
         return filtered;
     };
