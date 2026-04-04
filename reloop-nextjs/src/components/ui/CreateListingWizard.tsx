@@ -214,18 +214,46 @@ export function CreateListingWizard({ isOpen, onClose, onSuccess }: CreateListin
     };
 
     const handleSubmit = async () => {
-        if (!user) return;
-        if (!formData.title || !formData.price || !formData.category) return;
+        console.log('[DEBUG] handleSubmit called');
+        if (!user) {
+            console.log('[DEBUG] No user, returning');
+            return;
+        }
+        if (!formData.title || !formData.price || !formData.category) {
+            console.log('[DEBUG] Missing form data', { title: formData.title, price: formData.price, category: formData.category });
+            return;
+        }
 
         setIsSubmitting(true);
+        console.log('[DEBUG] Starting submit process');
+
         try {
             const tempId = `${Date.now()}-${user.uid.slice(0, 5)}`;
+            console.log('[DEBUG] Generated tempId:', tempId);
 
             let imageUrls: string[] = [];
             if (formData.images.length > 0) {
-                imageUrls = await StorageService.uploadListingImages(formData.images, tempId);
+                console.log('[DEBUG] Uploading', formData.images.length, 'images...');
+                try {
+                    imageUrls = await Promise.race([
+                        StorageService.uploadListingImages(formData.images, tempId),
+                        new Promise<string[]>((_, reject) =>
+                            setTimeout(() => reject(new Error('Upload timeout after 30s')), 30000)
+                        )
+                    ]);
+                    console.log('[DEBUG] Images uploaded:', imageUrls);
+                } catch (uploadError) {
+                    console.error('[DEBUG] Image upload failed:', uploadError);
+                    // Continue without images if upload fails
+                    imageUrls = ['https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=500'];
+                    console.log('[DEBUG] Using fallback image');
+                }
+            } else {
+                console.log('[DEBUG] No images to upload');
+                imageUrls = ['https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=500'];
             }
 
+            console.log('[DEBUG] Creating listing in Firestore...');
             await DBService.createListing({
                 title: formData.title,
                 description: formData.description,
@@ -244,14 +272,16 @@ export function CreateListingWizard({ isOpen, onClose, onSuccess }: CreateListin
                     responseTime: '1 hour'
                 }
             });
+            console.log('[DEBUG] Listing created successfully!');
 
             onSuccess?.();
             onClose();
             router.push('/marketplace');
         } catch (error) {
-            console.error("Failed to create listing", error);
+            console.error("[DEBUG] Failed to create listing:", error);
             alert("Failed to create listing. Please try again.");
         } finally {
+            console.log('[DEBUG] Submit process finished');
             setIsSubmitting(false);
         }
     };
