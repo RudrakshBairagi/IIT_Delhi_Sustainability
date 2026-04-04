@@ -93,7 +93,7 @@ export default function MarketplacePage() {
             {/* TopAppBar */}
             <PageHeader title="MARKET HUB" />
 
-            <main className="pt-[60px] px-6 max-w-5xl mx-auto">
+            <main className="pt-2 px-6 max-w-5xl mx-auto">
                 {/* Search Section */}
                 <section className="mb-3">
                     <div className="relative group">

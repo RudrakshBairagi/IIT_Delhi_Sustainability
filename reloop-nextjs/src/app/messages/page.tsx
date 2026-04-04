@@ -95,7 +95,7 @@ export default function MessagesPage() {
         <div className="min-h-screen text-[#29302f]" style={{ backgroundColor: '#f1f8f6' }}>
             <PageHeader title="MESSAGES" backHref="/" />
 
-            <main className="pt-[60px] pb-32 px-6 max-w-2xl mx-auto space-y-1">
+            <main className="pt-2 pb-32 px-6 max-w-2xl mx-auto space-y-1">
 
                 {/* Segmented Controls */}
                 <section className="grid grid-cols-2 gap-4">
