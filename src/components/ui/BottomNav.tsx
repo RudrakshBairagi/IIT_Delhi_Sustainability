@@ -18,6 +18,7 @@ export function BottomNav() {
     const hiddenPatterns = [
         /^\/marketplace\/[^/]+$/, // /marketplace/[id] - item detail
         /^\/marketplace\/[^/]+\/trade$/, // /marketplace/[id]/trade
+        /^\/messages\/[^/]+$/, // /messages/[id] - chat page (has its own input footer)
     ];
 
     const shouldHideNav = hiddenRoutes.some(route => pathname.startsWith(route)) ||
