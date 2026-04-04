@@ -166,7 +166,7 @@ export default function HomePage() {
         {/* Stats Cards - Beautified */}
         <motion.div variants={itemVariants} className="grid grid-cols-2 gap-3">
           {/* Rank Card */}
-          <Link href="/impact" className="relative group">
+          <Link href="/impact?tab=leaderboard" className="relative group">
             <div className="absolute inset-0 bg-dark rounded-2xl translate-x-0.5 translate-y-0.5"></div>
             <div className="relative bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/40 dark:to-cyan-900/40 rounded-2xl border-2 border-dark dark:border-gray-600 p-4 transition-all group-hover:translate-x-0.5 group-hover:translate-y-0.5">
               <div className="flex items-center gap-3 mb-3">
@@ -186,7 +186,7 @@ export default function HomePage() {
           </Link>
 
           {/* CO2 Card */}
-          <Link href="/impact" className="relative group">
+          <Link href="/impact?tab=personal" className="relative group">
             <div className="absolute inset-0 bg-dark rounded-2xl translate-x-0.5 translate-y-0.5"></div>
             <div className="relative bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/40 dark:to-emerald-900/40 rounded-2xl border-2 border-dark dark:border-gray-600 p-4 transition-all group-hover:translate-x-0.5 group-hover:translate-y-0.5">
               <div className="flex items-center gap-3 mb-3">
