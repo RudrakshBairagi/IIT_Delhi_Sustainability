@@ -29,7 +29,7 @@ export function PageHeader({ title = 'RELOOP', showBackButton = true, backHref, 
     };
 
     return (
-        <header className={cn('w-full sticky top-0 z-50 bg-[#f1f8f6]/80 backdrop-blur-xl flex justify-between items-center px-6 py-4 shadow-[0_4px_12px_rgba(0,0,0,0.04)] mx-auto', className)}>
+        <header className={cn('w-full z-50 bg-[#f1f8f6]/80 backdrop-blur-xl flex justify-between items-center px-6 py-4 shadow-[0_4px_12px_rgba(0,0,0,0.04)] mx-auto', className)}>
             <div className="flex items-center gap-3">
                 {showBackButton ? (
                     <button onClick={handleBack} className="text-[#29664c] hover:opacity-80 transition-opacity active:scale-95 duration-200 p-1 flex items-center justify-center -ml-1">
