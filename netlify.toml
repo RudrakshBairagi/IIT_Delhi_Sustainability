@@ -1,11 +1,16 @@
 [build]
-  publish = "."
+  base = "reloop-nextjs"
+  command = "npm run build"
+  publish = ".next"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
 
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-  force = false  # Only redirect if file doesn't exist (SPA fallback if needed, though this is multi-page)
+  force = false
 
 # Optimization headers
 [[headers]]
