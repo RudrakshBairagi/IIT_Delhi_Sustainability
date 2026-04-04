@@ -64,7 +64,7 @@ function LoginContent() {
             } else if (err.code === 'auth/popup-closed-by-user') {
                 // User closed popup, no error needed
             } else {
-                setError('Google sign in failed');
+                setError(`Google sign in failed: ${err.code || err.message}`);
             }
         } finally {
             setGoogleLoading(false);
