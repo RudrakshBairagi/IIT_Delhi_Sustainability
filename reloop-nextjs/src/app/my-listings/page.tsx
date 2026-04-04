@@ -19,7 +19,7 @@ const STATUS_CONFIG = {
 
 export default function MyListingsPage() {
     const router = useRouter();
-    const { user, loading: authLoading } = useAuth();
+    const { user, isLoading: authLoading } = useAuth();
     const [listings, setListings] = useState<Listing[]>([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState<'all' | 'available' | 'sold'>('all');
@@ -86,7 +86,7 @@ export default function MyListingsPage() {
 
     return (
         <div className="min-h-screen bg-sky pb-24">
-            <PageHeader title="My Listings" showBack />
+            <PageHeader title="My Listings" />
 
             {/* Stats Bar */}
             <div className="px-4 pt-4">
@@ -96,8 +96,8 @@ export default function MyListingsPage() {
                             key={f}
                             onClick={() => setFilter(f)}
                             className={`px-4 py-2 rounded-full font-bold text-sm flex items-center gap-2 whitespace-nowrap transition-all ${filter === f
-                                    ? 'bg-dark text-white'
-                                    : 'bg-white text-dark border-2 border-gray-200'
+                                ? 'bg-dark text-white'
+                                : 'bg-white text-dark border-2 border-gray-200'
                                 }`}
                         >
                             {f === 'all' ? '📋' : STATUS_CONFIG[f].icon}
