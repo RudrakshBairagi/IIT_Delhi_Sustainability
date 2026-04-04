@@ -164,98 +164,46 @@ export default function MarketplacePage() {
                             initial="hidden"
                             animate="visible"
                         >
-                            {/* Item Card 1 */}
-                            <motion.div variants={itemVariants} className="flex">
-                                <Link href="/sell" className="flex flex-col group cursor-pointer bg-white p-3 rounded-xl border border-outline-variant/10 shadow-sm transition-all hover:shadow-md w-full h-full">
-                                    <div className="relative aspect-square rounded-lg overflow-hidden mb-4 bg-surface-container shadow-sm group-hover:shadow-md transition-all duration-500">
-                                        <img className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Vintage industrial desk lamp" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1lLqCa8m_-lrvuyfNyRDVLat65weGVdR7mPqrWDgCct7DKk7l4IarJGZokRqkIRkGjCd-f2tUyQpdCj-E2c_aBfguy0KiROtAkfP0r_vfsROum7Mg_BHzRcu8IWFdfnWZHSOwADBqmaG-Hsngbkkat-PFTCf2lDFYwSBK0B3vr-6Xdlf0rng62rPo7RJm0LXPKl_G7NsCAiMTvvvwEuStZ_tIW7d7HgKfytVp3A8hEVPfWWzh49kk4ubo2TttDelvdViF9E4d1Q0"/>
-                                        <div className="absolute top-2 left-2">
-                                            <span className="bg-surface/90 backdrop-blur-md px-2 py-0.5 rounded-md text-[8px] font-extrabold text-primary uppercase tracking-tighter">PREMIUM</span>
-                                        </div>
-                                    </div>
-                                    <div className="px-1 flex flex-col justify-between flex-grow">
-                                        <h4 className="font-extrabold text-sm text-on-surface leading-tight uppercase line-clamp-2">VINTAGE DESK LAMP</h4>
-                                        <div className="flex items-center justify-between mt-3 pt-3 border-t border-outline-variant/10">
-                                            <div className="flex items-center gap-1">
-                                                <span className="material-symbols-outlined text-secondary text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>monetization_on</span>
-                                                <span className="font-bold text-secondary text-xs">450 Coins</span>
+                            {filteredListings.length === 0 ? (
+                                <div className="col-span-full py-12 flex flex-col items-center justify-center text-center">
+                                    <span className="material-symbols-outlined text-5xl text-outline mb-4">search_off</span>
+                                    <h3 className="font-extrabold text-lg">No Items Found</h3>
+                                    <p className="text-sm font-medium text-on-surface-variant">Try adjusting your filters or search query</p>
+                                </div>
+                            ) : (
+                                filteredListings.map(listing => (
+                                    <motion.div key={listing.id} variants={itemVariants} className="flex">
+                                        <Link href={`/marketplace/${listing.id}`} className="flex flex-col group cursor-pointer bg-white p-3 rounded-xl border border-outline-variant/10 shadow-sm transition-all hover:shadow-md w-full h-full">
+                                            <div className="relative aspect-square rounded-lg overflow-hidden mb-4 bg-surface-container shadow-sm group-hover:shadow-md transition-all duration-500">
+                                                <img 
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                                                    alt={listing.title} 
+                                                    src={listing.images && listing.images.length > 0 ? listing.images[0] : 'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=400&fit=crop'}
+                                                />
+                                                {listing.condition && (
+                                                    <div className="absolute top-2 left-2">
+                                                        <span className="bg-surface/90 backdrop-blur-md px-2 py-0.5 rounded-md text-[8px] font-extrabold text-primary uppercase tracking-tighter">
+                                                            {listing.condition}
+                                                        </span>
+                                                    </div>
+                                                )}
                                             </div>
-                                            <div className="bg-surface-container-high px-2 py-1 rounded-md">
-                                                <span className="font-bold text-on-surface-variant text-[10px]">₹750</span>
+                                            <div className="px-1 flex flex-col justify-between flex-grow">
+                                                <h4 className="font-extrabold text-sm text-on-surface leading-tight uppercase line-clamp-2">{listing.title}</h4>
+                                                <div className="flex items-center justify-between mt-3 pt-3 border-t border-outline-variant/10">
+                                                    <div className="flex items-center gap-1">
+                                                        <span className="material-symbols-outlined text-secondary text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>monetization_on</span>
+                                                        <span className="font-bold text-secondary text-xs">{listing.price > 0 ? `${listing.price} Coins` : 'FREE'}</span>
+                                                    </div>
+                                                    <div className="bg-surface-container-high px-2 py-1 rounded-md">
+                                                        <span className="font-bold text-on-surface-variant text-[10px]">₹{Math.round((listing.price * 1.6) || 0)}</span>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                </Link>
-                            </motion.div>
-
-                            {/* Item Card 2 */}
-                            <motion.div variants={itemVariants} className="flex">
-                                <Link href="/sell" className="flex flex-col group cursor-pointer bg-white p-3 rounded-xl border border-outline-variant/10 shadow-sm transition-all hover:shadow-md w-full h-full">
-                                    <div className="relative aspect-square rounded-lg overflow-hidden mb-4 bg-surface-container shadow-sm group-hover:shadow-md transition-all duration-500">
-                                        <img className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="MacBook Pro" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDS4FLOrw681zHR7EIahWEWJKooeMFNIOVt1olIM3HwdaT21vjwINhN_nNZRs24ytH5hECyezNveNz1TnAQOkkRfBkuXspx0Si4IGKlPTtBLMZr5CCNtB5RGTxiQKdF2lZXPTiakJYQXW41qR1kXxpIEaFW8J7ei7YFc8D7nF8Or09dmCwKZ8sEBSsBiLm-XS4ljZu216CKVVK0gCylaYmKnVr-c-Go0YRoEKIZ_OLqmXLVytxrs91KsBvmHJRloVb9AUidUVAv9pQ"/>
-                                        <div className="absolute top-2 left-2">
-                                            <span className="bg-surface/90 backdrop-blur-md px-2 py-0.5 rounded-md text-[8px] font-extrabold text-primary uppercase tracking-tighter">RE-TECH</span>
-                                        </div>
-                                    </div>
-                                    <div className="px-1 flex flex-col justify-between flex-grow">
-                                        <h4 className="font-extrabold text-sm text-on-surface leading-tight uppercase line-clamp-2">MACBOOK PRO 2019</h4>
-                                        <div className="flex items-center justify-between mt-3 pt-3 border-t border-outline-variant/10">
-                                            <div className="flex items-center gap-1">
-                                                <span className="material-symbols-outlined text-secondary text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>monetization_on</span>
-                                                <span className="font-bold text-secondary text-xs">9,200 Coins</span>
-                                            </div>
-                                            <div className="bg-surface-container-high px-2 py-1 rounded-md">
-                                                <span className="font-bold text-on-surface-variant text-[10px]">₹45,000</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Link>
-                            </motion.div>
-
-                            {/* Item Card 3 */}
-                            <motion.div variants={itemVariants} className="flex">
-                                <Link href="/sell" className="flex flex-col group cursor-pointer bg-white p-3 rounded-xl border border-outline-variant/10 shadow-sm transition-all hover:shadow-md w-full h-full">
-                                    <div className="relative aspect-square rounded-lg overflow-hidden mb-4 bg-surface-container shadow-sm group-hover:shadow-md transition-all duration-500">
-                                        <img className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Organic Cotton Tee" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDvVs7ORoFRUpQj3xRN0RvS-VYowpSqVrtukeGnYzO0twjApc55sVZJsu1TBVbWdI2qB0KhJz3q6PeHkjCXBPRS29EXJOLA6TRX6QKmR_sJZgKpiA88jnqVkxfG4vS7MN8jfT73jXgze_g7_p6Cn3LiWpKiVcii6YOMVwIZke2tku1yKlsnaH7uc8uWR_9x4w8WGGoGiNlHW5ztAxmtaGCXxrrsKbmbJM1lyYxrXYTkHtDY9PtBXOL7o-yEJgRev84ivOL5Pp36FE"/>
-                                    </div>
-                                    <div className="px-1 flex flex-col justify-between flex-grow">
-                                        <h4 className="font-extrabold text-sm text-on-surface leading-tight uppercase line-clamp-2">ORGANIC COTTON TEE</h4>
-                                        <div className="flex items-center justify-between mt-3 pt-3 border-t border-outline-variant/10">
-                                            <div className="flex items-center gap-1">
-                                                <span className="material-symbols-outlined text-secondary text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>monetization_on</span>
-                                                <span className="font-bold text-secondary text-xs">120 Coins</span>
-                                            </div>
-                                            <div className="bg-surface-container-high px-2 py-1 rounded-md">
-                                                <span className="font-bold text-on-surface-variant text-[10px]">₹200</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Link>
-                            </motion.div>
-
-                            {/* Item Card 4 */}
-                            <motion.div variants={itemVariants} className="flex">
-                                <Link href="/sell" className="flex flex-col group cursor-pointer bg-white p-3 rounded-xl border border-outline-variant/10 shadow-sm transition-all hover:shadow-md w-full h-full">
-                                    <div className="relative aspect-square rounded-lg overflow-hidden mb-4 bg-surface-container shadow-sm group-hover:shadow-md transition-all duration-500">
-                                        <img className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Ceramic Artisan Mug" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKIUT8TIus1j7c-4NnrTrSZUMJQYh1eioNoHKsSI1vcofw-kS0Gk12l0GQo7vQzVOWGWj_C2VR-uGut5CSQEopYCOAjs6EbuRuhzhX-9xvMKrr4UZbCokcirQr3aN4MBop5J8T4hLWKTWQ6UBOg7mNIB18DFutP3F0tD4xCKfV4wfp3NvRK_r8UM0D5ereo8Q1HUmYJGfn0MCVEkyoVKwJoCas3k_pz9ibft6HeOjD5Q9bEk4Rw38TAI5Bc2otgw8cLmwZewE4Lgs"/>
-                                        <div className="absolute bottom-2 right-2">
-                                            <span className="bg-secondary text-white px-2 py-0.5 rounded-md text-[8px] font-extrabold uppercase tracking-widest">-20%</span>
-                                        </div>
-                                    </div>
-                                    <div className="px-1 flex flex-col justify-between flex-grow">
-                                        <h4 className="font-extrabold text-sm text-on-surface leading-tight uppercase line-clamp-2">CERAMIC ARTISAN MUG</h4>
-                                        <div className="flex items-center justify-between mt-3 pt-3 border-t border-outline-variant/10">
-                                            <div className="flex items-center gap-1">
-                                                <span className="material-symbols-outlined text-secondary text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>monetization_on</span>
-                                                <span className="font-bold text-secondary text-xs">85 Coins</span>
-                                            </div>
-                                            <div className="bg-surface-container-high px-2 py-1 rounded-md">
-                                                <span className="font-bold text-on-surface-variant text-[10px]">₹150</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Link>
-                            </motion.div>
+                                        </Link>
+                                    </motion.div>
+                                ))
+                            )}
                         </motion.div>
                 </section>
 
