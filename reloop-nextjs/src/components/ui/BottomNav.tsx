@@ -22,7 +22,7 @@ const quickActions = [
     { icon: 'add_circle', label: 'New Trade', action: 'openListing', color: 'bg-green-500' },
     { icon: 'qr_code_scanner', label: 'Quick Scan', href: '/scanner', color: 'bg-blue-500' },
     { icon: 'favorite', label: 'Donate', href: '/charity', color: 'bg-pink-500' },
-    { icon: 'recycling', label: 'Recycle', href: '/scanner/recycling-centers', color: 'bg-emerald-500' },
+    { icon: 'recycling', label: 'Recycle', href: '/recycle', color: 'bg-emerald-500' },
 ];
 
 export function BottomNav() {

@@ -13,8 +13,16 @@ export interface User {
     co2Saved: number;
     badges: string[];
     campus?: string;
+    hostel?: string; // Student hostel/accommodation
+    room?: string; // Room number
     isArtist?: boolean; // For art student makeover feature
     streak?: number;
+    totalScans?: number; // Total items scanned
+    fcmTokens?: string[]; // Push notification tokens
+    tradesCompleted?: number; // Number of completed trades
+    donationsMade?: number; // Number of donations made
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 export interface LoginCredentials {

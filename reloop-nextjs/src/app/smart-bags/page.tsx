@@ -3,9 +3,10 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import DemoManager from '@/lib/demo-manager';
+import { useRouter } from 'next/navigation';
 import { SmartBag } from '@/types';
 import { useAuth } from '@/lib/contexts/AuthContext';
+import { DBService } from '@/lib/firebase/db';
 
 const itemVariants = {
     hidden: { y: 15, opacity: 0 },
@@ -22,17 +23,37 @@ const STATUS_STEPS = [
 ];
 
 export default function SmartBagsPage() {
-    const { user } = useAuth();
+    const { user, isDemo } = useAuth();
+    const router = useRouter();
     const [activeTab, setActiveTab] = useState<TabType>('active');
     const [bags, setBags] = useState<SmartBag[]>([]);
     const [totalCoins, setTotalCoins] = useState(0);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const userBags = DemoManager.getSmartBags();
-        setBags(userBags);
-        const coins = userBags.reduce((sum, bag) => sum + (bag.coinsAwarded || 0), 0);
-        setTotalCoins(coins);
-    }, []);
+        if (!user) return;
+
+        if (isDemo) {
+            // Demo mode - use mock data
+            const DemoManager = require('@/lib/demo-manager').default;
+            const userBags = DemoManager.getSmartBags();
+            setBags(userBags);
+            setTotalCoins(userBags.reduce((sum: number, bag: SmartBag) => sum + (bag.coinsAwarded || 0), 0));
+            setLoading(false);
+            return;
+        }
+
+        // Real Firebase subscription
+        setLoading(true);
+        const unsubscribe = DBService.subscribeToUserSmartBags(user.uid, (fetchedBags) => {
+            setBags(fetchedBags as SmartBag[]);
+            const coins = fetchedBags.reduce((sum: number, bag: any) => sum + (bag.coinsAwarded || 0), 0);
+            setTotalCoins(coins);
+            setLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, [user, isDemo]);
 
     const activeBags = bags.filter(b => b.status !== 'processed');
     const historyBags = bags.filter(b => b.status === 'processed');
@@ -50,6 +71,7 @@ export default function SmartBagsPage() {
             <header className="px-6 pt-12 pb-4 flex justify-between items-center z-20 relative">
                 <h1 className="text-4xl font-black uppercase tracking-tight leading-none whitespace-nowrap">Smart Bags</h1>
                 <button
+                    onClick={() => router.push('/notifications')}
                     aria-label="Notifications"
                     className="bg-white dark:bg-dark-surface w-12 h-12 rounded-full border-4 border-black dark:border-gray-600 shadow-[4px_4px_0px_0px_#000] dark:shadow-brutal-sm flex items-center justify-center active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-150"
                 >

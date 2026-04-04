@@ -64,7 +64,7 @@ export default function ScanResultPage() {
     const sellLink = `/marketplace/create?title=${encodeURIComponent(item.objectName)}&category=${encodeURIComponent(item.category)}&price=${item.estimatedCoins || 10}`;
     const reuseLink = `/scanner/ideas`; // Could pass query params if needed
     const donateLink = `/charity`; // Link to charity page
-    const recycleLink = `/scanner/recycling-centers`; // Link to recycling centers
+    const recycleLink = `/scanner/recycle`; // Link to recycling centers
 
     return (
         <div className="min-h-screen bg-[#d0f0fd] dark:bg-[#112118] text-[#111714] dark:text-white overflow-x-hidden selection:bg-[#4ce68a] selection:text-[#111714]">

@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import { DBService } from '@/lib/firebase/db';
+import { useAuth } from '@/lib/contexts/AuthContext';
 import DemoManager from '@/lib/demo-manager';
 import { Listing } from '@/types';
 import { PageHeader } from '@/components/ui/PageHeader';
@@ -14,24 +16,56 @@ const itemVariants = {
 
 export default function ExpiredListingsPage() {
     const router = useRouter();
+    const { user, isDemo } = useAuth();
     const [expiredListings, setExpiredListings] = useState<Listing[]>([]);
     const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
     const [processing, setProcessing] = useState(false);
     const [completed, setCompleted] = useState(false);
     const [coinsEarned, setCoinsEarned] = useState(0);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const expired = DemoManager.getExpiredListings();
-        setExpiredListings(expired);
-    }, []);
+        const loadExpired = async () => {
+            setIsLoading(true);
+            try {
+                if (user?.uid && !isDemo) {
+                    const expired = await DBService.getExpiredListings(user.uid);
+                    setExpiredListings(expired as Listing[]);
+                } else {
+                    setExpiredListings(DemoManager.getExpiredListings());
+                }
+            } catch (error) {
+                console.error('Error loading expired listings:', error);
+                setExpiredListings(DemoManager.getExpiredListings());
+            }
+            setIsLoading(false);
+        };
+        loadExpired();
+    }, [user, isDemo]);
 
     const handleEquityChoice = async (listingId: string, choice: 'recycle' | 'donate') => {
         setProcessing(true);
-        await DemoManager.simulateDelay(1500);
 
-        const result = DemoManager.handleEquityChoice(listingId, choice);
-        setCoinsEarned(result.coinsAwarded);
-        setCompleted(true);
+        try {
+            if (user?.uid && !isDemo) {
+                const result = await DBService.handleEquityChoice(user.uid, listingId, choice);
+                if (result.success) {
+                    setCoinsEarned(result.coinsAwarded);
+                    setCompleted(true);
+                } else {
+                    alert('Failed to process. Please try again.');
+                }
+            } else {
+                await DemoManager.simulateDelay(1500);
+                const result = DemoManager.handleEquityChoice(listingId, choice);
+                setCoinsEarned(result.coinsAwarded);
+                setCompleted(true);
+            }
+        } catch (error) {
+            console.error('Error processing choice:', error);
+            alert('An error occurred. Please try again.');
+        }
+
         setProcessing(false);
     };
 
@@ -110,7 +144,7 @@ export default function ExpiredListingsPage() {
                             transition={{ delay: 0.2 }}
                             onClick={() => handleEquityChoice(selectedListing.id, 'recycle')}
                             disabled={processing}
-                            className="group bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl border-3 border-dark shadow-brutal p-6 text-left hover:scale-[1.02] active:scale-[0.98] transition-all"
+                            className="group bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl border-3 border-dark shadow-brutal p-6 text-left hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
                         >
                             <div className="flex items-start justify-between">
                                 <div className="flex-1">
@@ -137,7 +171,7 @@ export default function ExpiredListingsPage() {
                             transition={{ delay: 0.3 }}
                             onClick={() => handleEquityChoice(selectedListing.id, 'donate')}
                             disabled={processing}
-                            className="group bg-gradient-to-br from-pink-400 to-rose-500 rounded-2xl border-3 border-dark shadow-brutal p-6 text-left hover:scale-[1.02] active:scale-[0.98] transition-all"
+                            className="group bg-gradient-to-br from-pink-400 to-rose-500 rounded-2xl border-3 border-dark shadow-brutal p-6 text-left hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
                         >
                             <div className="flex items-start justify-between">
                                 <div className="flex-1">
@@ -161,6 +195,13 @@ export default function ExpiredListingsPage() {
                             </div>
                         </motion.button>
                     </div>
+
+                    {processing && (
+                        <div className="flex items-center justify-center gap-3 py-4">
+                            <div className="w-6 h-6 border-3 border-primary border-t-transparent rounded-full animate-spin" />
+                            <span className="text-sm font-bold text-dark/60">Processing...</span>
+                        </div>
+                    )}
                 </div>
             </div>
         );
@@ -176,7 +217,11 @@ export default function ExpiredListingsPage() {
                 animate="visible"
                 variants={{ visible: { transition: { staggerChildren: 0.08 } } }}
             >
-                {expiredListings.length === 0 ? (
+                {isLoading ? (
+                    <div className="flex items-center justify-center py-20">
+                        <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+                    </div>
+                ) : expiredListings.length === 0 ? (
                     <motion.div variants={itemVariants} className="text-center py-12">
                         <span className="material-symbols-outlined text-6xl text-dark/30 dark:text-white/30 mb-4">inventory_2</span>
                         <p className="text-dark/60 dark:text-white/60 font-bold">No expired items</p>
@@ -211,7 +256,7 @@ export default function ExpiredListingsPage() {
                 )}
 
                 {/* Demo Helper */}
-                {expiredListings.length === 0 && (
+                {!isLoading && expiredListings.length === 0 && (
                     <motion.div variants={itemVariants} className="bg-card-yellow rounded-xl border-2 border-dark shadow-brutal-sm px-4 py-3">
                         <p className="text-xs font-bold text-dark">💡 Demo Tip</p>
                         <p className="text-xs text-dark/70 mt-1">

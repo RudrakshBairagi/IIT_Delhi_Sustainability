@@ -1,31 +1,77 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import { DBService } from '@/lib/firebase/db';
+import { useAuth } from '@/lib/contexts/AuthContext';
 import DemoManager from '@/lib/demo-manager';
 
 export default function WorkerCollectPage() {
     const router = useRouter();
+    const { user, isDemo, isLoading: authLoading } = useAuth();
     const [step, setStep] = useState<'scan' | 'weigh' | 'confirm' | 'success'>('scan');
     const [scanning, setScanning] = useState(false);
     const [scannedBag, setScannedBag] = useState<any | null>(null);
     const [weight, setWeight] = useState('');
     const [confirming, setConfirming] = useState(false);
     const [coinsAwarded, setCoinsAwarded] = useState(0);
+    const [allBags, setAllBags] = useState<any[]>([]);
+
+    // Load all bags on mount
+    useEffect(() => {
+        // Wait for auth to finish loading before fetching data
+        if (authLoading) return;
+
+        const loadBags = async () => {
+            try {
+                if (isDemo) {
+                    // Demo mode - use mock data
+                    setAllBags(DemoManager.getAllSmartBags());
+                } else if (user?.uid) {
+                    // Firebase mode
+                    const bags = await DBService.getUserSmartBags(user.uid);
+                    setAllBags(bags);
+                }
+            } catch (error) {
+                console.error('Error loading bags:', error);
+                setAllBags(DemoManager.getAllSmartBags());
+            }
+        };
+        loadBags();
+    }, [user, isDemo, authLoading]);
 
     const handleScan = async () => {
         setScanning(true);
-        await DemoManager.simulateDelay(1500);
 
-        const allBags = DemoManager.getAllSmartBags();
-        const filledBag = allBags.find(b => b.status === 'filled');
+        try {
+            if (!isDemo) {
+                // Simulate scanning - in real app this would use camera
+                await new Promise(resolve => setTimeout(resolve, 1500));
 
-        if (filledBag) {
-            setScannedBag(filledBag);
-            setStep('weigh');
-        } else {
-            alert('No filled bags available for demo. Please mark a bag as filled first.');
+                // Find a filled bag from Firebase
+                const filledBag = allBags.find(b => b.status === 'filled');
+                if (filledBag) {
+                    setScannedBag(filledBag);
+                    setStep('weigh');
+                } else {
+                    alert('No filled bags available. Please mark a bag as filled first.');
+                }
+            } else {
+                await DemoManager.simulateDelay(1500);
+                const demoBags = DemoManager.getAllSmartBags();
+                const filledBag = demoBags.find(b => b.status === 'filled');
+
+                if (filledBag) {
+                    setScannedBag(filledBag);
+                    setStep('weigh');
+                } else {
+                    alert('No filled bags available for demo. Please mark a bag as filled first.');
+                }
+            }
+        } catch (error) {
+            console.error('Error scanning:', error);
+            alert('An error occurred while scanning.');
         }
 
         setScanning(false);
@@ -41,13 +87,32 @@ export default function WorkerCollectPage() {
         if (!scannedBag || !weight) return;
 
         setConfirming(true);
-        await DemoManager.simulateDelay(1500);
 
-        const result = DemoManager.collectSmartBag(scannedBag.qrCode, parseFloat(weight));
+        try {
+            const weightKg = parseFloat(weight);
+            const coins = Math.floor(weightKg * 10);
 
-        if (result.success) {
-            setCoinsAwarded(result.coinsAwarded);
-            setStep('success');
+            if (!isDemo && scannedBag.userId) {
+                // Update bag status in Firebase
+                await DBService.updateSmartBagStatus(scannedBag.id, 'collected');
+
+                // Add coins to bag owner
+                await DBService.addCoinsToUser(scannedBag.userId, coins, 'Smart bag collection');
+
+                setCoinsAwarded(coins);
+                setStep('success');
+            } else {
+                await DemoManager.simulateDelay(1500);
+                const result = DemoManager.collectSmartBag(scannedBag.qrCode, weightKg);
+
+                if (result.success) {
+                    setCoinsAwarded(result.coinsAwarded || 0);
+                    setStep('success');
+                }
+            }
+        } catch (error) {
+            console.error('Error confirming collection:', error);
+            alert('An error occurred. Please try again.');
         }
 
         setConfirming(false);
@@ -125,12 +190,12 @@ export default function WorkerCollectPage() {
                                     </div>
                                     <div className="flex-1">
                                         <p className="font-black text-dark dark:text-white">Bag Identified</p>
-                                        <p className="text-sm text-dark/60 dark:text-white/60">{scannedBag.qrCode}</p>
+                                        <p className="text-sm text-dark/60 dark:text-white/60">{scannedBag.qrCode || scannedBag.id}</p>
                                     </div>
                                 </div>
                                 <div className="bg-gray-100 dark:bg-dark-bg rounded-xl px-3 py-2">
                                     <p className="text-xs text-dark/50 dark:text-white/50">Owner</p>
-                                    <p className="text-sm font-bold text-dark dark:text-white">{scannedBag.ownerName}</p>
+                                    <p className="text-sm font-bold text-dark dark:text-white">{scannedBag.ownerName || 'User'}</p>
                                 </div>
                             </div>
 
@@ -188,11 +253,11 @@ export default function WorkerCollectPage() {
                             <div className="bg-white dark:bg-dark-surface rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm p-6 mb-6 space-y-4">
                                 <div className="flex justify-between">
                                     <span className="text-sm text-dark/60 dark:text-white/60">Bag QR</span>
-                                    <span className="text-sm font-bold text-dark dark:text-white">{scannedBag.qrCode}</span>
+                                    <span className="text-sm font-bold text-dark dark:text-white">{scannedBag.qrCode || scannedBag.id}</span>
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-sm text-dark/60 dark:text-white/60">Owner</span>
-                                    <span className="text-sm font-bold text-dark dark:text-white">{scannedBag.ownerName}</span>
+                                    <span className="text-sm font-bold text-dark dark:text-white">{scannedBag.ownerName || 'User'}</span>
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-sm text-dark/60 dark:text-white/60">Weight</span>
@@ -246,7 +311,7 @@ export default function WorkerCollectPage() {
                             <div className="bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl border-3 border-dark shadow-brutal p-6 mb-6">
                                 <p className="text-sm font-black uppercase text-dark/70 tracking-wider mb-1">Coins Awarded</p>
                                 <p className="text-6xl font-black text-dark">+{coinsAwarded}</p>
-                                <p className="text-sm font-bold text-dark/70 mt-2">to {scannedBag.ownerName}</p>
+                                <p className="text-sm font-bold text-dark/70 mt-2">to {scannedBag.ownerName || 'User'}</p>
                             </div>
 
                             <div className="space-y-3">

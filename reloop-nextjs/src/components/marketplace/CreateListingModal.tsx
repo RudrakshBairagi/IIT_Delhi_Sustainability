@@ -71,6 +71,11 @@ export const CreateListingModal = ({ onClose, onSuccess }: CreateListingModalPro
 
         setIsSubmitting(true);
         try {
+            if (!user) {
+                alert('Please log in to create a listing');
+                return;
+            }
+
             await ApiClient.listings.create({
                 title: formData.title,
                 description: formData.description,
@@ -78,8 +83,14 @@ export const CreateListingModal = ({ onClose, onSuccess }: CreateListingModalPro
                 condition: formData.condition,
                 category: formData.category,
                 images: images,
-                status: 'available'
-            });
+                status: 'available',
+                seller: {
+                    id: user.uid,
+                    name: user.name,
+                    avatar: user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}`,
+                    responseTime: '2h'
+                }
+            } as any);
             onSuccess();
             onClose();
         } catch (error) {
@@ -89,6 +100,7 @@ export const CreateListingModal = ({ onClose, onSuccess }: CreateListingModalPro
             setIsSubmitting(false);
         }
     };
+
 
     return (
         <motion.div

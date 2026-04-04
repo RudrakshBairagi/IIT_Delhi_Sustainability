@@ -2,8 +2,10 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { DBService } from '@/lib/firebase/db';
+import { useAuth } from '@/lib/contexts/AuthContext';
 import DemoManager from '@/lib/demo-manager';
-import { Reward, User } from '@/types';
+import { Reward } from '@/types';
 import { PageHeader } from '@/components/ui/PageHeader';
 
 const containerVariants = {
@@ -298,21 +300,52 @@ const categoryColors: Record<string, string> = {
 };
 
 export default function RewardsPage() {
+    const { user: authUser, isDemo } = useAuth();
     const [rewards, setRewards] = useState<Reward[]>([]);
-    const [user, setUser] = useState<User | null>(null);
     const [activeTab, setActiveTab] = useState('All');
     const [redeemed, setRedeemed] = useState<Set<string>>(new Set());
     const [showHowToEarn, setShowHowToEarn] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isRedeeming, setIsRedeeming] = useState(false);
 
     // Modal state
     const [selectedReward, setSelectedReward] = useState<Reward | null>(null);
     const [redemptionCode, setRedemptionCode] = useState('');
 
     useEffect(() => {
-        setRewards(DemoManager.getMockRewards());
-        setUser(DemoManager.getMockUser());
-        setRedeemed(new Set(DemoManager.getRedeemedRewards()));
-    }, []);
+        const loadData = async () => {
+            setIsLoading(true);
+            try {
+                // Try Firebase first
+                if (authUser?.uid && !isDemo) {
+                    const firebaseRewards = await DBService.getRewards();
+                    if (firebaseRewards.length > 0) {
+                        setRewards(firebaseRewards as Reward[]);
+                        // Get user's redeemed rewards
+                        const redeemedSet = await DBService.getRedemptionsByRewardIds(
+                            authUser.uid,
+                            firebaseRewards.map(r => r.id)
+                        );
+                        setRedeemed(redeemedSet);
+                    } else {
+                        // Fallback to demo data if no Firebase rewards
+                        setRewards(DemoManager.getMockRewards());
+                        setRedeemed(new Set(DemoManager.getRedeemedRewards()));
+                    }
+                } else {
+                    // Demo mode
+                    setRewards(DemoManager.getMockRewards());
+                    setRedeemed(new Set(DemoManager.getRedeemedRewards()));
+                }
+            } catch (error) {
+                console.error('Error loading rewards:', error);
+                setRewards(DemoManager.getMockRewards());
+                setRedeemed(new Set(DemoManager.getRedeemedRewards()));
+            }
+            setIsLoading(false);
+        };
+        loadData();
+    }, [authUser, isDemo]);
 
     const categoryMap: Record<string, string> = {
         'Vouchers': 'voucher',
@@ -333,20 +366,39 @@ export default function RewardsPage() {
         return code;
     }, []);
 
-    const handleRedeem = (reward: Reward) => {
-        if (!user || user.coins < reward.cost || redeemed.has(reward.id)) return;
+    const handleRedeem = async (reward: Reward) => {
+        if (!authUser || authUser.coins < reward.cost || redeemed.has(reward.id) || isRedeeming) return;
 
-        const success = DemoManager.redeemReward(reward.id, reward.cost);
-        if (success) {
-            setUser(DemoManager.getMockUser());
-            setRedeemed(new Set(DemoManager.getRedeemedRewards()));
-
-            if (reward.category !== 'donation') {
-                setRedemptionCode(generateRedemptionCode());
+        setIsRedeeming(true);
+        try {
+            if (!isDemo) {
+                // Firebase redemption
+                const result = await DBService.redeemReward(authUser.uid, reward.id, reward.cost);
+                if (result.success) {
+                    setRedeemed(prev => new Set([...prev, reward.id]));
+                    if (reward.category !== 'donation') {
+                        setRedemptionCode(generateRedemptionCode());
+                    }
+                    setSelectedReward(reward);
+                } else {
+                    alert(result.error || 'Failed to redeem reward');
+                }
+            } else {
+                // Demo mode
+                const success = DemoManager.redeemReward(reward.id, reward.cost);
+                if (success) {
+                    setRedeemed(new Set(DemoManager.getRedeemedRewards()));
+                    if (reward.category !== 'donation') {
+                        setRedemptionCode(generateRedemptionCode());
+                    }
+                    setSelectedReward(reward);
+                }
             }
-
-            setSelectedReward(reward);
+        } catch (error) {
+            console.error('Error redeeming reward:', error);
+            alert('Failed to redeem reward. Please try again.');
         }
+        setIsRedeeming(false);
     };
 
     const closeModal = () => {
@@ -354,7 +406,24 @@ export default function RewardsPage() {
         setRedemptionCode('');
     };
 
-    if (!user) return null;
+    if (isLoading) {
+        return (
+            <div className="min-h-screen bg-background flex items-center justify-center">
+                <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+            </div>
+        );
+    }
+
+    if (!authUser) {
+        return (
+            <div className="min-h-screen bg-background flex items-center justify-center p-6">
+                <div className="text-center">
+                    <span className="material-symbols-outlined text-6xl text-gray-300 mb-4">redeem</span>
+                    <p className="font-bold text-dark dark:text-white">Sign in to view rewards</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-background via-background to-card-yellow/20">
@@ -379,10 +448,10 @@ export default function RewardsPage() {
                         <div>
                             <p className="text-dark/50 font-black text-xs uppercase tracking-widest">Your Balance</p>
                             <div className="flex items-baseline gap-2 mt-1">
-                                <p className="text-5xl font-black text-dark">{user.coins}</p>
+                                <p className="text-5xl font-black text-dark">{authUser.coins}</p>
                                 <span className="text-lg font-black text-dark/60">Eco Coins</span>
                             </div>
-                            <p className="text-xs font-bold text-dark/40 mt-2">≈ ₹{(user.coins * 0.5).toFixed(0)} value</p>
+                            <p className="text-xs font-bold text-dark/40 mt-2">≈ ₹{(authUser.coins * 0.5).toFixed(0)} value</p>
                         </div>
                         <motion.div
                             className="text-7xl"
@@ -431,7 +500,7 @@ export default function RewardsPage() {
                 <motion.div variants={containerVariants} className="space-y-4">
                     {filtered.map((reward) => {
                         const isRedeemed = redeemed.has(reward.id);
-                        const canAfford = user.coins >= reward.cost;
+                        const canAfford = authUser.coins >= reward.cost;
                         const isDonation = reward.category === 'donation';
                         const gradientClass = categoryColors[reward.category] || 'from-gray-300 to-gray-400';
 
@@ -494,7 +563,7 @@ export default function RewardsPage() {
                                                             : 'bg-gray-100 dark:bg-dark-bg text-dark/30 dark:text-white/30 cursor-not-allowed border-dark/20'
                                                             }`}
                                                     >
-                                                        {!canAfford ? `Need ${reward.cost - user.coins} more` : isDonation ? '💚 Contribute' : 'Claim →'}
+                                                        {!canAfford ? `Need ${reward.cost - authUser.coins} more` : isDonation ? '💚 Contribute' : 'Claim →'}
                                                     </motion.button>
                                                 )}
                                             </div>

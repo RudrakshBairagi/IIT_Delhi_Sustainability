@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import { DBService } from '@/lib/firebase/db';
 import DemoManager from '@/lib/demo-manager';
 import { Listing } from '@/types';
 import { PageHeader } from '@/components/ui/PageHeader';
@@ -23,8 +24,10 @@ const TRENDING = ['Electronics', 'Books', 'Clothing', 'Furniture'];
 
 export default function SearchPage() {
     const [query, setQuery] = useState('');
+    const [allListings, setAllListings] = useState<Listing[]>([]);
     const [results, setResults] = useState<Listing[]>([]);
     const [hasSearched, setHasSearched] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [showFilters, setShowFilters] = useState(false);
     const [activeFilters, setActiveFilters] = useState({
         priceRange: [0, 100],
@@ -32,8 +35,27 @@ export default function SearchPage() {
         sortBy: 'newest'
     });
 
-    const allListings = DemoManager.getMockListings();
+    // Load listings on mount
+    useEffect(() => {
+        const loadListings = async () => {
+            setIsLoading(true);
+            try {
+                const firebaseListings = await DBService.getListings();
+                if (firebaseListings.length > 0) {
+                    setAllListings(firebaseListings);
+                } else {
+                    setAllListings(DemoManager.getMockListings());
+                }
+            } catch (error) {
+                console.error('Error loading listings:', error);
+                setAllListings(DemoManager.getMockListings());
+            }
+            setIsLoading(false);
+        };
+        loadListings();
+    }, []);
 
+    // Search effect
     useEffect(() => {
         if (query.length < 2) {
             setResults([]);
@@ -50,7 +72,7 @@ export default function SearchPage() {
                 l.description.toLowerCase().includes(q)
         );
         setResults(filtered);
-    }, [query]);
+    }, [query, allListings]);
 
     return (
         <div className="min-h-screen bg-background">
@@ -80,7 +102,11 @@ export default function SearchPage() {
                     </button>
                 </div>
 
-                {!hasSearched ? (
+                {isLoading ? (
+                    <div className="flex items-center justify-center py-20">
+                        <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+                    </div>
+                ) : !hasSearched ? (
                     <motion.div initial="hidden" animate="visible" variants={containerVariants} className="space-y-6">
                         {/* Recent Searches */}
                         <motion.div variants={itemVariants}>

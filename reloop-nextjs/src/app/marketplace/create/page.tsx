@@ -9,6 +9,7 @@ import { Listing } from '@/types';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { useNavStore } from '@/lib/store/nav-store';
 import { EquityProtocolModal } from '@/components/modals/EquityProtocolModal';
+import { useAuth } from '@/lib/contexts/AuthContext';
 
 const CATEGORIES = ['Electronics', 'Books', 'Clothing', 'Home & Garden', 'Sports', 'Other'];
 const CONDITIONS = ['Like New', 'Good', 'Used', 'Fair'];
@@ -28,6 +29,7 @@ function CreateListingContent() {
     const searchParams = useSearchParams();
     const { setActions, reset } = useNavStore();
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const { user } = useAuth();
 
     // Auto-fill from URL params (from scanner)
     const [title, setTitle] = useState(searchParams.get('title') || '');
@@ -90,6 +92,11 @@ function CreateListingContent() {
         setIsSubmitting(true);
 
         try {
+            if (!user) {
+                setError('You must be logged in to create a listing');
+                return;
+            }
+
             await ApiClient.listings.create({
                 title: title.trim(),
                 description: description.trim() || 'No description provided.',
@@ -99,7 +106,13 @@ function CreateListingContent() {
                 location: location.trim() || 'Campus',
                 images: photos.length > 0 ? photos : ['https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=500'],
                 status: 'available',
-            });
+                seller: {
+                    id: user.uid,
+                    name: user.name,
+                    avatar: user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}`,
+                    responseTime: '2h'
+                }
+            } as any);
             // Notifications are now handled by backend or could be added here if we had a Notification API
             // For now, just redirect
             router.push('/marketplace');

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import DemoManager from '@/lib/demo-manager';
 import { useAuth } from '@/lib/contexts/AuthContext';
+import { DBService } from '@/lib/firebase/db';
 import { Message } from '@/types';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -31,11 +32,37 @@ export default function MessagesPage() {
         const loadMessages = async () => {
             setIsLoading(true);
             try {
-                // For now, use demo data for both modes
-                // Firebase has different structure (conversations + messages subcollection)
-                setMessages(DemoManager.getMockMessages());
+                if (isDemo || !user) {
+                    // Demo mode - use mock data
+                    setMessages(DemoManager.getMockMessages());
+                } else {
+                    // Firebase mode - load conversations
+                    const conversations = await DBService.getConversations(user.uid);
+
+                    // Transform conversations to Message format
+                    const formattedMessages: Message[] = conversations.map((conv: any) => {
+                        const otherParticipantId = conv.participants?.find((p: string) => p !== user.uid) || '';
+                        return {
+                            id: conv.id,
+                            senderId: otherParticipantId,
+                            senderName: conv.otherParticipant?.name || 'User',
+                            senderAvatar: conv.otherParticipant?.avatar || `https://ui-avatars.com/api/?name=User`,
+                            lastMessage: conv.lastMessage || 'No messages yet',
+                            timestamp: conv.lastMessageAt?.toDate?.() || new Date(),
+                            unread: conv.unreadCount > 0,
+                            conversationType: conv.listingId ? 'marketplace' : 'community',
+                            listingId: conv.listingId,
+                            listingTitle: conv.listingTitle,
+                            listingPrice: conv.listingPrice,
+                            listingImage: conv.listingImage,
+                        };
+                    });
+                    setMessages(formattedMessages);
+                }
             } catch (error) {
                 console.error('Failed to load messages', error);
+                // Fallback to demo data on error
+                setMessages(DemoManager.getMockMessages());
             } finally {
                 setIsLoading(false);
             }
@@ -43,11 +70,13 @@ export default function MessagesPage() {
 
         loadMessages();
 
-        // Subscribe to demo data updates
-        const unsubscribe = DemoManager.subscribe(() => {
-            setMessages([...DemoManager.getMockMessages()]);
-        });
-        return unsubscribe;
+        // Subscribe to demo data updates (demo mode only)
+        if (isDemo) {
+            const unsubscribe = DemoManager.subscribe(() => {
+                setMessages([...DemoManager.getMockMessages()]);
+            });
+            return unsubscribe;
+        }
     }, [isDemo, user]);
 
     // Format price as Indian Rupees

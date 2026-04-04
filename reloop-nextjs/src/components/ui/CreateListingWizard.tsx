@@ -107,6 +107,15 @@ export function CreateListingWizard({ isOpen, onClose, onSuccess }: CreateListin
         setCameraState('captured');
         setImagePreviews([imageSrc]);
 
+        // Convert data URL to File for upload
+        try {
+            const blob = await fetch(imageSrc).then(r => r.blob());
+            const file = new File([blob], `capture-${Date.now()}.jpg`, { type: 'image/jpeg' });
+            setFormData(prev => ({ ...prev, images: [file] }));
+        } catch (err) {
+            console.error('Failed to convert image:', err);
+        }
+
         // Analyze with AI
         setIsAnalyzing(true);
         try {
@@ -141,6 +150,9 @@ export function CreateListingWizard({ isOpen, onClose, onSuccess }: CreateListin
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files?.[0]) return;
         const file = e.target.files[0];
+
+        // Set the file for upload
+        setFormData(prev => ({ ...prev, images: [file] }));
 
         const reader = new FileReader();
         reader.onloadend = async () => {

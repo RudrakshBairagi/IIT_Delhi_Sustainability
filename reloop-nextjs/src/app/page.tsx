@@ -12,6 +12,7 @@ import { StreakBadge } from '@/components/ui/StreakBadge';
 import { StoriesBar } from '@/components/ui/StoriesBar';
 import { User } from '@/types';
 import DemoManager from '@/lib/demo-manager';
+import { DBService } from '@/lib/firebase/db';
 
 // Animation variants
 const containerVariants = {
@@ -34,13 +35,16 @@ const itemVariants = {
 };
 
 export default function HomePage() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, isDemo } = useAuth();
   const router = useRouter();
   const [streak, setStreak] = useState(1);
-
+  const [userRank, setUserRank] = useState(12); // Default fallback
+  const [totalUsers, setTotalUsers] = useState(50);
+  const [percentile, setPercentile] = useState(75);
+  const [rankChange, setRankChange] = useState(0);
 
   useEffect(() => {
-    setStreak(user?.badges?.length || 1); // Mock streak from badges count for now
+    setStreak(user?.badges?.length || 1);
   }, [user]);
 
   useEffect(() => {
@@ -49,45 +53,40 @@ export default function HomePage() {
     }
   }, [user, isLoading, router]);
 
-  // Extended leaderboard for rank calculation (simulates campus users)
-  const allCampusUsers = [
-    { uid: '1', name: 'EcoChampion', xp: 8450 },
-    { uid: '2', name: 'GreenWarrior', xp: 7200 },
-    { uid: '3', name: 'SustainableX', xp: 6100 },
-    { uid: '4', name: 'RecycleKing', xp: 5800 },
-    { uid: '5', name: 'PlanetHero', xp: 5200 },
-    { uid: '6', name: 'EcoNinja', xp: 4900 },
-    { uid: '7', name: 'GreenThumb', xp: 4500 },
-    { uid: '8', name: 'TradeQueen', xp: 4100 },
-    { uid: '9', name: 'ReLooper', xp: 3800 },
-    { uid: '10', name: 'CircularEco', xp: 3500 },
-    { uid: '11', name: 'ZeroWaste', xp: 3200 },
-    { uid: 'current', name: user?.name || 'You', xp: user?.xp || 2800 }, // Current user
-    { uid: '12', name: 'CarbonCutter', xp: 2600 },
-    { uid: '13', name: 'ReusePro', xp: 2200 },
-    { uid: '14', name: 'EcoStarter', xp: 1800 },
-    { uid: '15', name: 'GreenNewbie', xp: 1200 },
-  ].sort((a, b) => b.xp - a.xp); // Sort by XP descending
-
-  // Calculate user's rank
-  const userRank = allCampusUsers.findIndex(u => u.uid === 'current') + 1;
-  const totalUsers = allCampusUsers.length;
-  const percentile = Math.round(((totalUsers - userRank) / totalUsers) * 100);
-  const usersAhead = userRank - 1;
-  const usersBehind = totalUsers - userRank;
-
-  // Get previous rank from localStorage for "up/down" indicator
-  const [rankChange, setRankChange] = useState(0);
+  // Fetch user rank from Firebase
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const prevRank = localStorage.getItem('reloop_prev_rank');
-      if (prevRank) {
-        const change = parseInt(prevRank) - userRank;
-        setRankChange(change);
+    const fetchRank = async () => {
+      if (isDemo || !user?.uid) {
+        // Demo mode fallback
+        setUserRank(12);
+        setTotalUsers(50);
+        setPercentile(75);
+        return;
       }
-      localStorage.setItem('reloop_prev_rank', userRank.toString());
-    }
-  }, [userRank]);
+
+      try {
+        const rankData = await DBService.getUserRank(user.uid);
+        if (rankData) {
+          const prevRank = typeof window !== 'undefined'
+            ? parseInt(localStorage.getItem('reloop_prev_rank') || String(rankData.rank))
+            : rankData.rank;
+
+          setUserRank(rankData.rank);
+          setTotalUsers(rankData.total);
+          setPercentile(rankData.percentile);
+          setRankChange(prevRank - rankData.rank);
+
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('reloop_prev_rank', rankData.rank.toString());
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching user rank:', error);
+      }
+    };
+
+    fetchRank();
+  }, [user?.uid, isDemo]);
 
   if (isLoading) {
     return (
@@ -115,6 +114,8 @@ export default function HomePage() {
               <StreakBadge streak={streak} />
               <div className="w-px h-3 bg-gray-300 dark:bg-gray-600" />
               <span className="text-xs font-black text-primary">⚡ {user.xp}</span>
+              <div className="w-px h-3 bg-gray-300 dark:bg-gray-600" />
+              <span className="text-xs font-black text-amber-500">🪙 {user.coins}</span>
             </div>
           </div>
           <Link href="/profile" className="relative group">
@@ -241,37 +242,53 @@ export default function HomePage() {
         {/* Quick Actions - Compact Grid */}
         <motion.div variants={itemVariants}>
           <p className="font-black text-dark dark:text-white text-sm uppercase tracking-tight mb-2 ml-1">Quick Actions</p>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-3 gap-2">
             <Link href="/marketplace" className="relative h-20 rounded-xl bg-[#F4A261] neo-border shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all cursor-pointer overflow-hidden group">
-              <div className="relative h-full flex items-center gap-3 px-3 z-10">
-                <div className="w-10 h-10 rounded-full bg-dark flex items-center justify-center text-white border-2 border-white shrink-0">
-                  <span className="material-symbols-outlined text-lg">storefront</span>
+              <div className="relative h-full flex items-center gap-2 px-2 z-10">
+                <div className="w-9 h-9 rounded-full bg-dark flex items-center justify-center text-white border-2 border-white shrink-0">
+                  <span className="material-symbols-outlined text-base">storefront</span>
                 </div>
-                <p className="text-dark text-sm font-black uppercase leading-tight tracking-tight">Shop<br />Items</p>
+                <p className="text-dark text-xs font-black uppercase leading-tight tracking-tight">Shop</p>
               </div>
             </Link>
             <Link href="/rewards" className="relative h-20 rounded-xl bg-[#2A9D8F] neo-border shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all cursor-pointer overflow-hidden group">
-              <div className="relative h-full flex items-center gap-3 px-3 z-10">
-                <div className="w-10 h-10 rounded-full bg-dark flex items-center justify-center text-white border-2 border-white shrink-0">
-                  <span className="material-symbols-outlined text-lg">redeem</span>
+              <div className="relative h-full flex items-center gap-2 px-2 z-10">
+                <div className="w-9 h-9 rounded-full bg-dark flex items-center justify-center text-white border-2 border-white shrink-0">
+                  <span className="material-symbols-outlined text-base">redeem</span>
                 </div>
-                <p className="text-white text-sm font-black uppercase leading-tight tracking-tight">Redeem<br />Rewards</p>
+                <p className="text-white text-xs font-black uppercase leading-tight tracking-tight">Rewards</p>
+              </div>
+            </Link>
+            <Link href="/missions" className="relative h-20 rounded-xl bg-[#FFB703] neo-border shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all cursor-pointer overflow-hidden group">
+              <div className="relative h-full flex items-center gap-2 px-2 z-10">
+                <div className="w-9 h-9 rounded-full bg-dark flex items-center justify-center text-white border-2 border-white shrink-0">
+                  <span className="material-symbols-outlined text-base">flag</span>
+                </div>
+                <p className="text-dark text-xs font-black uppercase leading-tight tracking-tight">Missions</p>
+              </div>
+            </Link>
+            <Link href="/leaderboard" className="relative h-20 rounded-xl bg-[#457B9D] neo-border shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all cursor-pointer overflow-hidden group">
+              <div className="relative h-full flex items-center gap-2 px-2 z-10">
+                <div className="w-9 h-9 rounded-full bg-dark flex items-center justify-center text-white border-2 border-white shrink-0">
+                  <span className="material-symbols-outlined text-base">leaderboard</span>
+                </div>
+                <p className="text-white text-xs font-black uppercase leading-tight tracking-tight">Ranks</p>
               </div>
             </Link>
             <Link href="/community" className="relative h-20 rounded-xl bg-[#9B5DE5] neo-border shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all cursor-pointer overflow-hidden group">
-              <div className="relative h-full flex items-center gap-3 px-3 z-10">
-                <div className="w-10 h-10 rounded-full bg-dark flex items-center justify-center text-white border-2 border-white shrink-0">
-                  <span className="material-symbols-outlined text-lg">palette</span>
+              <div className="relative h-full flex items-center gap-2 px-2 z-10">
+                <div className="w-9 h-9 rounded-full bg-dark flex items-center justify-center text-white border-2 border-white shrink-0">
+                  <span className="material-symbols-outlined text-base">palette</span>
                 </div>
-                <p className="text-white text-sm font-black uppercase leading-tight tracking-tight">DIY<br />Community</p>
+                <p className="text-white text-xs font-black uppercase leading-tight tracking-tight">DIY</p>
               </div>
             </Link>
             <Link href="/charity" className="relative h-20 rounded-xl bg-[#E76F51] neo-border shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all cursor-pointer overflow-hidden group">
-              <div className="relative h-full flex items-center gap-3 px-3 z-10">
-                <div className="w-10 h-10 rounded-full bg-dark flex items-center justify-center text-white border-2 border-white shrink-0">
-                  <span className="material-symbols-outlined text-lg">volunteer_activism</span>
+              <div className="relative h-full flex items-center gap-2 px-2 z-10">
+                <div className="w-9 h-9 rounded-full bg-dark flex items-center justify-center text-white border-2 border-white shrink-0">
+                  <span className="material-symbols-outlined text-base">volunteer_activism</span>
                 </div>
-                <p className="text-white text-sm font-black uppercase leading-tight tracking-tight">Give<br />Back</p>
+                <p className="text-white text-xs font-black uppercase leading-tight tracking-tight">Donate</p>
               </div>
             </Link>
           </div>

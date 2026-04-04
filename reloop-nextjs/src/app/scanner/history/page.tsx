@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import { DBService } from '@/lib/firebase/db';
+import { useAuth } from '@/lib/contexts/AuthContext';
 import DemoManager from '@/lib/demo-manager';
 import { ScanResult } from '@/types';
 import { PageHeader } from '@/components/ui/PageHeader';
@@ -21,19 +23,45 @@ const itemVariants = {
 
 export default function ScanHistoryPage() {
     const router = useRouter();
+    const { user, isDemo } = useAuth();
     const [history, setHistory] = useState<ScanResult[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        setTimeout(() => {
-            setHistory(DemoManager.getScanHistory());
+        const loadHistory = async () => {
+            setIsLoading(true);
+            try {
+                if (user?.uid && !isDemo) {
+                    const scans = await DBService.getUserScans(user.uid);
+                    if (scans.length > 0) {
+                        // Convert Firebase scan format to ScanResult format
+                        const mappedScans = scans.map(scan => ({
+                            success: true,
+                            item: scan.item,
+                            classification: scan.classification || 'safe',
+                            xpEarned: scan.xpEarned || 0
+                        }));
+                        setHistory(mappedScans);
+                    } else {
+                        setHistory([]);
+                    }
+                } else {
+                    // Demo mode fallback
+                    setHistory(DemoManager.getScanHistory());
+                }
+            } catch (error) {
+                console.error('Error loading scan history:', error);
+                setHistory(DemoManager.getScanHistory());
+            }
             setIsLoading(false);
-        }, 500);
-    }, []);
+        };
+
+        loadHistory();
+    }, [user, isDemo]);
 
     const handleItemClick = (result: ScanResult) => {
         ScannerService.storeResult(result);
-        router.push('/scanner/result');
+        router.push('/scanner/results');
     };
 
     const getCategoryIcon = (category: string) => {

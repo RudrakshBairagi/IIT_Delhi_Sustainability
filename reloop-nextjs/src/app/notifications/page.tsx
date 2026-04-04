@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import DemoManager from '@/lib/demo-manager';
 import { DBService } from '@/lib/firebase/db';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { Notification } from '@/types';
+import DemoManager from '@/lib/demo-manager';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { EmptyState } from '@/components/ui/EmptyState';
 
@@ -26,6 +26,18 @@ const ICON_COLORS: Record<string, string> = {
     system: 'bg-card-blue',
     coin: 'bg-card-green',
     level: 'bg-primary',
+    bag_processed: 'bg-card-green',
+    message: 'bg-card-blue',
+};
+
+const TYPE_ICONS: Record<string, string> = {
+    trade: 'swap_horiz',
+    achievement: 'emoji_events',
+    system: 'info',
+    coin: 'monetization_on',
+    level: 'trending_up',
+    bag_processed: 'recycling',
+    message: 'chat',
 };
 
 function timeAgo(date: Date): string {
@@ -37,37 +49,76 @@ function timeAgo(date: Date): string {
 }
 
 export default function NotificationsPage() {
-    const { user } = useAuth();
+    const { user, isDemo } = useAuth();
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const load = async () => {
-            if (user?.uid) {
-                try {
-                    const notifs = await DBService.getNotifications(user.uid);
-                    if (notifs.length > 0) {
-                        setNotifications(notifs.map((n: any) => ({
-                            ...n,
-                            timestamp: n.createdAt?.toDate?.() || new Date()
-                        })));
-                    } else {
-                        setNotifications(DemoManager.getMockNotifications() as Notification[]);
-                    }
-                } catch (error) {
-                    console.error('Error loading notifications:', error);
-                    setNotifications(DemoManager.getMockNotifications() as Notification[]);
-                }
-            } else {
-                setNotifications(DemoManager.getMockNotifications() as Notification[]);
-            }
+        if (!user?.uid) {
             setIsLoading(false);
-        };
-        load();
-    }, [user]);
+            return;
+        }
 
-    const markAllRead = () => {
-        setNotifications(notifications.map(n => ({ ...n, read: true })));
+        if (isDemo) {
+            // Demo mode - load mock notifications
+            const mockNotifs = DemoManager.getMockNotifications().map((n: any) => ({
+                id: n.id,
+                type: n.type || 'system',
+                title: n.title,
+                message: n.message,
+                icon: n.icon || TYPE_ICONS[n.type] || 'notifications',
+                read: n.read || false,
+                actionUrl: n.actionUrl,
+                timestamp: n.timestamp instanceof Date ? n.timestamp : new Date()
+            }));
+            setNotifications(mockNotifs);
+            setIsLoading(false);
+            return;
+        }
+
+        // Real-time subscription to Firebase notifications
+        const unsubscribe = DBService.subscribeToNotifications(user.uid, (notifs) => {
+            const mapped = notifs.map((n: any) => ({
+                id: n.id,
+                type: n.type || 'system',
+                title: n.title,
+                message: n.message,
+                icon: n.icon || TYPE_ICONS[n.type] || 'notifications',
+                read: n.read || false,
+                actionUrl: n.actionUrl,
+                timestamp: n.createdAt instanceof Date ? n.createdAt : new Date()
+            }));
+            setNotifications(mapped);
+            setIsLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, [user, isDemo]);
+
+    const handleMarkAsRead = async (notificationId: string) => {
+        // Optimistic update
+        setNotifications(prev =>
+            prev.map(n => n.id === notificationId ? { ...n, read: true } : n)
+        );
+
+        if (isDemo) {
+            // DemoManager doesn't have a markRead method on the class for individual items public
+            // likely just updated local state above is enough for demo
+            return;
+        }
+
+        await DBService.markNotificationRead(notificationId);
+    };
+
+    const handleMarkAllRead = async () => {
+        if (!user?.uid) return;
+
+        // Optimistic update
+        setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+
+        if (isDemo) return;
+
+        await DBService.markAllNotificationsRead(user.uid);
     };
 
     const unreadCount = notifications.filter(n => !n.read).length;
@@ -79,7 +130,7 @@ export default function NotificationsPage() {
                 subtitle={unreadCount > 0 ? `${unreadCount} new` : undefined}
                 rightAction={
                     unreadCount > 0 ? (
-                        <button onClick={markAllRead} className="text-sm font-bold text-primary">
+                        <button onClick={handleMarkAllRead} className="text-sm font-bold text-primary">
                             Mark all read
                         </button>
                     ) : undefined
@@ -101,7 +152,10 @@ export default function NotificationsPage() {
                             return (
                                 <motion.div key={notif.id} variants={itemVariants}>
                                     <Wrapper {...wrapperProps as any}>
-                                        <div className={`rounded-2xl border-2 p-4 flex items-start gap-4 transition-all hover:-translate-y-0.5 ${notif.read ? 'bg-white dark:bg-dark-surface border-gray-200 dark:border-gray-700' : 'bg-card-green border-dark dark:border-gray-600 shadow-brutal-sm'}`}>
+                                        <div
+                                            onClick={() => !notif.read && handleMarkAsRead(notif.id)}
+                                            className={`rounded-2xl border-2 p-4 flex items-start gap-4 transition-all hover:-translate-y-0.5 cursor-pointer ${notif.read ? 'bg-white dark:bg-dark-surface border-gray-200 dark:border-gray-700' : 'bg-card-green border-dark dark:border-gray-600 shadow-brutal-sm'}`}
+                                        >
                                             <div className={`w-12 h-12 ${ICON_COLORS[notif.type] || 'bg-gray-100 dark:bg-dark-surface'} rounded-xl border-2 border-dark dark:border-gray-600 flex items-center justify-center shrink-0`}>
                                                 <span className="material-symbols-outlined text-xl text-dark dark:text-white">{notif.icon}</span>
                                             </div>

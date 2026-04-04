@@ -50,9 +50,13 @@ export default function ItemDetailPage() {
             setIsLoading(true);
             const id = params.id as string;
 
-            // Try Firebase first
+            // Try Firebase first with timeout
             try {
-                const firebaseListing = await DBService.getListingById(id);
+                const firebasePromise = DBService.getListingById(id);
+                const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => resolve(null), 3000));
+
+                const firebaseListing = await Promise.race([firebasePromise, timeoutPromise]);
+
                 if (firebaseListing) {
                     setListing(firebaseListing);
                     setIsLoading(false);
@@ -65,6 +69,7 @@ export default function ItemDetailPage() {
             // Fallback to DemoManager
             const found = DemoManager.getListingById?.(id);
             if (!found) {
+                console.log('Listing not found in Firebase or DemoManager, redirecting...');
                 router.push('/marketplace');
                 return;
             }
@@ -291,7 +296,7 @@ export default function ItemDetailPage() {
                                 </div>
                             </div>
                             <button
-                                onClick={() => router.push(`/messages/${listing.seller.id}`)}
+                                onClick={() => router.push(`/messages/new?sellerId=${listing.seller.id}&listingId=${listing.id}&listingTitle=${encodeURIComponent(listing.title)}`)}
                                 className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-dark-surface border-2 border-dark shadow-brutal-sm active:scale-95 transition-transform"
                             >
                                 <span className="material-symbols-outlined text-dark dark:text-white">chat</span>
@@ -310,8 +315,21 @@ export default function ItemDetailPage() {
                                 Edit Listing
                             </button>
                             <button
-                                onClick={() => {
+                                onClick={async () => {
                                     if (confirm('Delete this listing?')) {
+                                        if (!isDemo && currentUserId) {
+                                            try {
+                                                const success = await DBService.deleteListing(listing.id, currentUserId);
+                                                if (!success) {
+                                                    alert('Failed to delete listing.');
+                                                    return;
+                                                }
+                                            } catch (err) {
+                                                console.error('Delete failed:', err);
+                                                alert('Failed to delete listing.');
+                                                return;
+                                            }
+                                        }
                                         router.push('/marketplace');
                                     }
                                 }}

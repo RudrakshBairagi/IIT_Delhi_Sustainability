@@ -65,14 +65,44 @@ export default function MarketplacePage() {
     };
 
     useEffect(() => {
-        loadListings();
+        let mounted = true;
 
+        const load = async () => {
+            // Don't clear listings immediately to prevent flash
+            setIsLoading(true);
+            try {
+                if (isDemo) {
+                    console.log('Marketplace loading in Demo Mode');
+                    const mockData = DemoManager.getMockListings();
+                    if (mounted) setListings(mockData);
+                } else {
+                    console.log('Marketplace loading in Firebase Mode');
+                    const data = await DBService.getListings();
+                    if (mounted) setListings(data);
+                }
+            } catch (error) {
+                console.error("Failed to load listings", error);
+            } finally {
+                if (mounted) setIsLoading(false);
+            }
+        };
+
+        load();
+
+        let unsubscribe = () => { };
         if (isDemo) {
-            const unsubscribe = DemoManager.subscribe(() => {
-                setListings([...DemoManager.getMockListings()]);
+            unsubscribe = DemoManager.subscribe(() => {
+                if (mounted) {
+                    console.log('Marketplace received DemoManager update');
+                    setListings([...DemoManager.getMockListings()]);
+                }
             });
-            return unsubscribe;
         }
+
+        return () => {
+            mounted = false;
+            unsubscribe();
+        };
     }, [isDemo]);
 
     // Handle edit action
@@ -81,17 +111,26 @@ export default function MarketplacePage() {
     };
 
     // Handle delete action
-    const handleDelete = (id: string) => {
+    const handleDelete = async (id: string) => {
         if (confirm('Are you sure you want to delete this listing?')) {
-            // In demo mode, just filter the local state
             if (isDemo) {
                 setListings(prev => prev.filter(l => l.id !== id));
-            } else {
-                // TODO: Call Firebase delete
-                console.log('Delete listing:', id);
+            } else if (currentUserId) {
+                try {
+                    const success = await DBService.deleteListing(id, currentUserId);
+                    if (success) {
+                        setListings(prev => prev.filter(l => l.id !== id));
+                    } else {
+                        alert('Failed to delete listing. You may not have permission.');
+                    }
+                } catch (error) {
+                    console.error('Error deleting listing:', error);
+                    alert('Failed to delete listing. Please try again.');
+                }
             }
         }
     };
+
 
     // Filter and sort listings based on active tab
     const getFilteredListings = () => {
@@ -142,7 +181,7 @@ export default function MarketplacePage() {
                         <h1 className="text-4xl font-black uppercase tracking-tight text-black dark:text-white leading-none whitespace-nowrap">Market Hub</h1>
                     </div>
                     <button
-                        onClick={() => alert('You have no new notifications!')}
+                        onClick={() => router.push('/notifications')}
                         aria-label="Notifications"
                         className="bg-[#FAFAFA] dark:bg-dark-surface w-12 h-12 rounded-full border-4 border-black dark:border-gray-600 shadow-[4px_4px_0px_0px_#000] flex items-center justify-center active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-150"
                     >

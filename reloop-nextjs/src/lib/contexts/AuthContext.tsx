@@ -31,14 +31,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isDemo, setIsDemo] = useState(false);
+    const [firebaseUid, setFirebaseUid] = useState<string | null>(null);
 
     // Function to refresh user data (for admin updates)
-    const refreshUser = useCallback(() => {
+    const refreshUser = useCallback(async () => {
         if (isDemo) {
-            // Re-read from DemoManager
             setUser({ ...DemoManager.getMockUser() });
+        } else if (firebaseUid) {
+            const profile = await DBService.getUserProfile(firebaseUid);
+            if (profile) setUser(profile);
         }
-    }, [isDemo]);
+    }, [isDemo, firebaseUid]);
 
     const enableDemoMode = useCallback(() => {
         localStorage.setItem('isDemoMode', 'true');
@@ -46,18 +49,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser({ ...DemoManager.getMockUser() });
     }, []);
 
+    // Listen to Firebase Auth state
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             if (firebaseUser) {
                 // Real Firebase user
                 setIsDemo(false);
                 localStorage.removeItem('isDemoMode');
+                setFirebaseUid(firebaseUser.uid);
+
                 try {
                     const profile = await DBService.getUserProfile(firebaseUser.uid);
                     if (profile) {
                         setUser(profile);
                     } else {
-                        // Fallback if firestore doc missing
+                        // Fallback if Firestore doc missing
                         setUser({
                             uid: firebaseUser.uid,
                             name: firebaseUser.displayName || 'User',
@@ -77,6 +83,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 }
             } else {
                 // No Firebase user - check if we should be in demo mode
+                setFirebaseUid(null);
                 const storedDemo = localStorage.getItem('isDemoMode');
                 if (storedDemo === 'true') {
                     setIsDemo(true);
@@ -92,13 +99,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return () => unsubscribe();
     }, []);
 
-    // Subscribe to DemoManager updates for real-time sync
+    // Real-time subscription to user profile (Firebase only)
+    useEffect(() => {
+        if (!firebaseUid || isDemo) return;
+
+        console.log('[AuthContext] Subscribing to user profile:', firebaseUid);
+
+        const unsubscribe = DBService.subscribeToUserProfile(firebaseUid, (profile) => {
+            if (profile) {
+                console.log('[AuthContext] User profile updated:', profile.name, 'coins:', profile.coins);
+                setUser(profile);
+            }
+        });
+
+        return () => {
+            console.log('[AuthContext] Unsubscribing from user profile');
+            unsubscribe();
+        };
+    }, [firebaseUid, isDemo]);
+
+    // Subscribe to DemoManager updates for demo mode
     useEffect(() => {
         if (!isDemo) return;
 
         console.log('[AuthContext] Subscribing to DemoManager updates');
 
-        // Subscribe to DemoManager changes
         const unsubscribe = DemoManager.subscribe((updatedUser) => {
             console.log('[AuthContext] Received update from DemoManager:', updatedUser.name);
             setUser({ ...updatedUser });
@@ -112,7 +137,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const logout = async () => {
         if (isDemo) {
-            // Logout from demo mode
             localStorage.removeItem('isDemoMode');
             setIsDemo(false);
             setUser(null);
@@ -126,15 +150,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (!user) return;
 
         if (isDemo) {
-            // Update DemoManager
             DemoManager.adminUpdateUser(data);
-            // User will be updated via subscription
         } else {
             try {
-                // Merge update into Firestore
-                await DBService.createUserProfile({ ...user, ...data });
-                // Update local state
-                setUser(prev => prev ? { ...prev, ...data } : null);
+                await DBService.updateUserProfile(user.uid, data);
+                // Profile will be updated via real-time subscription
             } catch (e) {
                 console.error("Error updating profile", e);
                 throw e;

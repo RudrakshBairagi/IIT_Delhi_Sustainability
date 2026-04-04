@@ -48,7 +48,7 @@ export default function RecyclePage() {
             {/* Header */}
             <header className="px-5 pt-6 pb-4 flex items-center gap-4">
                 <Link
-                    href="/scanner/result"
+                    href="/scanner/results"
                     className="w-10 h-10 flex items-center justify-center bg-white dark:bg-dark-surface rounded-xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm"
                 >
                     <span className="material-symbols-outlined text-dark dark:text-white">arrow_back</span>

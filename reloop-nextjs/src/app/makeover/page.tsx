@@ -115,7 +115,7 @@ export default function MakeoverPage() {
 
     return (
         <div className="min-h-screen bg-background">
-            <PageHeader title="Art Makeover" backHref="/scanner/result" />
+            <PageHeader title="Art Makeover" backHref="/scanner/results" />
 
             <motion.div
                 className="px-5 pb-28 space-y-4"
