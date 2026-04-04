@@ -6,7 +6,7 @@ import { useState } from 'react';
 import VideoModal from '@/components/ui/VideoModal';
 
 const trendingCreators = [
-    { id: '1', username: '@ANKUSH', image: '/images/ankush.png', border: 'border-[#29664c]' },
+    { id: '1', username: '@RUDRAKSH', image: 'https://ui-avatars.com/api/?name=Rudraksh&background=random', border: 'border-[#29664c]' },
     { id: '2', username: '@UNNATI', image: '/images/unnati.png', border: 'border-[#006946]' },
     { id: '3', username: '@URANSH', image: '/images/uransh.png', border: 'border-[#29664c]' },
     { id: '4', username: '@RUDRAKSH', image: '/images/rudraksh.png', border: 'border-[#006946]' },
@@ -16,8 +16,8 @@ const projects = [
     {
         id: 'new-pista',
         title: 'DIY BOTTLE PAINTING',
-        author: '@ANKUSH',
-        authorImage: '/images/ankush.png',
+        author: '@RUDRAKSH',
+        authorImage: 'https://ui-avatars.com/api/?name=Rudraksh&background=random',
         image: '/videos/thumb-pista.png',
         time: 'Just now',
         videoId: 'pista-tulip',
@@ -26,8 +26,8 @@ const projects = [
     {
         id: '4',
         title: 'CARDBOARD BANGLE BOX',
-        author: '@ANKUSH',
-        authorImage: '/images/ankush.png',
+        author: '@RUDRAKSH',
+        authorImage: 'https://ui-avatars.com/api/?name=Rudraksh&background=random',
         image: '/videos/thumb-2.png',
         time: '#Tulip',
         videoId: 'DTc9Um6EUJO',

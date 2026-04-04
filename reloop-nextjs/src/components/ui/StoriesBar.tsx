@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 const STORIES = [
-    { id: '4', name: 'Ankush', image: '/images/ankush.png', hasStory: true },
+    { id: '4', name: 'Rudraksh', image: 'https://ui-avatars.com/api/?name=Rudraksh&background=random', hasStory: true },
     { id: '1', name: 'Unnati', image: '/images/unnati.png', hasStory: true },
     { id: '2', name: 'Uransh', image: '/images/uransh.png', hasStory: true },
     { id: '3', name: 'Rudraksh', image: '/images/rudraksh.png', hasStory: true },

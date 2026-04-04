@@ -77,7 +77,7 @@
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/Ankush-Jha/reloop-webapp.git
+git clone https://github.com/RudrakshBairagi/IIT_Delhi_Sustainability.git
 cd reloop-webapp
 
 # 2. Setup Firebase Config
@@ -112,14 +112,7 @@ reloop/
 
 ---
 
-## 👨‍💻 Built By
 
-**Ankush Jha**  
-GitHub: [@Ankush-Jha](https://github.com/Ankush-Jha)
-**Unnati Asthana**  
-**Uransh**  
-**Rudraksh Bairagi**  
----
 
 ## 📄 License
 

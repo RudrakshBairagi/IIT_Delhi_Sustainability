@@ -4,7 +4,7 @@ import os
 
 # Default to local postgres if not specified
 # Ensure you create a database named 'reloop' in your postgres instance
-SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://ankushjha@localhost/reloop")
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://rudrakshbairagi@localhost/reloop")
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
