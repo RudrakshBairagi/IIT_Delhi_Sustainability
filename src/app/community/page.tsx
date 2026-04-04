@@ -78,11 +78,11 @@ export default function CommunityPage() {
             />
 
             {/* Header */}
-            <header className="w-full sticky top-0 z-50 bg-[#f9f6f1]/80 backdrop-blur-xl shadow-[0_40px_64px_-10px_rgba(41,48,47,0.06)]">
+            <header className="w-full sticky top-0 z-50 bg-[#f9f6f1]/80 backdrop-blur-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
                 <div className="flex justify-between items-center px-6 py-4 w-full">
                     <div className="flex items-center gap-2">
                         <span className="material-symbols-outlined text-[#29664c]">eco</span>
-                        <h1 className="text-2xl font-black text-[#29664c] uppercase tracking-widest font-['Plus_Jakarta_Sans']">RELOOP</h1>
+                        <h1 className="text-2xl font-extrabold text-[#29664c] uppercase tracking-widest font-['Plus_Jakarta_Sans']">RELOOP</h1>
                     </div>
                     <div className="flex items-center gap-2 bg-[#b9f9d6]/40 px-4 py-2 rounded-full cursor-pointer active:scale-95 duration-200">
                         <span className="material-symbols-outlined text-[#29664c] text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>payments</span>
@@ -160,7 +160,7 @@ export default function CommunityPage() {
                                         alt={project.title}
                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                     />
-                                    <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter text-[#29664c]">
+                                    <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-tighter text-[#29664c]">
                                         {project.time}
                                     </span>
                                 </div>

@@ -96,7 +96,7 @@ export default function SearchPage() {
                     </div>
                     <button
                         onClick={() => setShowFilters(true)}
-                        className="w-12 h-12 bg-white dark:bg-dark-surface rounded-xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm flex items-center justify-center active:scale-95 transition-transform"
+                        className="w-12 h-12 bg-white dark:bg-dark-surface rounded-xl border border-outline-variant/10 dark:border-gray-600 shadow-sm flex items-center justify-center active:scale-95 transition-transform"
                     >
                         <span className="material-symbols-outlined text-dark dark:text-white">tune</span>
                     </button>
@@ -116,7 +116,7 @@ export default function SearchPage() {
                                     <button
                                         key={term}
                                         onClick={() => setQuery(term)}
-                                        className="px-4 py-2 bg-white dark:bg-dark-surface rounded-full border-2 border-dark dark:border-gray-600 text-sm font-bold text-dark dark:text-white hover:bg-gray-50 dark:bg-dark-bg transition-colors flex items-center gap-2"
+                                        className="px-4 py-2 bg-white dark:bg-dark-surface rounded-full border border-outline-variant/10 dark:border-gray-600 text-sm font-bold text-dark dark:text-white hover:bg-gray-50 dark:bg-dark-bg transition-colors flex items-center gap-2"
                                     >
                                         <span className="material-symbols-outlined text-sm text-dark/40 dark:text-white/40">history</span>
                                         {term}
@@ -130,13 +130,13 @@ export default function SearchPage() {
                             <p className="text-sm font-bold text-dark/60 dark:text-white/60 mb-3">Trending Categories</p>
                             <div className="grid grid-cols-2 gap-3">
                                 {TRENDING.map((cat, i) => {
-                                    const colors = ['bg-card-green', 'bg-card-yellow', 'bg-card-pink', 'bg-card-blue'];
+                                    const colors = ['bg-surface-container-low', 'bg-surface-container-low', 'bg-card-pink', 'bg-card-blue'];
                                     const icons = ['devices', 'menu_book', 'checkroom', 'chair'];
                                     return (
                                         <button
                                             key={cat}
                                             onClick={() => setQuery(cat)}
-                                            className={`${colors[i]} rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm p-4 flex items-center gap-3 hover:-translate-y-1 transition-transform`}
+                                            className={`${colors[i]} rounded-2xl border border-outline-variant/10 dark:border-gray-600 shadow-sm p-4 flex items-center gap-3 hover:-translate-y-1 transition-transform`}
                                         >
                                             <span className="material-symbols-outlined text-2xl text-dark dark:text-white">{icons[i]}</span>
                                             <span className="font-bold text-dark dark:text-white text-sm">{cat}</span>
@@ -158,8 +158,8 @@ export default function SearchPage() {
                             {results.map((listing) => (
                                 <motion.div key={listing.id} variants={itemVariants}>
                                     <Link href={`/marketplace/${listing.id}`}>
-                                        <div className="bg-white dark:bg-dark-surface rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm p-4 flex items-center gap-4 hover:-translate-y-1 transition-transform">
-                                            <div className="w-16 h-16 rounded-xl border-2 border-dark dark:border-gray-600 overflow-hidden bg-gray-100 dark:bg-dark-surface shrink-0">
+                                        <div className="bg-white dark:bg-dark-surface rounded-2xl border border-outline-variant/10 dark:border-gray-600 shadow-sm p-4 flex items-center gap-4 hover:-translate-y-1 transition-transform">
+                                            <div className="w-16 h-16 rounded-xl border border-outline-variant/10 dark:border-gray-600 overflow-hidden bg-gray-100 dark:bg-dark-surface shrink-0">
                                                 <img src={listing.images[0]} alt={listing.title} className="w-full h-full object-cover" />
                                             </div>
                                             <div className="flex-1 min-w-0">
@@ -194,10 +194,10 @@ export default function SearchPage() {
                             animate={{ y: 0 }}
                             exit={{ y: '100%' }}
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="bg-white dark:bg-dark-surface w-full max-w-md rounded-t-3xl sm:rounded-3xl border-t-2 sm:border-2 border-dark shadow-brutal p-6"
+                            className="bg-white dark:bg-dark-surface w-full max-w-md rounded-t-3xl sm:rounded-3xl border-t-2 sm:border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] p-6"
                         >
                             <div className="flex items-center justify-between mb-6">
-                                <h3 className="text-xl font-black text-dark dark:text-white">Filters</h3>
+                                <h3 className="text-xl font-extrabold text-dark dark:text-white">Filters</h3>
                                 <button onClick={() => setShowFilters(false)} className="p-2 -mr-2">
                                     <span className="material-symbols-outlined">close</span>
                                 </button>
@@ -210,7 +210,7 @@ export default function SearchPage() {
                                         {['Newest', 'Price: Low to High', 'Price: High to Low'].map((opt) => (
                                             <button
                                                 key={opt}
-                                                className={`px-3 py-2 rounded-lg text-xs font-bold border-2 ${activeFilters.sortBy === opt.toLowerCase() ? 'bg-primary border-dark text-dark' : 'bg-gray-100 dark:bg-dark-bg border-transparent text-gray-500'}`}
+                                                className={`px-3 py-2 rounded-lg text-xs font-bold border-2 ${activeFilters.sortBy === opt.toLowerCase() ? 'bg-primary border-outline-variant/20 text-dark' : 'bg-gray-100 dark:bg-dark-bg border-transparent text-gray-500'}`}
                                                 onClick={() => setActiveFilters({ ...activeFilters, sortBy: opt.toLowerCase() })}
                                             >
                                                 {opt}
@@ -225,7 +225,7 @@ export default function SearchPage() {
                                         {['Any', 'New', 'Like New', 'Good', 'Fair'].map((opt) => (
                                             <button
                                                 key={opt}
-                                                className={`px-3 py-2 rounded-lg text-xs font-bold border-2 ${activeFilters.condition === opt.toLowerCase() ? 'bg-primary border-dark text-dark' : 'bg-gray-100 dark:bg-dark-bg border-transparent text-gray-500'}`}
+                                                className={`px-3 py-2 rounded-lg text-xs font-bold border-2 ${activeFilters.condition === opt.toLowerCase() ? 'bg-primary border-outline-variant/20 text-dark' : 'bg-gray-100 dark:bg-dark-bg border-transparent text-gray-500'}`}
                                                 onClick={() => setActiveFilters({ ...activeFilters, condition: opt.toLowerCase() })}
                                             >
                                                 {opt}
@@ -236,7 +236,7 @@ export default function SearchPage() {
 
                                 <button
                                     onClick={() => setShowFilters(false)}
-                                    className="w-full py-4 bg-dark text-white rounded-xl font-bold uppercase tracking-wide shadow-brutal active:scale-95 transition-transform"
+                                    className="w-full py-4 bg-dark text-white rounded-xl font-bold uppercase tracking-wide shadow-[0_2px_10px_rgba(0,0,0,0.02)] active:scale-95 transition-transform"
                                 >
                                     Apply Filters
                                 </button>

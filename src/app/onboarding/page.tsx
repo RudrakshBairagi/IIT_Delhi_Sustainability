@@ -9,14 +9,14 @@ const SLIDES = [
         title: 'Scan & Discover',
         description: 'Point your camera at any item to get AI-powered upcycling ideas and earn eco-coins.',
         icon: 'photo_camera',
-        color: 'bg-card-green',
+        color: 'bg-surface-container-low',
         bgGradient: 'from-green-100 to-green-50',
     },
     {
         title: 'Trade & Swap',
         description: 'List items you no longer need and trade with fellow students on campus.',
         icon: 'swap_horiz',
-        color: 'bg-card-yellow',
+        color: 'bg-surface-container-low',
         bgGradient: 'from-yellow-100 to-yellow-50',
     },
     {
@@ -71,7 +71,7 @@ export default function OnboardingPage() {
                         transition={{ type: 'spring' as const, stiffness: 300, damping: 30 }}
                         className="text-center"
                     >
-                        <div className={`w-32 h-32 ${slide.color} rounded-[2.5rem] border-[3px] border-dark dark:border-gray-600 shadow-brutal mx-auto flex items-center justify-center mb-8`}>
+                        <div className={`w-32 h-32 ${slide.color} rounded-[2.5rem] border border-outline-variant/10 dark:border-gray-600 shadow-[0_2px_10px_rgba(0,0,0,0.02)] mx-auto flex items-center justify-center mb-8`}>
                             <span className="material-symbols-outlined text-6xl text-dark dark:text-white">{slide.icon}</span>
                         </div>
                         <h2 className="text-4xl font-[900] text-dark dark:text-white tracking-tight mb-4 uppercase">
@@ -92,7 +92,7 @@ export default function OnboardingPage() {
                         <button
                             key={i}
                             onClick={() => setCurrent(i)}
-                            className={`h-3 rounded-full border-2 border-dark dark:border-gray-600 transition-all ${i === current ? 'w-10 bg-primary' : 'w-3 bg-white dark:bg-dark-surface'
+                            className={`h-3 rounded-full border border-outline-variant/10 dark:border-gray-600 transition-all ${i === current ? 'w-10 bg-primary' : 'w-3 bg-white dark:bg-dark-surface'
                                 }`}
                         />
                     ))}
@@ -101,7 +101,7 @@ export default function OnboardingPage() {
                 {/* CTA */}
                 <button
                     onClick={next}
-                    className="w-full bg-dark text-white py-5 rounded-2xl font-[900] text-lg uppercase tracking-wider shadow-brutal active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-3"
+                    className="w-full bg-dark text-white py-5 rounded-2xl font-[900] text-lg uppercase tracking-wider shadow-[0_2px_10px_rgba(0,0,0,0.02)] active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-3"
                 >
                     {current === SLIDES.length - 1 ? 'Get Started' : 'Next'}
                     <span className="material-symbols-outlined">arrow_forward</span>

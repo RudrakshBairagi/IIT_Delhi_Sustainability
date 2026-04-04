@@ -86,7 +86,7 @@ export function QRCodeMessage({ type, qrData, isOwn, timestamp }: QRCodeMessageP
                 <div className="text-center">
                     <p className="font-bold text-dark dark:text-white">{qrData.listingTitle}</p>
                     {qrData.amount && (
-                        <p className="text-primary font-black text-lg mt-1">
+                        <p className="text-primary font-extrabold text-lg mt-1">
                             🪙 {qrData.amount} coins
                         </p>
                     )}

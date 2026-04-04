@@ -128,12 +128,12 @@ export default function WorkerCollectPage() {
     return (
         <div className="min-h-screen bg-background flex flex-col">
             {/* Header */}
-            <div className="bg-dark text-white px-5 py-4 border-b-4 border-dark-surface">
+            <div className="bg-dark text-white px-5 py-4 border-b-4 border-outline-variant/20-surface">
                 <button onClick={() => router.back()} className="flex items-center gap-2 mb-2">
                     <span className="material-symbols-outlined">arrow_back</span>
                     <span className="font-bold">Back</span>
                 </button>
-                <h1 className="text-2xl font-black">Worker Collection</h1>
+                <h1 className="text-2xl font-extrabold">Worker Collection</h1>
                 <p className="text-sm text-white/70 mt-1">Scan, weigh, and process smart bags</p>
             </div>
 
@@ -148,7 +148,7 @@ export default function WorkerCollectPage() {
                             exit={{ opacity: 0, y: -20 }}
                             className="w-full max-w-md text-center"
                         >
-                            <div className="w-full aspect-square bg-dark rounded-3xl border-4 border-dark shadow-brutal mb-6 flex items-center justify-center relative overflow-hidden">
+                            <div className="w-full aspect-square bg-dark rounded-3xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] mb-6 flex items-center justify-center relative overflow-hidden">
                                 <motion.div
                                     animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.8, 0.5] }}
                                     transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
@@ -156,7 +156,7 @@ export default function WorkerCollectPage() {
                                 />
                             </div>
 
-                            <p className="text-lg font-black text-dark dark:text-white mb-2">
+                            <p className="text-lg font-extrabold text-dark dark:text-white mb-2">
                                 {scanning ? 'Scanning QR...' : 'Scan Bag QR Code'}
                             </p>
                             <p className="text-sm text-dark/60 dark:text-white/60 mb-6 max-w-xs mx-auto">
@@ -166,7 +166,7 @@ export default function WorkerCollectPage() {
                             <button
                                 onClick={handleScan}
                                 disabled={scanning}
-                                className="w-full bg-green-500 text-white font-black py-4 rounded-2xl border-2 border-dark shadow-brutal flex items-center justify-center gap-2 active:translate-y-0.5 transition-transform disabled:opacity-50"
+                                className="w-full bg-green-500 text-white font-extrabold py-4 rounded-2xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex items-center justify-center gap-2 active:translate-y-0.5 transition-transform disabled:opacity-50"
                             >
                                 <span className="material-symbols-outlined">qr_code_scanner</span>
                                 {scanning ? 'Scanning...' : 'Scan QR Code'}
@@ -183,13 +183,13 @@ export default function WorkerCollectPage() {
                             exit={{ opacity: 0, y: -20 }}
                             className="w-full max-w-md"
                         >
-                            <div className="bg-white dark:bg-dark-surface rounded-2xl border-3 border-dark shadow-brutal p-6 mb-6">
+                            <div className="bg-white dark:bg-dark-surface rounded-2xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] p-6 mb-6">
                                 <div className="flex items-center gap-3 mb-4">
                                     <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
                                         <span className="material-symbols-outlined text-white" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
                                     </div>
                                     <div className="flex-1">
-                                        <p className="font-black text-dark dark:text-white">Bag Identified</p>
+                                        <p className="font-extrabold text-dark dark:text-white">Bag Identified</p>
                                         <p className="text-sm text-dark/60 dark:text-white/60">{scannedBag.qrCode || scannedBag.id}</p>
                                     </div>
                                 </div>
@@ -201,7 +201,7 @@ export default function WorkerCollectPage() {
 
                             <div className="text-center mb-6">
                                 <span className="material-symbols-outlined text-8xl mb-4">monitor_weight</span>
-                                <p className="text-lg font-black text-dark dark:text-white mb-2">Enter Weight</p>
+                                <p className="text-lg font-extrabold text-dark dark:text-white mb-2">Enter Weight</p>
                                 <p className="text-sm text-dark/60 dark:text-white/60">Weigh the bag and input the weight</p>
                             </div>
 
@@ -212,7 +212,7 @@ export default function WorkerCollectPage() {
                                     value={weight}
                                     onChange={(e) => setWeight(e.target.value)}
                                     placeholder="0.0"
-                                    className="w-full text-4xl font-black text-center bg-white dark:bg-dark-surface border-3 border-dark rounded-2xl py-6 px-4 shadow-brutal focus:ring-4 focus:ring-green-200 dark:text-white"
+                                    className="w-full text-4xl font-extrabold text-center bg-white dark:bg-dark-surface border border-outline-variant/10 rounded-2xl py-6 px-4 shadow-[0_2px_10px_rgba(0,0,0,0.02)] focus:ring-4 focus:ring-green-200 dark:text-white"
                                 />
                                 <div className="absolute right-6 top-1/2 -translate-y-1/2 text-2xl font-bold text-dark/40 dark:text-white/40">kg</div>
                             </div>
@@ -221,14 +221,14 @@ export default function WorkerCollectPage() {
                                 <button
                                     onClick={handleWeighSubmit}
                                     disabled={!weight || parseFloat(weight) <= 0}
-                                    className="w-full bg-green-500 text-white font-black py-4 rounded-2xl border-2 border-dark shadow-brutal flex items-center justify-center gap-2 active:translate-y-0.5 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-full bg-green-500 text-white font-extrabold py-4 rounded-2xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex items-center justify-center gap-2 active:translate-y-0.5 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     <span className="material-symbols-outlined">arrow_forward</span>
                                     Continue
                                 </button>
                                 <button
                                     onClick={resetFlow}
-                                    className="w-full bg-white dark:bg-dark-surface text-dark dark:text-white font-bold py-3 rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm"
+                                    className="w-full bg-white dark:bg-dark-surface text-dark dark:text-white font-bold py-3 rounded-2xl border border-outline-variant/10 dark:border-gray-600 shadow-sm"
                                 >
                                     Cancel
                                 </button>
@@ -245,12 +245,12 @@ export default function WorkerCollectPage() {
                             exit={{ opacity: 0, y: -20 }}
                             className="w-full max-w-md"
                         >
-                            <div className="bg-gradient-to-br from-green-400 to-emerald-500 rounded-3xl border-4 border-dark shadow-brutal p-6 mb-6 text-center">
+                            <div className="bg-gradient-to-br from-green-400 to-emerald-500 rounded-3xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] p-6 mb-6 text-center">
                                 <span className="material-symbols-outlined text-7xl text-dark mb-2" style={{ fontVariationSettings: "'FILL' 1" }}>shopping_bag</span>
-                                <p className="text-sm font-black uppercase text-dark/70 tracking-wider">Confirm Collection</p>
+                                <p className="text-sm font-extrabold uppercase text-dark/70 tracking-wider">Confirm Collection</p>
                             </div>
 
-                            <div className="bg-white dark:bg-dark-surface rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm p-6 mb-6 space-y-4">
+                            <div className="bg-white dark:bg-dark-surface rounded-2xl border border-outline-variant/10 dark:border-gray-600 shadow-sm p-6 mb-6 space-y-4">
                                 <div className="flex justify-between">
                                     <span className="text-sm text-dark/60 dark:text-white/60">Bag QR</span>
                                     <span className="text-sm font-bold text-dark dark:text-white">{scannedBag.qrCode || scannedBag.id}</span>
@@ -265,7 +265,7 @@ export default function WorkerCollectPage() {
                                 </div>
                                 <div className="flex justify-between items-center pt-4 border-t-2 border-dashed border-dark/10">
                                     <span className="text-sm text-dark/60 dark:text-white/60">Coins to Award</span>
-                                    <span className="text-3xl font-black text-green-600 dark:text-green-400">+{Math.floor(parseFloat(weight) * 10)}</span>
+                                    <span className="text-3xl font-extrabold text-green-600 dark:text-green-400">+{Math.floor(parseFloat(weight) * 10)}</span>
                                 </div>
                             </div>
 
@@ -273,14 +273,14 @@ export default function WorkerCollectPage() {
                                 <button
                                     onClick={handleConfirm}
                                     disabled={confirming}
-                                    className="w-full bg-dark text-white font-black py-4 rounded-2xl border-2 border-dark shadow-brutal flex items-center justify-center gap-2 active:translate-y-0.5 transition-transform"
+                                    className="w-full bg-dark text-white font-extrabold py-4 rounded-2xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex items-center justify-center gap-2 active:translate-y-0.5 transition-transform"
                                 >
                                     <span className="material-symbols-outlined">check_circle</span>
                                     {confirming ? 'Processing...' : 'Confirm Collection'}
                                 </button>
                                 <button
                                     onClick={() => setStep('weigh')}
-                                    className="w-full bg-white dark:bg-dark-surface text-dark dark:text-white font-bold py-3 rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm"
+                                    className="w-full bg-white dark:bg-dark-surface text-dark dark:text-white font-bold py-3 rounded-2xl border border-outline-variant/10 dark:border-gray-600 shadow-sm"
                                 >
                                     Edit Weight
                                 </button>
@@ -300,31 +300,31 @@ export default function WorkerCollectPage() {
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1 }}
                                 transition={{ type: 'spring', delay: 0.2 }}
-                                className="w-32 h-32 bg-green-500 rounded-full border-4 border-dark shadow-brutal flex items-center justify-center mb-6 mx-auto"
+                                className="w-32 h-32 bg-green-500 rounded-full border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex items-center justify-center mb-6 mx-auto"
                             >
                                 <span className="material-symbols-outlined text-white text-7xl" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
                             </motion.div>
 
-                            <h1 className="text-3xl font-black text-dark dark:text-white mb-2">Collected!</h1>
+                            <h1 className="text-3xl font-extrabold text-dark dark:text-white mb-2">Collected!</h1>
                             <p className="text-dark/70 dark:text-white/70 mb-6">Bag processed successfully</p>
 
-                            <div className="bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl border-3 border-dark shadow-brutal p-6 mb-6">
-                                <p className="text-sm font-black uppercase text-dark/70 tracking-wider mb-1">Coins Awarded</p>
-                                <p className="text-6xl font-black text-dark">+{coinsAwarded}</p>
+                            <div className="bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] p-6 mb-6">
+                                <p className="text-sm font-extrabold uppercase text-dark/70 tracking-wider mb-1">Coins Awarded</p>
+                                <p className="text-6xl font-extrabold text-dark">+{coinsAwarded}</p>
                                 <p className="text-sm font-bold text-dark/70 mt-2">to {scannedBag.ownerName || 'User'}</p>
                             </div>
 
                             <div className="space-y-3">
                                 <button
                                     onClick={resetFlow}
-                                    className="w-full bg-dark text-white font-black py-4 rounded-2xl border-2 border-dark shadow-brutal flex items-center justify-center gap-2"
+                                    className="w-full bg-dark text-white font-extrabold py-4 rounded-2xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex items-center justify-center gap-2"
                                 >
                                     <span className="material-symbols-outlined">qr_code_scanner</span>
                                     Scan Next Bag
                                 </button>
                                 <button
                                     onClick={() => router.push('/smart-bags')}
-                                    className="w-full bg-white dark:bg-dark-surface text-dark dark:text-white font-bold py-3 rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm"
+                                    className="w-full bg-white dark:bg-dark-surface text-dark dark:text-white font-bold py-3 rounded-2xl border border-outline-variant/10 dark:border-gray-600 shadow-sm"
                                 >
                                     View All Bags
                                 </button>

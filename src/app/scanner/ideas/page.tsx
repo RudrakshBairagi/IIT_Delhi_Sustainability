@@ -91,7 +91,7 @@ export default function ReuseIdeasPage() {
     return (
         <div className="bg-[#f1f8f6] font-body text-[#29302f] antialiased min-h-screen pb-32">
             {/* TopAppBar */}
-            <header className="flex items-center justify-between px-6 py-4 w-full fixed top-0 z-50 bg-[#f1f8f6]/80 backdrop-blur-3xl shadow-[0_40px_64px_-10px_rgba(41,48,47,0.06)]">
+            <header className="flex items-center justify-between px-6 py-4 w-full fixed top-0 z-50 bg-[#f1f8f6]/80 backdrop-blur-3xl shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
                 <div className="flex items-center gap-4">
                     <button onClick={() => router.back()} className="text-[#29664c] hover:opacity-80 transition-opacity active:scale-95 duration-200">
                         <span className="material-symbols-outlined" style={{ fontSize: 28 }}>arrow_back</span>
@@ -129,7 +129,7 @@ export default function ReuseIdeasPage() {
                 <motion.section 
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-[#ffffff] rounded-xl p-6 shadow-[0_40px_64px_-10px_rgba(41,48,47,0.06)] border border-white/20"
+                    className="bg-[#ffffff] rounded-xl p-6 shadow-[0_4px_12px_rgba(0,0,0,0.04)] border border-white/20"
                 >
                     <div className="flex items-start gap-4 mb-6">
                         <div className="bg-[#b9f9d6] p-3 rounded-full text-[#246147]">

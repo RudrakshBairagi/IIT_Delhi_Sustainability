@@ -318,7 +318,7 @@ export function CreateListingWizard({ isOpen, onClose, onSuccess }: CreateListin
                             </span>
                         </button>
                         <div className="flex-1">
-                            <h1 className="text-lg font-black text-dark dark:text-white uppercase tracking-tight">
+                            <h1 className="text-lg font-extrabold text-dark dark:text-white uppercase tracking-tight">
                                 Create Listing
                             </h1>
                             {/* Progress Dots */}
@@ -360,12 +360,12 @@ export function CreateListingWizard({ isOpen, onClose, onSuccess }: CreateListin
 
                                 <div className="text-center mb-4">
                                     <span className="text-4xl">📸</span>
-                                    <h2 className="text-2xl font-black text-dark dark:text-white mt-2">Scan your item</h2>
+                                    <h2 className="text-2xl font-extrabold text-dark dark:text-white mt-2">Scan your item</h2>
                                     <p className="text-gray-500 text-sm mt-1">AI will identify it automatically</p>
                                 </div>
 
                                 {/* Camera Viewport */}
-                                <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden border-4 border-dark bg-dark mb-4">
+                                <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden border border-outline-variant/10 bg-dark mb-4">
 
                                     {/* Idle State */}
                                     {cameraState === 'idle' && (
@@ -376,7 +376,7 @@ export function CreateListingWizard({ isOpen, onClose, onSuccess }: CreateListin
                                             <p className="text-white/60 text-sm mb-4">Ready to scan</p>
                                             <button
                                                 onClick={requestCamera}
-                                                className="px-6 py-3 bg-primary text-dark font-bold rounded-full shadow-brutal-sm active:scale-95 transition-all"
+                                                className="px-6 py-3 bg-primary text-dark font-bold rounded-full shadow-sm active:scale-95 transition-all"
                                             >
                                                 Start Camera
                                             </button>
@@ -418,7 +418,7 @@ export function CreateListingWizard({ isOpen, onClose, onSuccess }: CreateListin
                                             <p className="text-white/60 text-sm text-center mb-4">Camera unavailable</p>
                                             <button
                                                 onClick={() => fileInputRef.current?.click()}
-                                                className="px-6 py-3 bg-primary text-dark font-bold rounded-full shadow-brutal-sm active:scale-95 transition-all"
+                                                className="px-6 py-3 bg-primary text-dark font-bold rounded-full shadow-sm active:scale-95 transition-all"
                                             >
                                                 Use Gallery
                                             </button>
@@ -454,7 +454,7 @@ export function CreateListingWizard({ isOpen, onClose, onSuccess }: CreateListin
                                 {cameraState === 'ready' && (
                                     <button
                                         onClick={capturePhoto}
-                                        className="w-full py-4 bg-primary text-dark font-black uppercase tracking-wide rounded-2xl shadow-brutal hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 mb-3"
+                                        className="w-full py-4 bg-primary text-dark font-extrabold uppercase tracking-wide rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 mb-3"
                                     >
                                         <span className="material-symbols-outlined">photo_camera</span>
                                         Capture
@@ -496,7 +496,7 @@ export function CreateListingWizard({ isOpen, onClose, onSuccess }: CreateListin
                                     <button
                                         onClick={handleNext}
                                         disabled={!formData.title}
-                                        className="w-full mt-4 py-4 bg-primary text-dark font-black uppercase tracking-wide rounded-2xl shadow-brutal hover:scale-[1.02] active:scale-95 disabled:opacity-40 disabled:scale-100 transition-all flex items-center justify-center gap-2"
+                                        className="w-full mt-4 py-4 bg-primary text-dark font-extrabold uppercase tracking-wide rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:scale-[1.02] active:scale-95 disabled:opacity-40 disabled:scale-100 transition-all flex items-center justify-center gap-2"
                                     >
                                         Next
                                         <span className="material-symbols-outlined">arrow_forward</span>
@@ -518,7 +518,7 @@ export function CreateListingWizard({ isOpen, onClose, onSuccess }: CreateListin
                             >
                                 <div className="text-center mb-6">
                                     <span className="text-4xl">📦</span>
-                                    <h2 className="text-2xl font-black text-dark dark:text-white mt-2">Tell us more!</h2>
+                                    <h2 className="text-2xl font-extrabold text-dark dark:text-white mt-2">Tell us more!</h2>
                                     <p className="text-gray-500 text-sm mt-1">Select category and condition</p>
                                 </div>
 
@@ -534,7 +534,7 @@ export function CreateListingWizard({ isOpen, onClose, onSuccess }: CreateListin
                                                 key={cat.id}
                                                 onClick={() => setFormData(prev => ({ ...prev, category: cat.id }))}
                                                 className={`p-3 rounded-xl border-2 flex flex-col items-center gap-1 transition-all ${formData.category === cat.id
-                                                    ? 'bg-primary border-dark shadow-brutal-sm'
+                                                    ? 'bg-primary border-outline-variant/20 shadow-sm'
                                                     : 'bg-gray-50 dark:bg-dark-bg border-transparent hover:border-primary/50'
                                                     }`}
                                             >
@@ -557,7 +557,7 @@ export function CreateListingWizard({ isOpen, onClose, onSuccess }: CreateListin
                                                 key={cond}
                                                 onClick={() => setFormData(prev => ({ ...prev, condition: cond }))}
                                                 className={`px-4 py-2 rounded-full text-sm font-bold border-2 transition-all ${formData.condition === cond
-                                                    ? 'bg-dark border-dark text-white'
+                                                    ? 'bg-dark border-outline-variant/20 text-white'
                                                     : 'bg-white dark:bg-dark-bg border-gray-200 dark:border-gray-700 text-gray-500'
                                                     }`}
                                             >
@@ -570,7 +570,7 @@ export function CreateListingWizard({ isOpen, onClose, onSuccess }: CreateListin
                                 <button
                                     onClick={handleNext}
                                     disabled={!formData.category}
-                                    className="w-full py-4 bg-primary text-dark font-black uppercase tracking-wide rounded-2xl shadow-brutal hover:scale-[1.02] active:scale-95 disabled:opacity-40 disabled:scale-100 transition-all flex items-center justify-center gap-2"
+                                    className="w-full py-4 bg-primary text-dark font-extrabold uppercase tracking-wide rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:scale-[1.02] active:scale-95 disabled:opacity-40 disabled:scale-100 transition-all flex items-center justify-center gap-2"
                                 >
                                     Next
                                     <span className="material-symbols-outlined">arrow_forward</span>
@@ -591,7 +591,7 @@ export function CreateListingWizard({ isOpen, onClose, onSuccess }: CreateListin
                             >
                                 <div className="text-center mb-6">
                                     <span className="text-4xl">💰</span>
-                                    <h2 className="text-2xl font-black text-dark dark:text-white mt-2">Set your price!</h2>
+                                    <h2 className="text-2xl font-extrabold text-dark dark:text-white mt-2">Set your price!</h2>
                                     <p className="text-gray-500 text-sm mt-1">How many coins?</p>
                                 </div>
 
@@ -610,7 +610,7 @@ export function CreateListingWizard({ isOpen, onClose, onSuccess }: CreateListin
                                             placeholder="50"
                                             value={formData.price}
                                             onChange={e => setFormData(prev => ({ ...prev, price: e.target.value }))}
-                                            className={`w-full p-4 pl-14 rounded-2xl border-2 bg-gray-50 dark:bg-dark-bg focus:border-primary outline-none transition-all text-3xl font-black text-center ${aiSuggested ? 'border-primary/50' : 'border-gray-200 dark:border-gray-700'
+                                            className={`w-full p-4 pl-14 rounded-2xl border-2 bg-gray-50 dark:bg-dark-bg focus:border-primary outline-none transition-all text-3xl font-extrabold text-center ${aiSuggested ? 'border-primary/50' : 'border-gray-200 dark:border-gray-700'
                                                 }`}
                                         />
                                         {formData.price && (
@@ -644,7 +644,7 @@ export function CreateListingWizard({ isOpen, onClose, onSuccess }: CreateListin
                                         <p className="text-xs text-gray-500">{CATEGORIES.find(c => c.id === formData.category)?.label} • {formData.condition}</p>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-xl font-black text-primary">🪙 {formData.price || '0'}</p>
+                                        <p className="text-xl font-extrabold text-primary">🪙 {formData.price || '0'}</p>
                                         <p className="text-xs text-gray-500">{formatRupeeValue(parseFloat(formData.price) || 0)}</p>
                                     </div>
                                 </div>
@@ -652,10 +652,10 @@ export function CreateListingWizard({ isOpen, onClose, onSuccess }: CreateListin
                                 <button
                                     onClick={handleSubmit}
                                     disabled={!formData.price || isSubmitting}
-                                    className="w-full py-4 bg-gradient-to-r from-primary to-green-400 text-dark font-black uppercase tracking-wide rounded-2xl shadow-brutal hover:scale-[1.02] active:scale-95 disabled:opacity-40 disabled:scale-100 transition-all flex items-center justify-center gap-2"
+                                    className="w-full py-4 bg-gradient-to-r from-primary to-green-400 text-dark font-extrabold uppercase tracking-wide rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:scale-[1.02] active:scale-95 disabled:opacity-40 disabled:scale-100 transition-all flex items-center justify-center gap-2"
                                 >
                                     {isSubmitting ? (
-                                        <span className="w-5 h-5 border-2 border-dark/30 border-t-dark rounded-full animate-spin" />
+                                        <span className="w-5 h-5 border border-outline-variant/10/30 border-t-dark rounded-full animate-spin" />
                                     ) : (
                                         <>
                                             <span className="material-symbols-outlined">check_circle</span>

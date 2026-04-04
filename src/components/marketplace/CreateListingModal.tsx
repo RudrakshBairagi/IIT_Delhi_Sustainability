@@ -113,7 +113,7 @@ export const CreateListingModal = ({ onClose, onSuccess }: CreateListingModalPro
                 initial={{ scale: 0.9, y: 20 }}
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.9, y: 20 }}
-                className="bg-white dark:bg-dark-surface w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl border-2 border-dark"
+                className="bg-white dark:bg-dark-surface w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl border border-outline-variant/10"
             >
                 {/* Header */}
                 <div className="p-5 border-b-2 border-gray-100 dark:border-gray-700 flex justify-between items-center">
@@ -213,7 +213,7 @@ export const CreateListingModal = ({ onClose, onSuccess }: CreateListingModalPro
                                         key={c}
                                         onClick={() => setFormData({ ...formData, condition: c })}
                                         className={`py-2 px-1 rounded-lg text-xs font-bold border-2 transition-all ${formData.condition === c
-                                            ? 'bg-primary border-dark text-dark'
+                                            ? 'bg-primary border-outline-variant/20 text-dark'
                                             : 'border-gray-200 text-gray-500 hover:border-primary/50'
                                             }`}
                                     >
@@ -252,10 +252,10 @@ export const CreateListingModal = ({ onClose, onSuccess }: CreateListingModalPro
                     <button
                         onClick={handleSubmit}
                         disabled={isSubmitting}
-                        className="flex-[2] py-3 bg-primary text-dark font-black uppercase tracking-wide rounded-xl shadow-brutal hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:active:scale-100 transition-all flex items-center justify-center gap-2"
+                        className="flex-[2] py-3 bg-primary text-dark font-extrabold uppercase tracking-wide rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:active:scale-100 transition-all flex items-center justify-center gap-2"
                     >
                         {isSubmitting ? (
-                            <div className="w-5 h-5 border-2 border-dark border-t-transparent rounded-full animate-spin" />
+                            <div className="w-5 h-5 border border-outline-variant/10 border-t-transparent rounded-full animate-spin" />
                         ) : (
                             <>
                                 <span>Post Listing</span>

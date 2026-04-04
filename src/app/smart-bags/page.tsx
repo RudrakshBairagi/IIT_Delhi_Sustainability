@@ -71,9 +71,9 @@ export default function SmartBagsPage() {
     };
 
     return (
-        <div className="text-on-surface min-h-screen pb-32 bg-warm-sand font-['Plus_Jakarta_Sans']">
+        <div className="text-on-surface min-h-screen pb-32 bg-surface font-['Plus_Jakarta_Sans']">
             {/* TopAppBar Shell */}
-            <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-4 backdrop-blur-xl shadow-[0_40px_64px_-10px_rgba(41,48,47,0.06)] bg-[#f9f6f1]/80">
+            <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-4 backdrop-blur-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] bg-[#f9f6f1]/80">
                 <Link href="/" className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full overflow-hidden bg-surface-container-highest">
                         <img 
@@ -121,7 +121,7 @@ export default function SmartBagsPage() {
                     variants={itemVariants}
                     initial="hidden"
                     animate="visible"
-                    className="relative overflow-hidden mb-8 rounded-xl p-8 shadow-[0_40px_64px_-10px_rgba(41,48,47,0.06)] border border-primary-container/10 bg-white group transition-transform duration-300"
+                    className="relative overflow-hidden mb-8 rounded-xl p-8 shadow-[0_4px_12px_rgba(0,0,0,0.04)] border border-primary-container/10 bg-white group transition-transform duration-300"
                 >
                     <div className="relative z-10">
                         <div className="flex items-start justify-between mb-12">
@@ -135,15 +135,15 @@ export default function SmartBagsPage() {
                         </div>
                         <div className="grid grid-cols-3 gap-4">
                             <div className="bg-surface-container-low p-4 rounded-[2rem] flex flex-col items-center justify-center aspect-square">
-                                <span className="text-2xl font-black text-primary">{activeBags.length}</span>
+                                <span className="text-2xl font-extrabold text-primary">{activeBags.length}</span>
                                 <span className="text-[10px] font-bold text-outline tracking-wider uppercase mt-1">Active</span>
                             </div>
                             <div className="bg-surface-container-low p-4 rounded-[2rem] flex flex-col items-center justify-center aspect-square">
-                                <span className="text-2xl font-black text-primary">{historyBags.length}</span>
+                                <span className="text-2xl font-extrabold text-primary">{historyBags.length}</span>
                                 <span className="text-[10px] font-bold text-outline tracking-wider uppercase mt-1">Done</span>
                             </div>
                             <div className="bg-primary p-4 rounded-[2rem] flex flex-col items-center justify-center aspect-square">
-                                <span className="text-2xl font-black text-on-primary">{totalCoins}</span>
+                                <span className="text-2xl font-extrabold text-on-primary">{totalCoins}</span>
                                 <span className="text-[10px] font-bold text-on-primary/70 tracking-wider uppercase mt-1">Coins</span>
                             </div>
                         </div>
@@ -255,21 +255,21 @@ export default function SmartBagsPage() {
                                             <span className="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-full">scale</span>
                                             <span className="font-bold text-sm text-on-surface-variant">Total Weight Recycled</span>
                                         </div>
-                                        <span className="font-black text-xl text-on-surface">{totalWeight.toFixed(1)} kg</span>
+                                        <span className="font-extrabold text-xl text-on-surface">{totalWeight.toFixed(1)} kg</span>
                                     </div>
                                     <div className="flex justify-between items-center py-3 border-b-2 border-dashed border-surface-container">
                                         <div className="flex items-center gap-3">
                                             <span className="material-symbols-outlined text-secondary bg-secondary/10 p-2 rounded-full">eco</span>
                                             <span className="font-bold text-sm text-on-surface-variant">CO₂ Saved</span>
                                         </div>
-                                        <span className="font-black text-xl text-secondary">{co2Saved} kg</span>
+                                        <span className="font-extrabold text-xl text-secondary">{co2Saved} kg</span>
                                     </div>
                                     <div className="flex justify-between items-center py-3">
                                         <div className="flex items-center gap-3">
                                             <span className="material-symbols-outlined text-terracotta bg-terracotta/10 p-2 rounded-full">monetization_on</span>
                                             <span className="font-bold text-sm text-on-surface-variant">Lifetime Coins Earned</span>
                                         </div>
-                                        <span className="font-black text-xl text-terracotta">{totalCoins}</span>
+                                        <span className="font-extrabold text-xl text-terracotta">{totalCoins}</span>
                                     </div>
                                 </div>
                             </>

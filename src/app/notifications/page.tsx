@@ -21,12 +21,12 @@ const itemVariants = {
 };
 
 const ICON_COLORS: Record<string, string> = {
-    trade: 'bg-card-yellow',
+    trade: 'bg-surface-container-low',
     achievement: 'bg-card-pink',
     system: 'bg-card-blue',
-    coin: 'bg-card-green',
+    coin: 'bg-surface-container-low',
     level: 'bg-primary',
-    bag_processed: 'bg-card-green',
+    bag_processed: 'bg-surface-container-low',
     message: 'bg-card-blue',
 };
 
@@ -154,14 +154,14 @@ export default function NotificationsPage() {
                                     <Wrapper {...wrapperProps as any}>
                                         <div
                                             onClick={() => !notif.read && handleMarkAsRead(notif.id)}
-                                            className={`rounded-2xl border-2 p-4 flex items-start gap-4 transition-all hover:-translate-y-0.5 cursor-pointer ${notif.read ? 'bg-white dark:bg-dark-surface border-gray-200 dark:border-gray-700' : 'bg-card-green border-dark dark:border-gray-600 shadow-brutal-sm'}`}
+                                            className={`rounded-2xl border-2 p-4 flex items-start gap-4 transition-all hover:-translate-y-0.5 cursor-pointer ${notif.read ? 'bg-white dark:bg-dark-surface border-gray-200 dark:border-gray-700' : 'bg-surface-container-low border-outline-variant/20 dark:border-gray-600 shadow-sm'}`}
                                         >
-                                            <div className={`w-12 h-12 ${ICON_COLORS[notif.type] || 'bg-gray-100 dark:bg-dark-surface'} rounded-xl border-2 border-dark dark:border-gray-600 flex items-center justify-center shrink-0`}>
+                                            <div className={`w-12 h-12 ${ICON_COLORS[notif.type] || 'bg-gray-100 dark:bg-dark-surface'} rounded-xl border border-outline-variant/10 dark:border-gray-600 flex items-center justify-center shrink-0`}>
                                                 <span className="material-symbols-outlined text-xl text-dark dark:text-white">{notif.icon}</span>
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-start justify-between gap-2">
-                                                    <p className={`font-bold text-dark dark:text-white text-sm ${!notif.read ? 'font-black' : ''}`}>{notif.title}</p>
+                                                    <p className={`font-bold text-dark dark:text-white text-sm ${!notif.read ? 'font-extrabold' : ''}`}>{notif.title}</p>
                                                     <span className="text-[10px] text-dark/40 dark:text-white/40 font-bold shrink-0">{timeAgo(notif.timestamp)}</span>
                                                 </div>
                                                 <p className="text-sm text-dark/60 dark:text-white/60 mt-0.5">{notif.message}</p>

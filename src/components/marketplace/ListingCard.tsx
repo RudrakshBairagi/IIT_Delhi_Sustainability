@@ -14,7 +14,7 @@ interface ListingCardProps {
 export function ListingCard({ listing, isOwner, onEdit, onDelete }: ListingCardProps) {
     return (
         <Link href={`/marketplace/${listing.id}`} className="block h-full">
-            <div className="bg-[#FAFAFA] rounded-2xl border-4 border-black shadow-[4px_4px_0px_0px_#000] overflow-hidden flex flex-col group active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all h-full">
+            <div className="bg-[#FAFAFA] rounded-2xl border-4 border-black shadow-sm hover:shadow-md overflow-hidden flex flex-col group active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all h-full">
                 {/* Image Container */}
                 <div className="aspect-square bg-white border-b-4 border-black relative flex items-center justify-center overflow-hidden">
                     <img
@@ -58,7 +58,7 @@ export function ListingCard({ listing, isOwner, onEdit, onDelete }: ListingCardP
                     </div>
                     {/* Price - Coins with Rupee equivalent */}
                     <div className="flex flex-col">
-                        <span className="font-black text-lg text-black">🪙 {listing.price}</span>
+                        <span className="font-extrabold text-lg text-black">🪙 {listing.price}</span>
                         <span className="text-xs text-gray-500 font-bold">{formatRupeeValue(listing.price)}</span>
                     </div>
                 </div>

@@ -60,7 +60,7 @@ export default function LeaderboardPage() {
         <div className="min-h-screen text-[#29302f] pb-32" style={{ backgroundColor: '#f1f8f6' }}>
 
             {/* Header */}
-            <header className="fixed top-0 w-full z-50 backdrop-blur-xl shadow-[0_40px_64px_-10px_rgba(41,48,47,0.06)] flex justify-between items-center px-6 h-16" style={{ backgroundColor: 'rgba(241,248,246,0.8)' }}>
+            <header className="fixed top-0 w-full z-50 backdrop-blur-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] flex justify-between items-center px-6 h-16" style={{ backgroundColor: 'rgba(241,248,246,0.8)' }}>
                 <div className="flex items-center gap-4">
                     <Link href="/" className="material-symbols-outlined text-[#29664c] cursor-pointer">menu</Link>
                     <h1 className="font-extrabold tracking-tighter text-2xl text-[#29302f]">Campus Leaderboard</h1>
@@ -127,7 +127,7 @@ export default function LeaderboardPage() {
                                         </div>
 
                                         {/* Podium Block */}
-                                        <div className={`${podiumBg[displayIdx]} w-full ${podiumHeights[displayIdx]} rounded-t-xl flex flex-col items-center justify-end pb-4 shadow-[0_40px_64px_-10px_rgba(41,48,47,0.06)] ${displayIdx === 1 ? 'border-t-4 border-[#29664c]/20' : ''}`}>
+                                        <div className={`${podiumBg[displayIdx]} w-full ${podiumHeights[displayIdx]} rounded-t-xl flex flex-col items-center justify-end pb-4 shadow-[0_4px_12px_rgba(0,0,0,0.04)] ${displayIdx === 1 ? 'border-t-4 border-[#29664c]/20' : ''}`}>
                                             <span className="font-bold text-[#29302f] text-sm">{leader.name}</span>
                                             <span className="text-[#29664c] font-extrabold text-xs">{leader.co2Saved} kg</span>
                                         </div>

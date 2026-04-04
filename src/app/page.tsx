@@ -62,7 +62,7 @@ export default function HomePage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-warm-sand flex items-center justify-center">
+      <div className="min-h-screen bg-surface flex items-center justify-center">
         <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     );
@@ -72,13 +72,13 @@ export default function HomePage() {
 
   return (
     <motion.div 
-      className="bg-warm-sand text-on-surface min-h-screen pb-32 font-['Plus_Jakarta_Sans']"
+      className="bg-surface text-on-surface min-h-screen pb-32 font-['Plus_Jakarta_Sans']"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
     >
       {/* TopAppBar */}
-      <motion.header variants={itemVariants} className="w-full sticky top-0 z-50 bg-[#f1f8f6]/80 backdrop-blur-xl flex justify-between items-center px-6 py-4 shadow-[0_40px_64px_-10px_rgba(41,48,47,0.06)]">
+      <motion.header variants={itemVariants} className="w-full sticky top-0 z-50 bg-[#f1f8f6]/80 backdrop-blur-xl flex justify-between items-center px-6 py-4 shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
         <div className="flex items-center gap-3">
           <span className="material-symbols-outlined text-[#29664c]" style={{ fontVariationSettings: "'FILL' 1" }}>eco</span>
           <h1 className="text-2xl font-extrabold tracking-tight text-[#29664c]">RELOOP</h1>
@@ -132,7 +132,7 @@ export default function HomePage() {
                   <span className="bg-on-terracotta text-terracotta px-4 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase">New Batch</span>
                 </div>
                 <div>
-                  <h2 className="text-4xl font-black leading-none mb-2">RECYCLE BAGS</h2>
+                  <h2 className="text-4xl font-extrabold leading-none mb-2">RECYCLE BAGS</h2>
                   <p className="text-on-terracotta/80 text-sm font-medium max-w-[200px]">Scan your smart bags to log your impact and earn coins.</p>
                 </div>
                 <button className="bg-on-terracotta text-terracotta py-4 rounded-xl font-bold uppercase tracking-widest text-xs transition-transform active:scale-95 w-full text-center">
@@ -186,7 +186,7 @@ export default function HomePage() {
                 <span className="text-[10px] font-bold uppercase tracking-widest">Campus Ranking</span>
               </div>
               <div className="space-y-1">
-                <p className="text-3xl font-black text-on-surface tracking-tighter">#{userRank}</p>
+                <p className="text-3xl font-extrabold text-on-surface tracking-tighter">#{userRank}</p>
                 <p className="text-[10px] font-bold text-outline uppercase tracking-tight">Top {percentile}% Student</p>
               </div>
             </div>
@@ -198,7 +198,7 @@ export default function HomePage() {
                 <span className="text-[10px] font-bold uppercase tracking-widest">CO2 Impact</span>
               </div>
               <div className="space-y-1">
-                <p className="text-3xl font-black text-primary tracking-tighter">{user.co2Saved}<span className="text-sm">kg</span></p>
+                <p className="text-3xl font-extrabold text-primary tracking-tighter">{user.co2Saved}<span className="text-sm">kg</span></p>
                 <p className="text-[10px] font-bold text-primary-dim uppercase tracking-tight">Offset this month</p>
               </div>
             </div>
@@ -213,25 +213,25 @@ export default function HomePage() {
               <div className="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center group-hover:bg-primary-container transition-colors">
                 <span className="material-symbols-outlined text-primary">recycling</span>
               </div>
-              <p className="font-black text-lg leading-tight uppercase tracking-tighter">Sorted<br/>Waste</p>
+              <p className="font-extrabold text-lg leading-tight uppercase tracking-tighter">Sorted<br/>Waste</p>
             </div>
             <div className="bg-white p-6 rounded-xl shadow-sm border border-outline-variant/10 space-y-4 group cursor-pointer transition-shadow hover:shadow-md">
               <div className="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center group-hover:bg-primary-container transition-colors">
                 <span className="material-symbols-outlined text-primary">local_drink</span>
               </div>
-              <p className="font-black text-lg leading-tight uppercase tracking-tighter">Zero<br/>Plastic</p>
+              <p className="font-extrabold text-lg leading-tight uppercase tracking-tighter">Zero<br/>Plastic</p>
             </div>
             <div className="bg-white p-6 rounded-xl shadow-sm border border-outline-variant/10 space-y-4 group cursor-pointer transition-shadow hover:shadow-md">
               <div className="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center group-hover:bg-primary-container transition-colors">
                 <span className="material-symbols-outlined text-primary">electric_bike</span>
               </div>
-              <p className="font-black text-lg leading-tight uppercase tracking-tighter">Green<br/>Travel</p>
+              <p className="font-extrabold text-lg leading-tight uppercase tracking-tighter">Green<br/>Travel</p>
             </div>
             <div className="bg-white p-6 rounded-xl shadow-sm border border-outline-variant/10 space-y-4 group cursor-pointer transition-shadow hover:shadow-md">
               <div className="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center group-hover:bg-primary-container transition-colors">
                 <span className="material-symbols-outlined text-primary">volunteer_activism</span>
               </div>
-              <p className="font-black text-lg leading-tight uppercase tracking-tighter">Donated<br/>Items</p>
+              <p className="font-extrabold text-lg leading-tight uppercase tracking-tighter">Donated<br/>Items</p>
             </div>
           </div>
         </motion.section>
@@ -239,7 +239,7 @@ export default function HomePage() {
         {/* Editorial Banner */}
         <motion.section variants={itemVariants} className="bg-surface-container-highest rounded-xl p-8 flex items-center justify-between overflow-hidden relative">
           <div className="relative z-10 space-y-2">
-            <h3 className="text-3xl font-black tracking-tighter leading-none text-on-surface">GREEN<br/>GUIDE 2024</h3>
+            <h3 className="text-3xl font-extrabold tracking-tighter leading-none text-on-surface">GREEN<br/>GUIDE 2024</h3>
             <p className="text-sm font-medium text-outline">The ultimate circular living guide.</p>
             <Link href="/guide" className="inline-block mt-4 text-xs font-bold border-b-2 border-primary text-primary py-1 uppercase tracking-widest">
               Read More

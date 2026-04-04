@@ -71,13 +71,13 @@ function NewConversationContent() {
     if (error) {
         return (
             <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
-                <div className="bg-white dark:bg-dark-surface rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal p-6 text-center max-w-sm">
+                <div className="bg-white dark:bg-dark-surface rounded-2xl border border-outline-variant/10 dark:border-gray-600 shadow-[0_2px_10px_rgba(0,0,0,0.02)] p-6 text-center max-w-sm">
                     <span className="material-symbols-outlined text-5xl text-red-500 mb-4">error</span>
                     <h2 className="text-xl font-bold text-dark dark:text-white mb-2">Oops!</h2>
                     <p className="text-gray-600 dark:text-gray-400 mb-4">{error}</p>
                     <button
                         onClick={() => router.back()}
-                        className="px-6 py-3 bg-primary text-dark font-bold rounded-xl border-2 border-dark shadow-brutal-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all"
+                        className="px-6 py-3 bg-primary text-dark font-bold rounded-xl border border-outline-variant/10 shadow-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all"
                     >
                         Go Back
                     </button>

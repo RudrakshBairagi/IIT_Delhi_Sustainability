@@ -89,29 +89,29 @@ function ReloopPointsContent() {
 
         return (
             <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 text-center">
-                <div className="w-28 h-28 bg-green-500 rounded-full border-4 border-dark shadow-brutal flex items-center justify-center mb-6">
+                <div className="w-28 h-28 bg-green-500 rounded-full border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex items-center justify-center mb-6">
                     <span className="material-symbols-outlined text-white text-6xl" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
                 </div>
-                <h1 className="text-2xl font-black text-dark dark:text-white mb-2">Item Dropped!</h1>
+                <h1 className="text-2xl font-extrabold text-dark dark:text-white mb-2">Item Dropped!</h1>
                 <p className="text-dark/70 dark:text-white/70 mb-6 text-sm max-w-xs">
                     Your item is now listed at {points.find(p => p.id === selectedPoint)?.name}
                 </p>
-                <div className="bg-card-yellow rounded-2xl border-2 border-dark shadow-brutal-sm p-4 mb-6 w-full max-w-xs">
+                <div className="bg-surface-container-low rounded-2xl border border-outline-variant/10 shadow-sm p-4 mb-6 w-full max-w-xs">
                     <p className="text-xs font-bold text-dark/70 mb-1">14-Day Liquidity Window</p>
-                    <p className="text-2xl font-black text-dark">{daysRemaining} days remaining</p>
+                    <p className="text-2xl font-extrabold text-dark">{daysRemaining} days remaining</p>
                     <p className="text-xs text-dark/50 mt-2">If unsold, you can recycle or donate it</p>
                 </div>
                 <div className="space-y-3 w-full max-w-xs">
                     <button
                         onClick={() => router.push('/my-listings')}
-                        className="w-full bg-dark text-white font-black py-4 rounded-2xl border-2 border-dark shadow-brutal flex items-center justify-center gap-2"
+                        className="w-full bg-dark text-white font-extrabold py-4 rounded-2xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex items-center justify-center gap-2"
                     >
                         <span className="material-symbols-outlined">list</span>
                         View My Listings
                     </button>
                     <button
                         onClick={() => router.push('/')}
-                        className="w-full bg-white dark:bg-dark-surface text-dark dark:text-white font-bold py-3 rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm"
+                        className="w-full bg-white dark:bg-dark-surface text-dark dark:text-white font-bold py-3 rounded-2xl border border-outline-variant/10 dark:border-gray-600 shadow-sm"
                     >
                         Go Home
                     </button>
@@ -131,7 +131,7 @@ function ReloopPointsContent() {
                 variants={{ visible: { transition: { staggerChildren: 0.08 } } }}
             >
                 {/* Item being dropped */}
-                <motion.div variants={itemVariants} className="bg-card-blue rounded-xl border-2 border-dark shadow-brutal-sm px-4 py-3 flex items-center gap-3">
+                <motion.div variants={itemVariants} className="bg-card-blue rounded-xl border border-outline-variant/10 shadow-sm px-4 py-3 flex items-center gap-3">
                     <span className="material-symbols-outlined text-dark">package_2</span>
                     <div className="flex-1 min-w-0">
                         <p className="font-bold text-dark text-sm truncate">{listingTitle}</p>
@@ -152,8 +152,8 @@ function ReloopPointsContent() {
                                 onClick={() => setSelectedPoint(point.id)}
                                 className={`bg-white dark:bg-dark-surface rounded-xl border-2 ${selectedPoint === point.id
                                     ? 'border-green-500 ring-2 ring-green-200'
-                                    : 'border-dark dark:border-gray-600'
-                                    } shadow-brutal-sm p-4 cursor-pointer transition-all`}
+                                    : 'border-outline-variant/20 dark:border-gray-600'
+                                    } shadow-sm p-4 cursor-pointer transition-all`}
                             >
                                 <div className="flex items-center gap-3">
                                     {selectedPoint === point.id ? (
@@ -161,7 +161,7 @@ function ReloopPointsContent() {
                                             <span className="material-symbols-outlined text-white">check</span>
                                         </div>
                                     ) : (
-                                        <div className="w-10 h-10 bg-card-yellow rounded-full border-2 border-dark flex items-center justify-center">
+                                        <div className="w-10 h-10 bg-surface-container-low rounded-full border border-outline-variant/10 flex items-center justify-center">
                                             <span className="material-symbols-outlined text-dark">place</span>
                                         </div>
                                     )}
@@ -185,14 +185,14 @@ function ReloopPointsContent() {
                     <button
                         onClick={handleDropOff}
                         disabled={!selectedPoint || dropping}
-                        className={`w-full py-4 rounded-2xl border-2 border-dark shadow-brutal font-black text-lg transition-all flex items-center justify-center gap-2 ${selectedPoint
+                        className={`w-full py-4 rounded-2xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] font-extrabold text-lg transition-all flex items-center justify-center gap-2 ${selectedPoint
                             ? 'bg-primary text-dark'
                             : 'bg-gray-200 text-gray-500 cursor-not-allowed'
                             }`}
                     >
                         {dropping ? (
                             <>
-                                <div className="w-5 h-5 border-2 border-dark border-t-transparent rounded-full animate-spin" />
+                                <div className="w-5 h-5 border border-outline-variant/10 border-t-transparent rounded-full animate-spin" />
                                 Processing...
                             </>
                         ) : (

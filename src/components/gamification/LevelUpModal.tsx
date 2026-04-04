@@ -42,10 +42,10 @@ export const LevelUpModal = ({ level, title, xp, onClose }: LevelUpModalProps) =
                     className="relative w-full max-w-sm"
                 >
                     {/* Level Badge */}
-                    <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-32 h-32 bg-primary rounded-full border-4 border-white flex items-center justify-center shadow-brutal z-10">
+                    <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-32 h-32 bg-primary rounded-full border-4 border-white flex items-center justify-center shadow-[0_2px_10px_rgba(0,0,0,0.02)] z-10">
                         <div className="text-center">
-                            <div className="text-xs font-black uppercase tracking-wider text-dark">Level</div>
-                            <div className="text-5xl font-black text-dark leading-none">{level}</div>
+                            <div className="text-xs font-extrabold uppercase tracking-wider text-dark">Level</div>
+                            <div className="text-5xl font-extrabold text-dark leading-none">{level}</div>
                         </div>
                     </div>
 
@@ -56,7 +56,7 @@ export const LevelUpModal = ({ level, title, xp, onClose }: LevelUpModalProps) =
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.3 }}
                         >
-                            <h2 className="text-3xl font-black uppercase italic mb-2 text-dark">Level Up!</h2>
+                            <h2 className="text-3xl font-extrabold uppercase italic mb-2 text-dark">Level Up!</h2>
                             <div className="inline-block bg-dark text-primary px-4 py-1 rounded-full font-bold text-sm uppercase tracking-wider mb-6">
                                 {title}
                             </div>
@@ -67,18 +67,18 @@ export const LevelUpModal = ({ level, title, xp, onClose }: LevelUpModalProps) =
 
                             <div className="grid grid-cols-2 gap-4 mb-8">
                                 <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                                    <div className="text-2xl font-black text-dark mb-1">+{xp}</div>
+                                    <div className="text-2xl font-extrabold text-dark mb-1">+{xp}</div>
                                     <div className="text-xs font-bold text-gray-500 uppercase">Total XP</div>
                                 </div>
                                 <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                                    <div className="text-2xl font-black text-dark mb-1">New</div>
+                                    <div className="text-2xl font-extrabold text-dark mb-1">New</div>
                                     <div className="text-xs font-bold text-gray-500 uppercase">Unlocks</div>
                                 </div>
                             </div>
 
                             <button
                                 onClick={onClose}
-                                className="w-full py-4 bg-primary text-dark font-black uppercase tracking-widest rounded-xl shadow-brutal hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all active:scale-95"
+                                className="w-full py-4 bg-primary text-dark font-extrabold uppercase tracking-widest rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all active:scale-95"
                             >
                                 Awesome!
                             </button>

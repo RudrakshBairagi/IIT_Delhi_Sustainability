@@ -164,7 +164,7 @@ export const TradeOfferModal = ({ targetListing, onClose, onSuccess }: TradeOffe
                 animate={{ y: 0 }}
                 exit={{ y: '100%' }}
                 transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                className="bg-white dark:bg-dark-surface w-full max-w-lg rounded-t-3xl sm:rounded-3xl overflow-hidden shadow-2xl border-t-2 sm:border-2 border-dark max-h-[90vh] flex flex-col"
+                className="bg-white dark:bg-dark-surface w-full max-w-lg rounded-t-3xl sm:rounded-3xl overflow-hidden shadow-2xl border-t-2 sm:border border-outline-variant/10 max-h-[90vh] flex flex-col"
             >
                 {/* Header */}
                 <div className="p-5 border-b-2 border-gray-100 dark:border-gray-700 flex justify-between items-center shrink-0">
@@ -239,7 +239,7 @@ export const TradeOfferModal = ({ targetListing, onClose, onSuccess }: TradeOffe
                                             <p className="text-[10px] text-gray-500">🪙 {item.price}</p>
                                         </div>
                                         {selectedItemId === item.id && (
-                                            <div className="absolute top-2 right-2 w-6 h-6 bg-primary rounded-full flex items-center justify-center border border-dark shadow-sm">
+                                            <div className="absolute top-2 right-2 w-6 h-6 bg-primary rounded-full flex items-center justify-center border border-outline-variant/20 shadow-sm">
                                                 <span className="material-symbols-outlined text-sm text-dark font-bold">check</span>
                                             </div>
                                         )}
@@ -261,10 +261,10 @@ export const TradeOfferModal = ({ targetListing, onClose, onSuccess }: TradeOffe
                     <button
                         onClick={handleSubmit}
                         disabled={isSubmitting || (!offeredCoins && !selectedItemId)}
-                        className="flex-[2] py-4 bg-primary text-dark font-black uppercase tracking-wide rounded-2xl shadow-brutal hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:active:scale-100 transition-all flex items-center justify-center gap-2"
+                        className="flex-[2] py-4 bg-primary text-dark font-extrabold uppercase tracking-wide rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:active:scale-100 transition-all flex items-center justify-center gap-2"
                     >
                         {isSubmitting ? (
-                            <div className="w-5 h-5 border-2 border-dark border-t-transparent rounded-full animate-spin" />
+                            <div className="w-5 h-5 border border-outline-variant/10 border-t-transparent rounded-full animate-spin" />
                         ) : (
                             <>
                                 <span>Send Offer</span>

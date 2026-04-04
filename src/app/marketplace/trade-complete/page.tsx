@@ -44,7 +44,7 @@ export default function TradeCompletePage() {
                 initial={{ scale: 0, rotate: -180 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ type: 'spring' as const, stiffness: 200, damping: 15, delay: 0.2 }}
-                className="w-32 h-32 bg-primary rounded-[2.5rem] border-[3px] border-dark dark:border-gray-600 shadow-brutal flex items-center justify-center mb-8"
+                className="w-32 h-32 bg-primary rounded-[2.5rem] border border-outline-variant/10 dark:border-gray-600 shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex items-center justify-center mb-8"
             >
                 <span className="material-symbols-outlined text-6xl text-dark">check</span>
             </motion.div>
@@ -70,11 +70,11 @@ export default function TradeCompletePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.8 }}
-                className="mt-8 bg-white dark:bg-dark-surface rounded-3xl border-2 border-dark dark:border-gray-600 shadow-brutal p-6 w-full max-w-sm"
+                className="mt-8 bg-white dark:bg-dark-surface rounded-3xl border border-outline-variant/10 dark:border-gray-600 shadow-[0_2px_10px_rgba(0,0,0,0.02)] p-6 w-full max-w-sm"
             >
                 <p className="text-sm font-bold text-dark/60 dark:text-white/60 text-center mb-4">Your Impact</p>
                 <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-card-green rounded-2xl p-4 text-center">
+                    <div className="bg-surface-container-low rounded-2xl p-4 text-center">
                         <p className="text-2xl font-[900] text-dark dark:text-white">
                             {tradeData?.item ? tradeData.item : `${coinsOffered}`}
                         </p>
@@ -87,7 +87,7 @@ export default function TradeCompletePage() {
                         <p className="text-xs font-bold text-dark/60 dark:text-white/60">kg CO₂ Saved</p>
                     </div>
                 </div>
-                <div className="mt-3 bg-card-yellow rounded-2xl p-3 text-center">
+                <div className="mt-3 bg-surface-container-low rounded-2xl p-3 text-center">
                     <p className="text-sm font-bold text-dark dark:text-white">Balance: 🪙 {userCoins} Eco Coins</p>
                 </div>
             </motion.div>
@@ -101,14 +101,14 @@ export default function TradeCompletePage() {
             >
                 <Link
                     href="/trade-history"
-                    className="w-full bg-dark dark:bg-primary text-white dark:text-dark py-4 rounded-2xl font-[900] uppercase tracking-wider shadow-brutal active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-3"
+                    className="w-full bg-dark dark:bg-primary text-white dark:text-dark py-4 rounded-2xl font-[900] uppercase tracking-wider shadow-[0_2px_10px_rgba(0,0,0,0.02)] active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-3"
                 >
                     <span className="material-symbols-outlined">history</span>
                     View Trade History
                 </Link>
                 <Link
                     href="/marketplace"
-                    className="w-full bg-white dark:bg-dark-surface text-dark dark:text-white py-4 rounded-2xl font-bold border-2 border-dark dark:border-gray-600 shadow-brutal-sm active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-3"
+                    className="w-full bg-white dark:bg-dark-surface text-dark dark:text-white py-4 rounded-2xl font-bold border border-outline-variant/10 dark:border-gray-600 shadow-sm active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-3"
                 >
                     Back to Marketplace
                 </Link>

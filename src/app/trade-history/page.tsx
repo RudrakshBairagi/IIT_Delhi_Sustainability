@@ -22,9 +22,9 @@ const itemVariants = {
 };
 
 const STATUS_STYLES: Record<string, { bg: string; text: string; label: string }> = {
-    pending: { bg: 'bg-card-yellow', text: 'text-yellow-800', label: 'Pending' },
+    pending: { bg: 'bg-surface-container-low', text: 'text-yellow-800', label: 'Pending' },
     accepted: { bg: 'bg-card-blue', text: 'text-blue-800', label: 'Accepted' },
-    completed: { bg: 'bg-card-green', text: 'text-green-800', label: 'Completed' },
+    completed: { bg: 'bg-surface-container-low', text: 'text-green-800', label: 'Completed' },
     declined: { bg: 'bg-card-coral', text: 'text-red-800', label: 'Declined' },
 };
 
@@ -149,11 +149,11 @@ export default function TradeHistoryPage() {
                     animate={{ opacity: 1, y: 0 }}
                     className="grid grid-cols-2 gap-3"
                 >
-                    <div className="bg-card-green rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm p-4 text-center">
+                    <div className="bg-surface-container-low rounded-2xl border border-outline-variant/10 dark:border-gray-600 shadow-sm p-4 text-center">
                         <p className="text-2xl font-[900] text-dark dark:text-white">{trades.filter(t => t.status === 'completed').length}</p>
                         <p className="text-xs font-bold text-dark/60 dark:text-white/60">Completed</p>
                     </div>
-                    <div className="bg-card-yellow rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm p-4 text-center">
+                    <div className="bg-surface-container-low rounded-2xl border border-outline-variant/10 dark:border-gray-600 shadow-sm p-4 text-center">
                         <p className="text-2xl font-[900] text-dark dark:text-white">{totalCo2.toFixed(1)}</p>
                         <p className="text-xs font-bold text-dark/60 dark:text-white/60">kg CO₂ Saved</p>
                     </div>
@@ -164,7 +164,7 @@ export default function TradeHistoryPage() {
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="bg-card-yellow/50 border-2 border-yellow-500 rounded-2xl p-4 flex items-center gap-3"
+                        className="bg-surface-container-low/50 border-2 border-yellow-500 rounded-2xl p-4 flex items-center gap-3"
                     >
                         <span className="material-symbols-outlined text-yellow-600">pending_actions</span>
                         <div>
@@ -234,10 +234,10 @@ export default function TradeHistoryPage() {
 
                                 return (
                                     <motion.div key={trade.id} variants={itemVariants}>
-                                        <div className="bg-white dark:bg-dark-surface rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm p-4">
+                                        <div className="bg-white dark:bg-dark-surface rounded-2xl border border-outline-variant/10 dark:border-gray-600 shadow-sm p-4">
                                             {/* Trade Info */}
                                             <div className="flex items-center gap-4">
-                                                <div className="w-16 h-16 rounded-xl border-2 border-dark dark:border-gray-600 overflow-hidden bg-gray-100 dark:bg-dark-surface shrink-0">
+                                                <div className="w-16 h-16 rounded-xl border border-outline-variant/10 dark:border-gray-600 overflow-hidden bg-gray-100 dark:bg-dark-surface shrink-0">
                                                     <img src={trade.listingImage} alt={trade.listingTitle} className="w-full h-full object-cover" />
                                                 </div>
                                                 <div className="flex-1 min-w-0">
@@ -287,10 +287,10 @@ export default function TradeHistoryPage() {
                                                     <button
                                                         onClick={() => handleAccept(trade)}
                                                         disabled={isProcessing}
-                                                        className="flex-1 py-3 rounded-xl bg-primary border-2 border-dark text-dark font-bold text-sm shadow-brutal-sm hover:shadow-none active:translate-y-0.5 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                                                        className="flex-1 py-3 rounded-xl bg-primary border border-outline-variant/10 text-dark font-bold text-sm shadow-sm hover:shadow-none active:translate-y-0.5 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                                                     >
                                                         {isProcessing ? (
-                                                            <div className="w-4 h-4 border-2 border-dark border-t-transparent rounded-full animate-spin" />
+                                                            <div className="w-4 h-4 border border-outline-variant/10 border-t-transparent rounded-full animate-spin" />
                                                         ) : (
                                                             <>
                                                                 <span className="material-symbols-outlined text-lg">check</span>
@@ -305,7 +305,7 @@ export default function TradeHistoryPage() {
                                             {trade.status === 'accepted' && (
                                                 <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
                                                     <Link href="/verify-trade">
-                                                        <button className="w-full py-3 rounded-xl bg-card-blue border-2 border-dark text-dark font-bold text-sm shadow-brutal-sm hover:shadow-none active:translate-y-0.5 transition-all flex items-center justify-center gap-2">
+                                                        <button className="w-full py-3 rounded-xl bg-card-blue border border-outline-variant/10 text-dark font-bold text-sm shadow-sm hover:shadow-none active:translate-y-0.5 transition-all flex items-center justify-center gap-2">
                                                             <span className="material-symbols-outlined text-lg">verified</span>
                                                             Verify Trade
                                                         </button>

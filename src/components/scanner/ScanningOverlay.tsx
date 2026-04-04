@@ -58,7 +58,7 @@ export const ScanningOverlay = ({ onCancel, imageUrl }: ScanningOverlayProps) =>
             `}</style>
 
             {/* Top Bar Component */}
-            <header className="w-full sticky top-0 z-50 bg-[#fcf9f2]/80 backdrop-blur-xl flex justify-between items-center px-6 py-4 shadow-[0_40px_64px_-10px_rgba(41,48,47,0.06)]">
+            <header className="w-full sticky top-0 z-50 bg-[#fcf9f2]/80 backdrop-blur-xl flex justify-between items-center px-6 py-4 shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
                 <button 
                     onClick={handleBack}
                     className="w-12 h-12 flex items-center justify-center rounded-full bg-[#eaf2f0] hover:bg-[#dbe5e2] transition-colors text-[#29664c] active:scale-95"

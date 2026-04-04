@@ -92,7 +92,7 @@ function SearchContent() {
                         {results.map((listing) => (
                             <motion.div key={listing.id} variants={itemVariants}>
                                 <Link href={`/marketplace/${listing.id}`}>
-                                    <div className="bg-white dark:bg-dark-surface rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm overflow-hidden hover-lift">
+                                    <div className="bg-white dark:bg-dark-surface rounded-2xl border border-outline-variant/10 dark:border-gray-600 shadow-sm overflow-hidden hover-lift">
                                         <div className="aspect-square bg-gray-100 dark:bg-dark-surface relative">
                                             <img src={listing.images[0]} alt={listing.title} className="w-full h-full object-cover" />
                                             <span className="absolute top-2 right-2 px-3 py-1.5 bg-primary rounded-full text-xs font-bold text-dark dark:text-white">

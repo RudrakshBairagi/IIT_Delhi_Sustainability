@@ -32,7 +32,7 @@ export default function VideoModal({ isOpen, onClose, videoId, videoSrc }: Video
                         initial={{ scale: 0.9, opacity: 0, y: 20 }}
                         animate={{ scale: 1, opacity: 1, y: 0 }}
                         exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                        className="relative w-full max-w-[340px] bg-black rounded-3xl overflow-hidden border-2 border-dark/50 shadow-2xl"
+                        className="relative w-full max-w-[340px] bg-black rounded-3xl overflow-hidden border border-outline-variant/10/50 shadow-2xl"
                     >
                         {/* Header/Close */}
                         <div className="absolute top-4 right-4 z-20">

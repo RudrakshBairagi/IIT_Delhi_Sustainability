@@ -143,10 +143,10 @@ export default function ScanBagPage() {
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.3 }}
-                    className="bg-white rounded-2xl shadow-[0_40px_64px_-10px_rgba(41,48,47,0.06)] p-6 mb-6 w-full max-w-sm"
+                    className="bg-white rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] p-6 mb-6 w-full max-w-sm"
                 >
                     <p className="text-xs font-bold text-[#a7afad] uppercase tracking-widest mb-1">QR CODE</p>
-                    <p className="text-xl font-black tracking-tight text-[#29302f]">{scannedQR}</p>
+                    <p className="text-xl font-extrabold tracking-tight text-[#29302f]">{scannedQR}</p>
 
                     <div className="mt-4 pt-4 border-t border-[#d4dfdd] space-y-2">
                         <div className="flex items-center gap-2 text-sm text-[#565d5c] font-medium">
@@ -197,7 +197,7 @@ export default function ScanBagPage() {
     return (
         <div className="min-h-screen text-[#29302f] flex flex-col" style={{ backgroundColor: '#f1f8f6' }}>
             {/* Header */}
-            <header className="w-full sticky top-0 z-50 backdrop-blur-xl shadow-[0_40px_64px_-10px_rgba(41,48,47,0.06)] flex items-center justify-between px-6 py-4" style={{ backgroundColor: 'rgba(241,248,246,0.8)' }}>
+            <header className="w-full sticky top-0 z-50 backdrop-blur-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] flex items-center justify-between px-6 py-4" style={{ backgroundColor: 'rgba(241,248,246,0.8)' }}>
                 <div className="flex items-center gap-4">
                     <Link href="/smart-bags" className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#eaf2f0] transition-colors active:scale-95 duration-200 text-[#29664c]">
                         <span className="material-symbols-outlined">arrow_back</span>

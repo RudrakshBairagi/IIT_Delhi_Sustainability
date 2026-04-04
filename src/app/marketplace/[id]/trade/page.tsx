@@ -141,12 +141,12 @@ export default function TradeRequestPage() {
                 variants={containerVariants}
             >
                 {/* Item Preview */}
-                <motion.div variants={itemVariants} className="bg-white dark:bg-dark-surface rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm p-4 flex items-center gap-4">
-                    <div className="w-20 h-20 rounded-xl border-2 border-dark dark:border-gray-600 overflow-hidden bg-gray-100 dark:bg-dark-surface shrink-0">
+                <motion.div variants={itemVariants} className="bg-white dark:bg-dark-surface rounded-2xl border border-outline-variant/10 dark:border-gray-600 shadow-sm p-4 flex items-center gap-4">
+                    <div className="w-20 h-20 rounded-xl border border-outline-variant/10 dark:border-gray-600 overflow-hidden bg-gray-100 dark:bg-dark-surface shrink-0">
                         <img src={listing.images[0]} alt={listing.title} className="w-full h-full object-cover" />
                     </div>
                     <div className="flex-1 min-w-0">
-                        <p className="font-black text-dark dark:text-white truncate">{listing.title}</p>
+                        <p className="font-extrabold text-dark dark:text-white truncate">{listing.title}</p>
                         <p className="text-sm text-dark/60 dark:text-white/60">{listing.condition}</p>
                         <p className="text-sm font-bold text-primary flex items-center gap-1 mt-1">
                             🪙 {listing.price} ({formatRupeeValue(listing.price)})
@@ -155,8 +155,8 @@ export default function TradeRequestPage() {
                 </motion.div>
 
                 {/* Seller Info */}
-                <motion.div variants={itemVariants} className="bg-card-blue rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm p-4 flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full border-2 border-dark dark:border-gray-600 overflow-hidden bg-gray-200 dark:bg-gray-700">
+                <motion.div variants={itemVariants} className="bg-card-blue rounded-2xl border border-outline-variant/10 dark:border-gray-600 shadow-sm p-4 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full border border-outline-variant/10 dark:border-gray-600 overflow-hidden bg-gray-200 dark:bg-gray-700">
                         <img src={listing.seller.avatar} alt={listing.seller.name} className="w-full h-full object-cover" />
                     </div>
                     <div>
@@ -172,8 +172,8 @@ export default function TradeRequestPage() {
                         <button
                             onClick={() => setTradeType('coins')}
                             className={`p-4 rounded-2xl border-2 text-center transition-all ${tradeType === 'coins'
-                                ? 'bg-primary border-dark dark:border-gray-600 shadow-brutal-sm'
-                                : 'bg-white dark:bg-dark-surface border-gray-200 dark:border-gray-700 hover:border-dark dark:border-gray-600'
+                                ? 'bg-primary border-outline-variant/20 dark:border-gray-600 shadow-sm'
+                                : 'bg-white dark:bg-dark-surface border-gray-200 dark:border-gray-700 hover:border-outline-variant/20 dark:border-gray-600'
                                 }`}
                         >
                             <span className="text-2xl mb-1 block">🪙</span>
@@ -182,8 +182,8 @@ export default function TradeRequestPage() {
                         <button
                             onClick={() => setTradeType('item')}
                             className={`p-4 rounded-2xl border-2 text-center transition-all ${tradeType === 'item'
-                                ? 'bg-primary border-dark dark:border-gray-600 shadow-brutal-sm'
-                                : 'bg-white dark:bg-dark-surface border-gray-200 dark:border-gray-700 hover:border-dark dark:border-gray-600'
+                                ? 'bg-primary border-outline-variant/20 dark:border-gray-600 shadow-sm'
+                                : 'bg-white dark:bg-dark-surface border-gray-200 dark:border-gray-700 hover:border-outline-variant/20 dark:border-gray-600'
                                 }`}
                         >
                             <span className="text-2xl mb-1 block">📦</span>
@@ -203,7 +203,7 @@ export default function TradeRequestPage() {
                                     type="number"
                                     value={offerCoins}
                                     onChange={(e) => setOfferCoins(e.target.value)}
-                                    className="w-full h-14 rounded-2xl bg-white dark:bg-dark-surface border-2 border-dark dark:border-gray-600 pl-12 pr-5 font-bold focus:outline-none focus:ring-2 focus:ring-primary"
+                                    className="w-full h-14 rounded-2xl bg-white dark:bg-dark-surface border border-outline-variant/10 dark:border-gray-600 pl-12 pr-5 font-bold focus:outline-none focus:ring-2 focus:ring-primary"
                                 />
                             </div>
                             <p className="text-xs text-dark/40 dark:text-white/40 mt-2 ml-1">
@@ -218,7 +218,7 @@ export default function TradeRequestPage() {
                                 value={offerItem}
                                 onChange={(e) => setOfferItem(e.target.value)}
                                 placeholder="e.g., Calculus Textbook"
-                                className="w-full h-14 rounded-2xl bg-white dark:bg-dark-surface border-2 border-dark dark:border-gray-600 px-5 font-medium placeholder:text-gray-400 dark:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary"
+                                className="w-full h-14 rounded-2xl bg-white dark:bg-dark-surface border border-outline-variant/10 dark:border-gray-600 px-5 font-medium placeholder:text-gray-400 dark:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary"
                             />
                         </div>
                     )}
@@ -232,7 +232,7 @@ export default function TradeRequestPage() {
                         onChange={(e) => setMessage(e.target.value)}
                         placeholder="Hi! I'm interested in your item..."
                         rows={3}
-                        className="w-full rounded-2xl bg-white dark:bg-dark-surface border-2 border-dark dark:border-gray-600 p-5 font-medium placeholder:text-gray-400 dark:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                        className="w-full rounded-2xl bg-white dark:bg-dark-surface border border-outline-variant/10 dark:border-gray-600 p-5 font-medium placeholder:text-gray-400 dark:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary resize-none"
                     />
                 </motion.div>
 
@@ -248,14 +248,14 @@ export default function TradeRequestPage() {
                 <button
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                    className={`w-full h-14 rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal font-black uppercase tracking-wide flex items-center justify-center gap-2 transition-all ${isSubmitting
+                    className={`w-full h-14 rounded-2xl border border-outline-variant/10 dark:border-gray-600 shadow-[0_2px_10px_rgba(0,0,0,0.02)] font-extrabold uppercase tracking-wide flex items-center justify-center gap-2 transition-all ${isSubmitting
                         ? 'bg-gray-300 dark:bg-gray-600 cursor-not-allowed'
                         : 'bg-primary hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none active:translate-x-1 active:translate-y-1'
                         }`}
                 >
                     {isSubmitting ? (
                         <>
-                            <div className="w-5 h-5 border-2 border-dark border-t-transparent rounded-full animate-spin" />
+                            <div className="w-5 h-5 border border-outline-variant/10 border-t-transparent rounded-full animate-spin" />
                             <span className="text-dark">Sending...</span>
                         </>
                     ) : (

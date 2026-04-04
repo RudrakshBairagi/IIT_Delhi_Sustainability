@@ -11,7 +11,7 @@ export function ListItemSkeleton({ count = 3, variant = 'default' }: ListItemSke
             {Array.from({ length: count }).map((_, index) => (
                 <div
                     key={index}
-                    className={`bg-white dark:bg-dark-surface rounded-[24px] border-2 border-black dark:border-gray-600 shadow-brutal ${variant === 'compact' ? 'p-3' : 'p-4'
+                    className={`bg-white dark:bg-dark-surface rounded-[24px] border-2 border-black dark:border-gray-600 shadow-[0_2px_10px_rgba(0,0,0,0.02)] ${variant === 'compact' ? 'p-3' : 'p-4'
                         } animate-pulse`}
                 >
                     <div className="flex items-center gap-3">

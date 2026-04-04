@@ -184,7 +184,7 @@ export default function StoriesPage() {
                                 style={{ backgroundImage: `url('${currentStory.image}')` }}
                             />
                             <div>
-                                <p className="text-white font-black text-sm">{currentStory.author}</p>
+                                <p className="text-white font-extrabold text-sm">{currentStory.author}</p>
                                 <p className="text-white/70 text-xs font-bold">{getTypeLabel(currentStory.type)}</p>
                             </div>
                         </div>
@@ -200,7 +200,7 @@ export default function StoriesPage() {
                         </div>
 
                         {/* Title */}
-                        <h1 className="text-4xl font-black text-white uppercase text-center tracking-tight mb-4 leading-tight">
+                        <h1 className="text-4xl font-extrabold text-white uppercase text-center tracking-tight mb-4 leading-tight">
                             {currentStory.title}
                         </h1>
 

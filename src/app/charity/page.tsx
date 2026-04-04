@@ -65,12 +65,12 @@ export default function GiveBackPage() {
     return (
         <div className="min-h-screen text-[#29302f] bg-[#f1f8f6] pb-32">
             {/* Header */}
-            <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-4 backdrop-blur-xl shadow-[0_40px_64px_-10px_rgba(41,48,47,0.06)]" style={{ backgroundColor: 'rgba(241,248,246,0.8)' }}>
+            <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-4 backdrop-blur-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)]" style={{ backgroundColor: 'rgba(241,248,246,0.8)' }}>
                 <div className="flex items-center gap-3">
                     <Link href="/" className="w-10 h-10 rounded-full overflow-hidden bg-[#d4dfdd] block active:scale-95 transition-transform">
                         <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNcJOvFUS0GWf5vbUdZjHLdDzC7HznpjR4IEIC6Umc2rwvLcN1127cSaUggCTjEl1k9RWeYz688zXytmn8rXhCIHEXRU4hnWXdYp6VkSjRdvf-jgy8kux75y5MH_BYULzHmVyaI4Wwrt5-4rrF-YzMTMnT4K42WpmXB_fwj1XcyYRUBXPFMGzfoDrD3-fEDiSINGeWQRhgQsJ4WrOyr4zPVGDtR-MCGUraEwTVRJmVSOuCKMZ5GLDH3fOHGzz3osMVWmlm_ZV1vLk" alt="Profile" />
                     </Link>
-                    <span className="text-2xl font-black text-[#29664c] tracking-tighter uppercase">RELOOP</span>
+                    <span className="text-2xl font-extrabold text-[#29664c] tracking-tighter uppercase">RELOOP</span>
                 </div>
                 <div className="bg-[#b9f9d6] px-4 py-2 rounded-full flex items-center gap-2 transition-transform active:scale-95 duration-150 cursor-pointer">
                     <span className="material-symbols-outlined text-[#246147] text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>monetization_on</span>
@@ -169,7 +169,7 @@ export default function GiveBackPage() {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.4 + (idx * 0.1) }}
-                                className="bg-[#ffffff] rounded-xl overflow-hidden shadow-[0_40px_64px_-10px_rgba(41,48,47,0.06)] group"
+                                className="bg-[#ffffff] rounded-xl overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.04)] group"
                             >
                                 <div className="h-48 relative overflow-hidden">
                                     <img className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src={cause.image} alt={cause.title} />

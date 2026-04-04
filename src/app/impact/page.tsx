@@ -87,12 +87,12 @@ function ImpactContent() {
         <div className="min-h-screen text-[#29302f] pb-32" style={{ backgroundColor: '#f1f8f6' }}>
 
             {/* Header */}
-            <header className="flex justify-between items-center w-full px-6 py-4 sticky top-0 z-50 backdrop-blur-xl shadow-[0_40px_64px_-10px_rgba(41,48,47,0.06)]" style={{ backgroundColor: 'rgba(241,248,246,0.8)' }}>
+            <header className="flex justify-between items-center w-full px-6 py-4 sticky top-0 z-50 backdrop-blur-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)]" style={{ backgroundColor: 'rgba(241,248,246,0.8)' }}>
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full overflow-hidden bg-[#d4dfdd]">
                         <img src={user.avatar || `https://ui-avatars.com/api/?name=${user.name}&background=29664c&color=fff`} alt="Profile" className="w-full h-full object-cover" />
                     </div>
-                    <span className="text-2xl font-black tracking-tighter text-[#29664c]">RELOOP</span>
+                    <span className="text-2xl font-extrabold tracking-tighter text-[#29664c]">RELOOP</span>
                 </div>
                 <div className="flex items-center gap-2 px-4 py-2 bg-[#b9f9d6] rounded-full hover:bg-[#eaf2f0] transition-all cursor-pointer">
                     <span className="material-symbols-outlined text-[#29664c] text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>stars</span>
@@ -138,9 +138,9 @@ function ImpactContent() {
                                 <div className="flex justify-between items-start mb-6">
                                     <div>
                                         <p className="text-xs font-bold uppercase tracking-[0.2em] opacity-80 mb-2">Total CO2 Saved</p>
-                                        <h2 className="text-6xl font-black tracking-tighter">{co2Total} kg</h2>
+                                        <h2 className="text-6xl font-extrabold tracking-tighter">{co2Total} kg</h2>
                                     </div>
-                                    <div className="bg-[#92f7c3] text-[#005e3e] px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-wider whitespace-nowrap">
+                                    <div className="bg-[#92f7c3] text-[#005e3e] px-4 py-2 rounded-full text-[10px] font-extrabold uppercase tracking-wider whitespace-nowrap">
                                         Top {topPct}% of Campus
                                     </div>
                                 </div>
@@ -179,7 +179,7 @@ function ImpactContent() {
                                     <div key={stat.label} className={`bg-white p-6 rounded-xl border-2 border-[#29302f] flex flex-col gap-4 shadow-[4px_4px_0px_0px_rgba(41,48,47,0.1)] ${stat.faded ? 'opacity-60' : ''}`}>
                                         <span className={`material-symbols-outlined text-3xl ${stat.faded ? 'text-[#565d5c]' : 'text-[#29664c]'}`}>{stat.icon}</span>
                                         <div>
-                                            <p className="text-2xl font-black text-[#29302f]">{stat.value}</p>
+                                            <p className="text-2xl font-extrabold text-[#29302f]">{stat.value}</p>
                                             <p className="text-[10px] font-bold text-[#565d5c] uppercase tracking-wider leading-tight">{stat.label}</p>
                                         </div>
                                     </div>
@@ -232,7 +232,7 @@ function ImpactContent() {
                                                             {labels[displayIdx]}
                                                         </div>
                                                     </div>
-                                                    <div className={`${podiumBg[displayIdx]} w-full ${heights[displayIdx]} rounded-t-xl flex flex-col items-center justify-end pb-4 shadow-[0_40px_64px_-10px_rgba(41,48,47,0.06)] ${displayIdx === 1 ? 'border-t-4 border-[#29664c]/20' : ''}`}>
+                                                    <div className={`${podiumBg[displayIdx]} w-full ${heights[displayIdx]} rounded-t-xl flex flex-col items-center justify-end pb-4 shadow-[0_4px_12px_rgba(0,0,0,0.04)] ${displayIdx === 1 ? 'border-t-4 border-[#29664c]/20' : ''}`}>
                                                         <span className="font-bold text-[#29302f] text-sm">{leader.name}</span>
                                                         <span className="text-[#29664c] font-extrabold text-xs">{leader.co2Saved} kg</span>
                                                     </div>

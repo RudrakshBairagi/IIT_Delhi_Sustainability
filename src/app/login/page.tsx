@@ -75,14 +75,14 @@ function LoginContent() {
         <div className="min-h-screen bg-gradient-to-b from-sky-200 to-white dark:from-dark-bg dark:to-dark-surface flex flex-col items-center justify-center p-4">
             {/* Logo */}
             <div className="mb-8 text-center">
-                <h1 className="text-4xl font-black uppercase italic tracking-tighter text-dark dark:text-white">ReLoop</h1>
+                <h1 className="text-4xl font-extrabold uppercase italic tracking-tighter text-dark dark:text-white">ReLoop</h1>
                 <p className="text-sm font-bold text-dark/60 dark:text-white/60 uppercase tracking-widest mt-1">♻️ Trade Sustainably</p>
             </div>
 
             {/* Login Card */}
-            <div className="w-full max-w-md bg-white dark:bg-dark-surface rounded-2xl neo-border shadow-brutal p-8">
+            <div className="w-full max-w-md bg-white dark:bg-dark-surface rounded-2xl  shadow-[0_2px_10px_rgba(0,0,0,0.02)] p-8">
                 <div className="text-center mb-6">
-                    <h2 className="text-2xl font-black text-dark dark:text-white uppercase tracking-tight">Welcome Back!</h2>
+                    <h2 className="text-2xl font-extrabold text-dark dark:text-white uppercase tracking-tight">Welcome Back!</h2>
                     <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Log in with your institutional email</p>
                 </div>
 
@@ -97,7 +97,7 @@ function LoginContent() {
                 </div>
 
                 {error && (
-                    <div className="bg-card-coral text-dark p-3 rounded-xl mb-4 text-sm font-bold neo-border flex items-center gap-2">
+                    <div className="bg-card-coral text-dark p-3 rounded-xl mb-4 text-sm font-bold  flex items-center gap-2">
                         <span>⚠️</span>
                         {error}
                     </div>
@@ -107,7 +107,7 @@ function LoginContent() {
                 <button
                     onClick={handleGoogleLogin}
                     disabled={googleLoading || loading}
-                    className="w-full py-4 bg-white dark:bg-dark-bg neo-border rounded-xl font-bold text-dark dark:text-white shadow-brutal active:shadow-none active:translate-x-1 active:translate-y-1 transition-all flex items-center justify-center gap-3 mb-4 disabled:opacity-50"
+                    className="w-full py-4 bg-white dark:bg-dark-bg  rounded-xl font-bold text-dark dark:text-white shadow-[0_2px_10px_rgba(0,0,0,0.02)] active:shadow-none active:translate-x-1 active:translate-y-1 transition-all flex items-center justify-center gap-3 mb-4 disabled:opacity-50"
                 >
                     {googleLoading ? (
                         <span className="flex items-center gap-2">
@@ -124,13 +124,13 @@ function LoginContent() {
 
                 <div className="my-6 flex items-center gap-4">
                     <div className="h-0.5 flex-1 bg-gray-200 dark:bg-gray-700" />
-                    <span className="text-xs text-gray-400 font-black uppercase">Or with Email</span>
+                    <span className="text-xs text-gray-400 font-extrabold uppercase">Or with Email</span>
                     <div className="h-0.5 flex-1 bg-gray-200 dark:bg-gray-700" />
                 </div>
 
                 <form onSubmit={handleLogin} className="space-y-4">
                     <div>
-                        <label className="block text-xs font-black text-dark dark:text-white uppercase tracking-wider mb-2">
+                        <label className="block text-xs font-extrabold text-dark dark:text-white uppercase tracking-wider mb-2">
                             Institutional Email
                         </label>
                         <div className="relative">
@@ -142,7 +142,7 @@ function LoginContent() {
                                     setEmail(e.target.value);
                                     setError('');
                                 }}
-                                className="relative w-full p-4 rounded-xl neo-border bg-white dark:bg-dark-bg focus:ring-2 focus:ring-primary outline-none transition-all text-dark dark:text-white font-bold"
+                                className="relative w-full p-4 rounded-xl  bg-white dark:bg-dark-bg focus:ring-2 focus:ring-primary outline-none transition-all text-dark dark:text-white font-bold"
                                 placeholder="yourname@nst.rishihood.edu.in"
                                 required
                             />
@@ -150,7 +150,7 @@ function LoginContent() {
                     </div>
                     <div>
                         <div className="flex items-center justify-between mb-2">
-                            <label className="block text-xs font-black text-dark dark:text-white uppercase tracking-wider">Password</label>
+                            <label className="block text-xs font-extrabold text-dark dark:text-white uppercase tracking-wider">Password</label>
                             <Link
                                 href="/forgot-password"
                                 className="text-xs font-bold text-primary hover:underline"
@@ -164,7 +164,7 @@ function LoginContent() {
                                 type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="relative w-full p-4 rounded-xl neo-border bg-white dark:bg-dark-bg focus:ring-2 focus:ring-primary outline-none transition-all text-dark dark:text-white font-bold"
+                                className="relative w-full p-4 rounded-xl  bg-white dark:bg-dark-bg focus:ring-2 focus:ring-primary outline-none transition-all text-dark dark:text-white font-bold"
                                 placeholder="••••••••"
                                 required
                             />
@@ -174,11 +174,11 @@ function LoginContent() {
                     <button
                         type="submit"
                         disabled={loading || googleLoading}
-                        className="w-full py-4 bg-primary text-dark font-black uppercase tracking-wider rounded-xl neo-border shadow-brutal active:shadow-none active:translate-x-1 active:translate-y-1 disabled:opacity-50 transition-all"
+                        className="w-full py-4 bg-primary text-dark font-extrabold uppercase tracking-wider rounded-xl  shadow-[0_2px_10px_rgba(0,0,0,0.02)] active:shadow-none active:translate-x-1 active:translate-y-1 disabled:opacity-50 transition-all"
                     >
                         {loading ? (
                             <span className="flex items-center justify-center gap-2">
-                                <span className="w-5 h-5 border-2 border-dark border-t-transparent rounded-full animate-spin" />
+                                <span className="w-5 h-5 border border-outline-variant/10 border-t-transparent rounded-full animate-spin" />
                                 Logging in...
                             </span>
                         ) : (
@@ -189,7 +189,7 @@ function LoginContent() {
 
                 <p className="mt-8 text-center text-sm text-gray-500">
                     Don't have an account?{' '}
-                    <Link href="/register" className="font-black text-primary hover:underline">
+                    <Link href="/register" className="font-extrabold text-primary hover:underline">
                         Sign Up
                     </Link>
                 </p>
@@ -200,7 +200,7 @@ function LoginContent() {
                             enableDemoMode();
                             router.push('/');
                         }}
-                        className="px-6 py-3 bg-card-yellow neo-border rounded-full font-black text-dark text-sm shadow-brutal-sm active:shadow-none active:translate-x-0.5 active:translate-y-0.5 transition-all"
+                        className="px-6 py-3 bg-surface-container-low  rounded-full font-extrabold text-dark text-sm shadow-sm active:shadow-none active:translate-x-0.5 active:translate-y-0.5 transition-all"
                     >
                         Try Demo Mode 🚀
                     </button>

@@ -81,13 +81,13 @@ export default function RegisterPage() {
         <div className="min-h-screen bg-gradient-to-b from-sky-200 to-white dark:from-dark-bg dark:to-dark-surface flex flex-col items-center justify-center p-4">
             {/* Logo */}
             <div className="mb-6 text-center">
-                <h1 className="text-4xl font-black uppercase italic tracking-tighter text-dark dark:text-white">ReLoop</h1>
+                <h1 className="text-4xl font-extrabold uppercase italic tracking-tighter text-dark dark:text-white">ReLoop</h1>
                 <p className="text-sm font-bold text-dark/60 dark:text-white/60 uppercase tracking-widest mt-1">♻️ Trade Sustainably</p>
             </div>
 
-            <div className="w-full max-w-md bg-white dark:bg-dark-surface rounded-2xl shadow-brutal p-8 border-2 border-dark dark:border-gray-700">
+            <div className="w-full max-w-md bg-white dark:bg-dark-surface rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.02)] p-8 border border-outline-variant/10 dark:border-gray-700">
                 <div className="text-center mb-6">
-                    <h2 className="text-2xl font-black text-dark dark:text-white uppercase">Join ReLoop</h2>
+                    <h2 className="text-2xl font-extrabold text-dark dark:text-white uppercase">Join ReLoop</h2>
                     <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Start your sustainable trading journey</p>
                 </div>
 
@@ -105,7 +105,7 @@ export default function RegisterPage() {
                 </div>
 
                 {error && (
-                    <div className="bg-card-coral text-dark p-3 rounded-xl mb-4 text-sm font-bold border-2 border-dark flex items-center gap-2">
+                    <div className="bg-card-coral text-dark p-3 rounded-xl mb-4 text-sm font-bold border border-outline-variant/10 flex items-center gap-2">
                         <span>⚠️</span>
                         {error}
                     </div>
@@ -115,7 +115,7 @@ export default function RegisterPage() {
                 <button
                     onClick={handleGoogleSignup}
                     disabled={googleLoading || loading}
-                    className="w-full py-4 bg-white dark:bg-dark-bg neo-border rounded-xl font-bold text-dark dark:text-white shadow-brutal active:shadow-none active:translate-x-1 active:translate-y-1 transition-all flex items-center justify-center gap-3 mb-4 disabled:opacity-50"
+                    className="w-full py-4 bg-white dark:bg-dark-bg  rounded-xl font-bold text-dark dark:text-white shadow-[0_2px_10px_rgba(0,0,0,0.02)] active:shadow-none active:translate-x-1 active:translate-y-1 transition-all flex items-center justify-center gap-3 mb-4 disabled:opacity-50"
                 >
                     {googleLoading ? (
                         <span className="flex items-center gap-2">
@@ -132,13 +132,13 @@ export default function RegisterPage() {
 
                 <div className="my-6 flex items-center gap-4">
                     <div className="h-0.5 flex-1 bg-gray-100 dark:bg-gray-800" />
-                    <span className="text-xs text-gray-400 font-black uppercase">Or with Email</span>
+                    <span className="text-xs text-gray-400 font-extrabold uppercase">Or with Email</span>
                     <div className="h-0.5 flex-1 bg-gray-100 dark:bg-gray-800" />
                 </div>
 
                 <form onSubmit={handleRegister} className="space-y-4">
                     <div>
-                        <label className="block text-xs font-black text-dark dark:text-white uppercase tracking-wider mb-2">
+                        <label className="block text-xs font-extrabold text-dark dark:text-white uppercase tracking-wider mb-2">
                             Full Name *
                         </label>
                         <input
@@ -152,7 +152,7 @@ export default function RegisterPage() {
                     </div>
 
                     <div>
-                        <label className="block text-xs font-black text-dark dark:text-white uppercase tracking-wider mb-2">
+                        <label className="block text-xs font-extrabold text-dark dark:text-white uppercase tracking-wider mb-2">
                             Institutional Email *
                         </label>
                         <input
@@ -166,7 +166,7 @@ export default function RegisterPage() {
                     </div>
 
                     <div>
-                        <label className="block text-xs font-black text-dark dark:text-white uppercase tracking-wider mb-2">
+                        <label className="block text-xs font-extrabold text-dark dark:text-white uppercase tracking-wider mb-2">
                             Password *
                         </label>
                         <input
@@ -183,7 +183,7 @@ export default function RegisterPage() {
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-xs font-black text-dark dark:text-white uppercase tracking-wider mb-2">
+                            <label className="block text-xs font-extrabold text-dark dark:text-white uppercase tracking-wider mb-2">
                                 Hostel
                             </label>
                             <select
@@ -200,7 +200,7 @@ export default function RegisterPage() {
                             </select>
                         </div>
                         <div>
-                            <label className="block text-xs font-black text-dark dark:text-white uppercase tracking-wider mb-2">
+                            <label className="block text-xs font-extrabold text-dark dark:text-white uppercase tracking-wider mb-2">
                                 Room No.
                             </label>
                             <input
@@ -216,11 +216,11 @@ export default function RegisterPage() {
                     <button
                         type="submit"
                         disabled={loading || googleLoading}
-                        className="w-full py-4 bg-primary text-dark font-black uppercase tracking-wider rounded-xl neo-border shadow-brutal active:shadow-none active:translate-x-1 active:translate-y-1 disabled:opacity-50 transition-all"
+                        className="w-full py-4 bg-primary text-dark font-extrabold uppercase tracking-wider rounded-xl  shadow-[0_2px_10px_rgba(0,0,0,0.02)] active:shadow-none active:translate-x-1 active:translate-y-1 disabled:opacity-50 transition-all"
                     >
                         {loading ? (
                             <span className="flex items-center justify-center gap-2">
-                                <span className="w-5 h-5 border-2 border-dark border-t-transparent rounded-full animate-spin" />
+                                <span className="w-5 h-5 border border-outline-variant/10 border-t-transparent rounded-full animate-spin" />
                                 Creating Account...
                             </span>
                         ) : (
@@ -231,7 +231,7 @@ export default function RegisterPage() {
 
                 <p className="mt-6 text-center text-sm text-gray-500">
                     Already have an account?{' '}
-                    <Link href="/login" className="font-black text-primary hover:underline">
+                    <Link href="/login" className="font-extrabold text-primary hover:underline">
                         Log In
                     </Link>
                 </p>

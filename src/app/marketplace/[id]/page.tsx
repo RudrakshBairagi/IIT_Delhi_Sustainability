@@ -126,7 +126,7 @@ export default function ItemDetailPage() {
     return (
         <div className="bg-surface text-on-surface antialiased overflow-x-hidden min-h-screen">
             {/* TopAppBar */}
-            <header className="fixed top-0 left-0 w-full z-50 bg-[#f1f8f6]/80 dark:bg-[#1a1c1b]/80 backdrop-blur-3xl shadow-[0_40px_64px_-10px_rgba(41,48,47,0.06)]">
+            <header className="fixed top-0 left-0 w-full z-50 bg-[#f1f8f6]/80 dark:bg-[#1a1c1b]/80 backdrop-blur-3xl shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
                 <div className="flex justify-between items-center px-6 h-16 w-full">
                     <button onClick={() => router.push('/marketplace')} className="active:scale-95 transition-transform duration-200 hover:bg-[#eaf2f0] dark:hover:bg-[#2d312f] p-2 rounded-full flex items-center justify-center">
                         <span className="material-symbols-outlined text-[#29664c] dark:text-[#b9f9d6]">arrow_back</span>

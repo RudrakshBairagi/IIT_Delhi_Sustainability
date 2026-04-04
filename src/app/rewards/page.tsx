@@ -102,7 +102,7 @@ function QRCouponModal({ reward, code, onClose }: { reward: Reward; code: string
                 exit={{ scale: 0.85, y: 30 }}
                 transition={{ type: 'spring', damping: 25, stiffness: 300 }}
                 onClick={e => e.stopPropagation()}
-                className="w-full max-w-sm bg-white rounded-3xl border-4 border-dark shadow-brutal-lg overflow-hidden"
+                className="w-full max-w-sm bg-white rounded-3xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)]-lg overflow-hidden"
             >
                 {/* Ticket-style Header */}
                 <div className="bg-gradient-to-br from-primary via-green-400 to-emerald-500 p-6 text-center relative">
@@ -115,7 +115,7 @@ function QRCouponModal({ reward, code, onClose }: { reward: Reward; code: string
                     >
                         {reward.icon}
                     </motion.span>
-                    <h2 className="text-2xl font-black text-dark tracking-tight">{reward.title}</h2>
+                    <h2 className="text-2xl font-extrabold text-dark tracking-tight">{reward.title}</h2>
                     <p className="text-sm text-dark/70 font-bold mt-1">{reward.description}</p>
                 </div>
 
@@ -125,7 +125,7 @@ function QRCouponModal({ reward, code, onClose }: { reward: Reward; code: string
                 {/* QR Code Section */}
                 <div className="p-6 flex flex-col items-center bg-gradient-to-b from-white to-gray-50">
                     <motion.div
-                        className="bg-white p-5 rounded-2xl border-3 border-dark shadow-brutal-sm"
+                        className="bg-white p-5 rounded-2xl border border-outline-variant/10 shadow-sm"
                         whileHover={{ scale: 1.02 }}
                     >
                         <QRPattern code={code} />
@@ -133,15 +133,15 @@ function QRCouponModal({ reward, code, onClose }: { reward: Reward; code: string
 
                     {/* Redemption Code */}
                     <div className="mt-5 w-full bg-gray-100 rounded-2xl px-5 py-4 border-2 border-dashed border-dark/20 text-center">
-                        <p className="text-[10px] text-dark/40 font-black uppercase tracking-widest">Your Coupon Code</p>
-                        <p className="text-2xl font-mono font-black text-dark tracking-[0.2em] mt-1">{code}</p>
+                        <p className="text-[10px] text-dark/40 font-extrabold uppercase tracking-widest">Your Coupon Code</p>
+                        <p className="text-2xl font-mono font-extrabold text-dark tracking-[0.2em] mt-1">{code}</p>
                     </div>
 
                     {/* Instructions */}
                     <div className="mt-4 flex items-center gap-3 bg-card-blue rounded-xl px-4 py-3 w-full">
                         <span className="material-symbols-outlined text-2xl text-dark">qr_code_scanner</span>
                         <div>
-                            <p className="text-sm font-black text-dark">Show at Counter</p>
+                            <p className="text-sm font-extrabold text-dark">Show at Counter</p>
                             <p className="text-[10px] text-dark/50 font-bold">
                                 Valid until {expiryDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
                             </p>
@@ -153,7 +153,7 @@ function QRCouponModal({ reward, code, onClose }: { reward: Reward; code: string
                 <div className="p-5 bg-gray-50 border-t-2 border-dark/10">
                     <button
                         onClick={onClose}
-                        className="w-full py-4 bg-dark text-white font-black text-lg rounded-2xl active:scale-[0.98] transition-transform shadow-brutal-sm border-2 border-dark"
+                        className="w-full py-4 bg-dark text-white font-extrabold text-lg rounded-2xl active:scale-[0.98] transition-transform shadow-sm border border-outline-variant/10"
                     >
                         Got It! ✓
                     </button>
@@ -181,7 +181,7 @@ function CommunityStoryModal({ reward, onClose }: { reward: Reward; onClose: () 
                 exit={{ scale: 0.85, y: 30 }}
                 transition={{ type: 'spring', damping: 25, stiffness: 300 }}
                 onClick={e => e.stopPropagation()}
-                className="w-full max-w-sm rounded-3xl border-4 border-dark shadow-brutal-lg overflow-hidden relative"
+                className="w-full max-w-sm rounded-3xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)]-lg overflow-hidden relative"
             >
                 {/* Gradient border glow */}
                 <motion.div
@@ -206,7 +206,7 @@ function CommunityStoryModal({ reward, onClose }: { reward: Reward; onClose: () 
                         </motion.div>
 
                         <motion.h2
-                            className="text-3xl font-black text-dark mb-2 tracking-tight"
+                            className="text-3xl font-extrabold text-dark mb-2 tracking-tight"
                             initial={{ opacity: 0, y: 15 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
@@ -226,17 +226,17 @@ function CommunityStoryModal({ reward, onClose }: { reward: Reward; onClose: () 
 
                     {/* Story Feature Banner */}
                     <motion.div
-                        className={`mx-5 p-5 rounded-2xl border-3 border-dark ${isTree ? 'bg-green-200' : 'bg-blue-200'} shadow-brutal-sm`}
+                        className={`mx-5 p-5 rounded-2xl border border-outline-variant/10 ${isTree ? 'bg-green-200' : 'bg-blue-200'} shadow-sm`}
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 0.4, type: 'spring' }}
                     >
                         <div className="flex items-center gap-4">
-                            <div className={`w-14 h-14 rounded-2xl ${isTree ? 'bg-green-500' : 'bg-blue-500'} flex items-center justify-center border-2 border-dark shadow-brutal-sm`}>
+                            <div className={`w-14 h-14 rounded-2xl ${isTree ? 'bg-green-500' : 'bg-blue-500'} flex items-center justify-center border border-outline-variant/10 shadow-sm`}>
                                 <span className="material-symbols-outlined text-white text-3xl">auto_stories</span>
                             </div>
                             <div className="flex-1">
-                                <p className="font-black text-dark text-base">Your Story is Coming!</p>
+                                <p className="font-extrabold text-dark text-base">Your Story is Coming!</p>
                                 <p className="text-xs text-dark/60 font-bold">We'll feature you in Community Stories ✨</p>
                             </div>
                         </div>
@@ -249,12 +249,12 @@ function CommunityStoryModal({ reward, onClose }: { reward: Reward; onClose: () 
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.5 }}
                     >
-                        <div className={`${isTree ? 'bg-green-100' : 'bg-blue-100'} rounded-2xl p-4 text-center border-2 border-dark/10`}>
-                            <p className="text-3xl font-black text-dark">{isTree ? '1' : '1lb'}</p>
+                        <div className={`${isTree ? 'bg-green-100' : 'bg-blue-100'} rounded-2xl p-4 text-center border border-outline-variant/10/10`}>
+                            <p className="text-3xl font-extrabold text-dark">{isTree ? '1' : '1lb'}</p>
                             <p className="text-xs font-bold text-dark/50 uppercase tracking-wide">{isTree ? 'Tree Planted' : 'Plastic Removed'}</p>
                         </div>
-                        <div className={`${isTree ? 'bg-green-100' : 'bg-blue-100'} rounded-2xl p-4 text-center border-2 border-dark/10`}>
-                            <p className="text-3xl font-black text-dark">{isTree ? '20kg' : '5kg'}</p>
+                        <div className={`${isTree ? 'bg-green-100' : 'bg-blue-100'} rounded-2xl p-4 text-center border border-outline-variant/10/10`}>
+                            <p className="text-3xl font-extrabold text-dark">{isTree ? '20kg' : '5kg'}</p>
                             <p className="text-xs font-bold text-dark/50 uppercase tracking-wide">CO₂ Offset</p>
                         </div>
                     </motion.div>
@@ -263,7 +263,7 @@ function CommunityStoryModal({ reward, onClose }: { reward: Reward; onClose: () 
                     <div className="p-5 flex gap-3 bg-white/50">
                         <button
                             onClick={onClose}
-                            className="flex-1 py-4 bg-white border-3 border-dark text-dark font-black rounded-2xl active:scale-[0.98] transition-transform shadow-brutal-sm"
+                            className="flex-1 py-4 bg-white border border-outline-variant/10 text-dark font-extrabold rounded-2xl active:scale-[0.98] transition-transform shadow-sm"
                         >
                             Done
                         </button>
@@ -281,7 +281,7 @@ function CommunityStoryModal({ reward, onClose }: { reward: Reward; onClose: () 
                                     alert('Copied to clipboard!');
                                 }
                             }}
-                            className={`flex-1 py-4 ${isTree ? 'bg-green-500' : 'bg-blue-500'} text-white font-black rounded-2xl active:scale-[0.98] transition-transform flex items-center justify-center gap-2 shadow-brutal-sm border-3 border-dark`}
+                            className={`flex-1 py-4 ${isTree ? 'bg-green-500' : 'bg-blue-500'} text-white font-extrabold rounded-2xl active:scale-[0.98] transition-transform flex items-center justify-center gap-2 shadow-sm border border-outline-variant/10`}
                         >
                             <span className="material-symbols-outlined">share</span>
                             Share
@@ -438,7 +438,7 @@ export default function RewardsPage() {
                 {/* Hero Balance Card */}
                 <motion.div
                     variants={itemVariants}
-                    className="relative overflow-hidden bg-gradient-to-br from-primary via-green-400 to-emerald-500 rounded-3xl border-4 border-dark shadow-brutal p-6"
+                    className="relative overflow-hidden bg-gradient-to-br from-primary via-green-400 to-emerald-500 rounded-3xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] p-6"
                 >
                     {/* Decorative circles */}
                     <div className="absolute -right-8 -top-8 w-32 h-32 bg-white/20 rounded-full blur-2xl" />
@@ -446,10 +446,10 @@ export default function RewardsPage() {
 
                     <div className="relative z-10 flex items-center justify-between">
                         <div>
-                            <p className="text-dark/50 font-black text-xs uppercase tracking-widest">Your Balance</p>
+                            <p className="text-dark/50 font-extrabold text-xs uppercase tracking-widest">Your Balance</p>
                             <div className="flex items-baseline gap-2 mt-1">
-                                <p className="text-5xl font-black text-dark">{authUser.coins}</p>
-                                <span className="text-lg font-black text-dark/60">Eco Coins</span>
+                                <p className="text-5xl font-extrabold text-dark">{authUser.coins}</p>
+                                <span className="text-lg font-extrabold text-dark/60">Eco Coins</span>
                             </div>
                             <p className="text-xs font-bold text-dark/40 mt-2">≈ ₹{(authUser.coins * 0.5).toFixed(0)} value</p>
                         </div>
@@ -464,7 +464,7 @@ export default function RewardsPage() {
 
                     {/* Progress to next tier */}
                     <div className="mt-5 relative">
-                        <div className="flex justify-between text-[10px] font-black text-dark/50 uppercase mb-1">
+                        <div className="flex justify-between text-[10px] font-extrabold text-dark/50 uppercase mb-1">
                             <span>Silver Tier</span>
                             <span>250 more for Gold</span>
                         </div>
@@ -486,8 +486,8 @@ export default function RewardsPage() {
                             key={tab}
                             onClick={() => setActiveTab(tab)}
                             whileTap={{ scale: 0.95 }}
-                            className={`px-5 py-2.5 rounded-full font-black text-sm transition-all border-2 whitespace-nowrap ${activeTab === tab
-                                ? 'bg-dark text-white border-dark shadow-brutal-sm'
+                            className={`px-5 py-2.5 rounded-full font-extrabold text-sm transition-all border-2 whitespace-nowrap ${activeTab === tab
+                                ? 'bg-dark text-white border-outline-variant/20 shadow-sm'
                                 : 'bg-white text-dark border-dark/20 hover:border-dark/40'
                                 }`}
                         >
@@ -511,15 +511,15 @@ export default function RewardsPage() {
                                 whileHover={{ scale: 1.01 }}
                                 whileTap={{ scale: 0.99 }}
                             >
-                                <div className={`bg-white dark:bg-dark-surface rounded-3xl border-3 border-dark dark:border-gray-600 shadow-brutal-sm overflow-hidden ${!reward.available ? 'opacity-50' : ''}`}>
+                                <div className={`bg-white dark:bg-dark-surface rounded-3xl border border-outline-variant/10 dark:border-gray-600 shadow-sm overflow-hidden ${!reward.available ? 'opacity-50' : ''}`}>
                                     <div className="flex items-stretch">
                                         {/* Left Icon Section */}
-                                        <div className={`w-28 bg-gradient-to-br ${gradientClass} flex flex-col items-center justify-center p-4 border-r-3 border-dark relative overflow-hidden`}>
+                                        <div className={`w-28 bg-gradient-to-br ${gradientClass} flex flex-col items-center justify-center p-4 border-r-3 border-outline-variant/20 relative overflow-hidden`}>
                                             {isDonation && (
                                                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" style={{ backgroundSize: '200% 100%' }} />
                                             )}
                                             <span className="text-5xl relative z-10 drop-shadow-sm">{reward.icon}</span>
-                                            <span className="mt-2 text-[10px] font-black uppercase text-dark/70 bg-white/50 px-2 py-0.5 rounded-full">
+                                            <span className="mt-2 text-[10px] font-extrabold uppercase text-dark/70 bg-white/50 px-2 py-0.5 rounded-full">
                                                 {reward.category}
                                             </span>
                                         </div>
@@ -528,9 +528,9 @@ export default function RewardsPage() {
                                         <div className="flex-1 p-4 flex flex-col justify-between">
                                             <div>
                                                 <div className="flex items-start justify-between gap-2">
-                                                    <h3 className="font-black text-dark dark:text-white text-lg leading-tight">{reward.title}</h3>
+                                                    <h3 className="font-extrabold text-dark dark:text-white text-lg leading-tight">{reward.title}</h3>
                                                     {isDonation && (
-                                                        <span className="text-[9px] font-black bg-green-500 text-white px-2 py-1 rounded-lg uppercase">
+                                                        <span className="text-[9px] font-extrabold bg-green-500 text-white px-2 py-1 rounded-lg uppercase">
                                                             Impact
                                                         </span>
                                                     )}
@@ -540,14 +540,14 @@ export default function RewardsPage() {
 
                                             <div className="flex items-center justify-between mt-3">
                                                 {/* Price */}
-                                                <div className="flex items-center gap-1.5 bg-card-yellow rounded-xl px-3 py-1.5 border-2 border-dark/10">
+                                                <div className="flex items-center gap-1.5 bg-surface-container-low rounded-xl px-3 py-1.5 border border-outline-variant/10/10">
                                                     <span className="text-lg">🪙</span>
-                                                    <span className="text-xl font-black text-dark">{reward.cost}</span>
+                                                    <span className="text-xl font-extrabold text-dark">{reward.cost}</span>
                                                 </div>
 
                                                 {/* Action Button */}
                                                 {isRedeemed ? (
-                                                    <div className="flex items-center gap-1.5 text-green-600 font-black text-sm bg-green-100 px-4 py-2 rounded-xl">
+                                                    <div className="flex items-center gap-1.5 text-green-600 font-extrabold text-sm bg-green-100 px-4 py-2 rounded-xl">
                                                         <span className="material-symbols-outlined text-lg">check_circle</span>
                                                         Claimed
                                                     </div>
@@ -556,10 +556,10 @@ export default function RewardsPage() {
                                                         onClick={() => handleRedeem(reward)}
                                                         disabled={!canAfford || !reward.available}
                                                         whileTap={{ scale: 0.95 }}
-                                                        className={`px-5 py-2.5 rounded-xl border-2 border-dark font-black text-sm transition-all ${canAfford && reward.available
+                                                        className={`px-5 py-2.5 rounded-xl border border-outline-variant/10 font-extrabold text-sm transition-all ${canAfford && reward.available
                                                             ? isDonation
-                                                                ? 'bg-gradient-to-r from-green-400 to-emerald-500 text-dark shadow-brutal-sm hover:shadow-brutal'
-                                                                : 'bg-primary text-dark shadow-brutal-sm hover:shadow-brutal'
+                                                                ? 'bg-gradient-to-r from-green-400 to-emerald-500 text-dark shadow-sm hover:shadow-[0_2px_10px_rgba(0,0,0,0.02)]'
+                                                                : 'bg-primary text-dark shadow-sm hover:shadow-[0_2px_10px_rgba(0,0,0,0.02)]'
                                                             : 'bg-gray-100 dark:bg-dark-bg text-dark/30 dark:text-white/30 cursor-not-allowed border-dark/20'
                                                             }`}
                                                     >
@@ -580,13 +580,13 @@ export default function RewardsPage() {
                     <motion.button
                         onClick={() => setShowHowToEarn(!showHowToEarn)}
                         whileTap={{ scale: 0.98 }}
-                        className="w-full bg-gradient-to-r from-card-blue to-blue-200 rounded-2xl border-3 border-dark shadow-brutal-sm p-4 flex items-center justify-between"
+                        className="w-full bg-gradient-to-r from-card-blue to-blue-200 rounded-2xl border border-outline-variant/10 shadow-sm p-4 flex items-center justify-between"
                     >
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center border-2 border-dark">
+                            <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center border border-outline-variant/10">
                                 <span className="material-symbols-outlined text-white">tips_and_updates</span>
                             </div>
-                            <span className="font-black text-dark">How to Earn More Coins</span>
+                            <span className="font-extrabold text-dark">How to Earn More Coins</span>
                         </div>
                         <motion.span
                             className="material-symbols-outlined text-dark text-2xl"
@@ -603,7 +603,7 @@ export default function RewardsPage() {
                                 exit={{ height: 0, opacity: 0 }}
                                 className="overflow-hidden"
                             >
-                                <div className="bg-white rounded-b-2xl border-3 border-t-0 border-dark p-4 space-y-3">
+                                <div className="bg-white rounded-b-2xl border-3 border-t-0 border-outline-variant/20 p-4 space-y-3">
                                     {[
                                         { icon: 'photo_camera', text: 'Scan recyclable items', coins: '10-45', color: 'bg-green-100' },
                                         { icon: 'swap_horiz', text: 'Complete trades', coins: '25-100', color: 'bg-blue-100' },
@@ -619,7 +619,7 @@ export default function RewardsPage() {
                                         >
                                             <span className="material-symbols-outlined text-dark/70">{item.icon}</span>
                                             <p className="flex-1 text-sm text-dark font-bold">{item.text}</p>
-                                            <span className="text-xs font-black text-dark bg-white px-2 py-1 rounded-lg">+{item.coins}</span>
+                                            <span className="text-xs font-extrabold text-dark bg-white px-2 py-1 rounded-lg">+{item.coins}</span>
                                         </motion.div>
                                     ))}
                                 </div>

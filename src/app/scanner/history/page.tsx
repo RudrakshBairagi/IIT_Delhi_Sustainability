@@ -111,9 +111,9 @@ export default function ScanHistoryPage() {
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                                 onClick={() => handleItemClick(scan)}
-                                className="bg-white dark:bg-dark-surface rounded-2xl border-2 border-dark shadow-brutal-sm p-4 flex items-center gap-4 cursor-pointer"
+                                className="bg-white dark:bg-dark-surface rounded-2xl border border-outline-variant/10 shadow-sm p-4 flex items-center gap-4 cursor-pointer"
                             >
-                                <div className="w-14 h-14 rounded-xl bg-gray-100 dark:bg-white/10 flex items-center justify-center shrink-0 border-2 border-dark">
+                                <div className="w-14 h-14 rounded-xl bg-gray-100 dark:bg-white/10 flex items-center justify-center shrink-0 border border-outline-variant/10">
                                     <span className="material-symbols-outlined text-2xl text-dark dark:text-white">
                                         {getCategoryIcon(scan.item.category)}
                                     </span>

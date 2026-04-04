@@ -19,9 +19,9 @@ const itemVariants = {
 
 const RECYCLE_TIPS = [
     { icon: 'delete', title: 'Clean Before Recycling', desc: 'Rinse containers and remove food residue', color: 'bg-card-blue' },
-    { icon: 'compress', title: 'Flatten Cardboard', desc: 'Break down boxes to save bin space', color: 'bg-card-yellow' },
+    { icon: 'compress', title: 'Flatten Cardboard', desc: 'Break down boxes to save bin space', color: 'bg-surface-container-low' },
     { icon: 'block', title: 'No Plastic Bags', desc: 'Loose recyclables only — no bag liners', color: 'bg-card-pink' },
-    { icon: 'check_circle', title: 'Check Local Rules', desc: 'Recycling rules vary by location', color: 'bg-card-green' },
+    { icon: 'check_circle', title: 'Check Local Rules', desc: 'Recycling rules vary by location', color: 'bg-surface-container-low' },
 ];
 
 const NEARBY_BINS = [
@@ -49,12 +49,12 @@ export default function RecyclePage() {
             <header className="px-5 pt-6 pb-4 flex items-center gap-4">
                 <Link
                     href="/scanner/results"
-                    className="w-10 h-10 flex items-center justify-center bg-white dark:bg-dark-surface rounded-xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm"
+                    className="w-10 h-10 flex items-center justify-center bg-white dark:bg-dark-surface rounded-xl border border-outline-variant/10 dark:border-gray-600 shadow-sm"
                 >
                     <span className="material-symbols-outlined text-dark dark:text-white">arrow_back</span>
                 </Link>
                 <div>
-                    <h1 className="font-black text-dark dark:text-white text-xl">Recycle Guide</h1>
+                    <h1 className="font-extrabold text-dark dark:text-white text-xl">Recycle Guide</h1>
                     {result && <p className="text-sm text-dark/60 dark:text-white/60">For your {result.item.objectName}</p>}
                 </div>
             </header>
@@ -67,7 +67,7 @@ export default function RecyclePage() {
             >
                 {/* Recyclability Card */}
                 {result && (
-                    <motion.div variants={itemVariants} className={`rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal p-5 text-center ${result.item.recyclable ? 'bg-card-green' : 'bg-card-coral'}`}>
+                    <motion.div variants={itemVariants} className={`rounded-2xl border border-outline-variant/10 dark:border-gray-600 shadow-[0_2px_10px_rgba(0,0,0,0.02)] p-5 text-center ${result.item.recyclable ? 'bg-surface-container-low' : 'bg-card-coral'}`}>
                         <span className="material-symbols-outlined text-5xl text-dark dark:text-white mb-2">
                             {result.item.recyclable ? 'recycling' : 'do_not_disturb'}
                         </span>
@@ -76,7 +76,7 @@ export default function RecyclePage() {
                         </h2>
                         <p className="text-sm text-dark/70 dark:text-white/70 mt-1">{result.item.recycleInfo || 'Check local guidelines'}</p>
                         {result.item.material && (
-                            <span className="inline-block mt-3 px-3 py-1 bg-white dark:bg-dark-surface rounded-full border border-dark dark:border-gray-600 text-xs font-bold text-dark dark:text-white">
+                            <span className="inline-block mt-3 px-3 py-1 bg-white dark:bg-dark-surface rounded-full border border-outline-variant/20 dark:border-gray-600 text-xs font-bold text-dark dark:text-white">
                                 Material: {result.item.material}
                             </span>
                         )}
@@ -88,9 +88,9 @@ export default function RecyclePage() {
                     <p className="font-extrabold text-dark dark:text-white text-lg mb-3 ml-1">Recycling Tips</p>
                     <div className="grid grid-cols-2 gap-3">
                         {RECYCLE_TIPS.map((tip, i) => (
-                            <div key={i} className={`${tip.color} rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm p-4`}>
+                            <div key={i} className={`${tip.color} rounded-2xl border border-outline-variant/10 dark:border-gray-600 shadow-sm p-4`}>
                                 <span className="material-symbols-outlined text-2xl text-dark dark:text-white mb-2">{tip.icon}</span>
-                                <p className="font-black text-dark dark:text-white text-xs">{tip.title}</p>
+                                <p className="font-extrabold text-dark dark:text-white text-xs">{tip.title}</p>
                                 <p className="text-[10px] text-dark/60 dark:text-white/60 mt-1">{tip.desc}</p>
                             </div>
                         ))}
@@ -102,8 +102,8 @@ export default function RecyclePage() {
                     <p className="font-extrabold text-dark dark:text-white text-lg mb-3 ml-1">Nearby Recycling Bins</p>
                     <div className="space-y-3">
                         {NEARBY_BINS.map((bin, i) => (
-                            <div key={i} className="bg-white dark:bg-dark-surface rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm p-4 flex items-center gap-4">
-                                <div className="w-12 h-12 bg-card-green rounded-xl border-2 border-dark dark:border-gray-600 flex items-center justify-center shrink-0">
+                            <div key={i} className="bg-white dark:bg-dark-surface rounded-2xl border border-outline-variant/10 dark:border-gray-600 shadow-sm p-4 flex items-center gap-4">
+                                <div className="w-12 h-12 bg-surface-container-low rounded-xl border border-outline-variant/10 dark:border-gray-600 flex items-center justify-center shrink-0">
                                     <span className="material-symbols-outlined text-xl text-dark dark:text-white">location_on</span>
                                 </div>
                                 <div className="flex-1 min-w-0">
@@ -126,7 +126,7 @@ export default function RecyclePage() {
                 <motion.div variants={itemVariants} className="space-y-3">
                     <Link
                         href="/scanner/ideas"
-                        className="w-full bg-primary text-dark py-4 rounded-2xl font-[900] uppercase tracking-wider border-2 border-dark dark:border-gray-600 shadow-brutal active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-3"
+                        className="w-full bg-primary text-dark py-4 rounded-2xl font-[900] uppercase tracking-wider border border-outline-variant/10 dark:border-gray-600 shadow-[0_2px_10px_rgba(0,0,0,0.02)] active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-3"
                     >
                         <span className="material-symbols-outlined">recycling</span>
                         Upcycle Instead

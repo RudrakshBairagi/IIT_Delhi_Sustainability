@@ -37,15 +37,15 @@ export default function TutorialsPage() {
                 {tutorials.map((tutorial) => (
                     <motion.div key={tutorial.id} variants={itemVariants}>
                         <Link href={`/tutorials/${tutorial.id}`}>
-                            <div className={`${tutorial.color} rounded-2xl border-2 border-dark shadow-brutal-sm p-4 flex items-center gap-4 active:scale-[0.98] transition-transform cursor-pointer`}>
-                                <div className="w-14 h-14 bg-white rounded-xl border-2 border-dark flex items-center justify-center text-2xl">
+                            <div className={`${tutorial.color} rounded-2xl border border-outline-variant/10 shadow-sm p-4 flex items-center gap-4 active:scale-[0.98] transition-transform cursor-pointer`}>
+                                <div className="w-14 h-14 bg-white rounded-xl border border-outline-variant/10 flex items-center justify-center text-2xl">
                                     {tutorial.icon}
                                 </div>
                                 <div className="flex-1">
-                                    <h3 className="font-black text-dark">{tutorial.title}</h3>
+                                    <h3 className="font-extrabold text-dark">{tutorial.title}</h3>
                                     <p className="text-xs text-dark/60 mb-2 line-clamp-1">{tutorial.description}</p>
                                     <div className="flex items-center gap-2">
-                                        <span className="inline-flex items-center px-2 py-0.5 bg-white rounded-lg border border-dark text-xs font-bold text-dark">
+                                        <span className="inline-flex items-center px-2 py-0.5 bg-white rounded-lg border border-outline-variant/20 text-xs font-bold text-dark">
                                             {tutorial.level}
                                         </span>
                                         <span className="text-xs text-dark/40 font-bold">{tutorial.estimatedTime}</span>

@@ -30,7 +30,7 @@ export const MissionCompleteToast = ({ mission, onClose }: MissionCompleteToastP
 
                     <div className="flex-1 min-w-0">
                         <p className="text-xs font-bold text-primary uppercase tracking-wider mb-0.5">Mission Complete!</p>
-                        <h3 className="font-black text-lg truncate leading-tight">{mission.title}</h3>
+                        <h3 className="font-extrabold text-lg truncate leading-tight">{mission.title}</h3>
                         <div className="flex items-center gap-3 mt-1">
                             <span className="text-xs font-bold text-white/80 flex items-center gap-1">
                                 <span className="text-yellow-400">⚡</span> {mission.xpReward} XP

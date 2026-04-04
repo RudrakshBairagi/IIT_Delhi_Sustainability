@@ -52,20 +52,20 @@ export default function MakeoverPage() {
                 <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="w-20 h-20 bg-gradient-to-br from-pink-200 to-purple-200 rounded-full border-4 border-dark flex items-center justify-center mb-6"
+                    className="w-20 h-20 bg-gradient-to-br from-pink-200 to-purple-200 rounded-full border border-outline-variant/10 flex items-center justify-center mb-6"
                 >
                     <span className="text-4xl">🎨</span>
                 </motion.div>
-                <h1 className="text-2xl font-black text-dark dark:text-white mb-2">Request Sent!</h1>
+                <h1 className="text-2xl font-extrabold text-dark dark:text-white mb-2">Request Sent!</h1>
                 <p className="text-dark/60 dark:text-white/60 mb-6 text-sm">
                     {artist?.name} will respond soon
                 </p>
 
                 {/* Compact Timeline */}
-                <div className="bg-white dark:bg-dark-surface rounded-2xl border-2 border-dark shadow-brutal-sm p-4 w-full mb-6">
+                <div className="bg-white dark:bg-dark-surface rounded-2xl border border-outline-variant/10 shadow-sm p-4 w-full mb-6">
                     <div className="flex items-center justify-between text-xs">
                         <div className="flex flex-col items-center gap-1">
-                            <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center border-2 border-dark">
+                            <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center border border-outline-variant/10">
                                 <span className="text-sm">✓</span>
                             </div>
                             <span className="text-dark/60 dark:text-white/60 font-bold">Sent</span>
@@ -95,17 +95,17 @@ export default function MakeoverPage() {
                 </div>
 
                 {/* Earnings Preview */}
-                <div className="bg-card-yellow rounded-2xl border-2 border-dark shadow-brutal-sm p-4 w-full mb-6 flex items-center justify-between">
+                <div className="bg-surface-container-low rounded-2xl border border-outline-variant/10 shadow-sm p-4 w-full mb-6 flex items-center justify-between">
                     <div>
                         <p className="text-xs font-bold text-dark/60">Your 30% share</p>
-                        <p className="text-2xl font-black text-dark">~{Math.round(itemData.coins * 2 * 0.3)} coins</p>
+                        <p className="text-2xl font-extrabold text-dark">~{Math.round(itemData.coins * 2 * 0.3)} coins</p>
                     </div>
                     <span className="text-4xl">🎨</span>
                 </div>
 
                 <button
                     onClick={() => router.push('/')}
-                    className="w-full bg-dark text-white font-black py-4 rounded-2xl border-2 border-dark shadow-brutal"
+                    className="w-full bg-dark text-white font-extrabold py-4 rounded-2xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)]"
                 >
                     Done
                 </button>
@@ -124,7 +124,7 @@ export default function MakeoverPage() {
                 variants={{ visible: { transition: { staggerChildren: 0.08 } } }}
             >
                 {/* Compact Info Banner */}
-                <motion.div variants={itemVariants} className="bg-gradient-to-r from-pink-100 to-purple-100 dark:from-pink-900/30 dark:to-purple-900/30 rounded-xl border-2 border-dark shadow-brutal-sm px-4 py-3 flex items-center gap-3">
+                <motion.div variants={itemVariants} className="bg-gradient-to-r from-pink-100 to-purple-100 dark:from-pink-900/30 dark:to-purple-900/30 rounded-xl border border-outline-variant/10 shadow-sm px-4 py-3 flex items-center gap-3">
                     <span className="text-2xl">👩‍🎨</span>
                     <p className="text-sm font-bold text-dark dark:text-white flex-1">
                         Artists transform → sell → you get <span className="text-primary">30%</span>
@@ -133,7 +133,7 @@ export default function MakeoverPage() {
 
                 {/* Item Preview - Compact */}
                 {itemData.image && (
-                    <motion.div variants={itemVariants} className="bg-white dark:bg-dark-surface rounded-xl border-2 border-dark shadow-brutal-sm overflow-hidden flex">
+                    <motion.div variants={itemVariants} className="bg-white dark:bg-dark-surface rounded-xl border border-outline-variant/10 shadow-sm overflow-hidden flex">
                         <img src={itemData.image} alt={itemData.title} className="w-24 h-24 object-cover" />
                         <div className="p-3 flex-1 flex flex-col justify-center">
                             <p className="font-bold text-dark dark:text-white text-sm">{itemData.title}</p>
@@ -151,10 +151,10 @@ export default function MakeoverPage() {
                             onClick={() => setSelectedArtist(artist.id)}
                             className={`bg-white dark:bg-dark-surface rounded-xl border-2 ${selectedArtist === artist.id
                                 ? 'border-pink-500 ring-2 ring-pink-200'
-                                : 'border-dark dark:border-gray-600'
-                                } shadow-brutal-sm p-3 flex items-center gap-3 cursor-pointer transition-all`}
+                                : 'border-outline-variant/20 dark:border-gray-600'
+                                } shadow-sm p-3 flex items-center gap-3 cursor-pointer transition-all`}
                         >
-                            <img src={artist.avatar} alt={artist.name} className="w-12 h-12 rounded-xl border-2 border-dark object-cover" />
+                            <img src={artist.avatar} alt={artist.name} className="w-12 h-12 rounded-xl border border-outline-variant/10 object-cover" />
                             <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2">
                                     <p className="font-bold text-dark dark:text-white text-sm">{artist.name}</p>
@@ -174,14 +174,14 @@ export default function MakeoverPage() {
                 </motion.div>
 
                 {/* Revenue Split - Compact */}
-                <motion.div variants={itemVariants} className="bg-card-yellow rounded-xl border-2 border-dark shadow-brutal-sm p-3">
+                <motion.div variants={itemVariants} className="bg-surface-container-low rounded-xl border border-outline-variant/10 shadow-sm p-3">
                     <div className="flex items-center justify-between mb-2">
                         <span className="text-xs font-bold text-dark/60">Revenue Split</span>
                         <span className="text-xs font-bold text-dark">You: 30% · Artist: 70%</span>
                     </div>
                     <div className="flex items-center gap-1">
-                        <div className="w-[30%] h-2 bg-primary rounded-full border border-dark" />
-                        <div className="flex-1 h-2 bg-purple-300 rounded-full border border-dark" />
+                        <div className="w-[30%] h-2 bg-primary rounded-full border border-outline-variant/20" />
+                        <div className="flex-1 h-2 bg-purple-300 rounded-full border border-outline-variant/20" />
                     </div>
                 </motion.div>
 
@@ -190,7 +190,7 @@ export default function MakeoverPage() {
                     <button
                         onClick={handleSubmit}
                         disabled={!selectedArtist || submitting}
-                        className={`w-full py-4 rounded-2xl border-2 border-dark shadow-brutal font-black text-lg transition-all flex items-center justify-center gap-2 ${selectedArtist
+                        className={`w-full py-4 rounded-2xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] font-extrabold text-lg transition-all flex items-center justify-center gap-2 ${selectedArtist
                             ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white'
                             : 'bg-gray-200 text-gray-500 cursor-not-allowed'
                             }`}
