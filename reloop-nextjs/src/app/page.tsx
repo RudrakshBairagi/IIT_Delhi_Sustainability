@@ -99,9 +99,11 @@ export default function HomePage() {
             </div>
             {/* Mock Stories */}
             {[
-              { name: 'Marcus', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC9OHkGtOCLS2lRmMUoiTD1oMerBkIPtgXTL-n5dogfoCYeafF8pF8_v5bSFYTbtNOE8RH9g3ahdG2VC8PXjnorr62U6E60A5Tko7p5Sl82aPANJS6lQ0b0Eysz5rOZo3Fl_vwTDx7LQbi763F0li176zl4aF48bW9NMVKYP2Rw9dTdOJO8Rq358P9_4Q8zFIvckQA-pGBNYzjMszRo3IIdBTzUZC0kodOAIwOJSjbFZU54TLEbiHxeMuUYaE0-WiWAhEppc8PO814' },
-              { name: 'Elena', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAUimW4oGSvGjJ3TJwdBbTtgNi2VTvfEU6ZhqQAaLglT6Os_0SEdsatve9ze4391RXMYiNKHHgmevMp1hPoP428VwARW2RKUfm-ky4TFNGzIpcBW4TIRie8t9zn6ujz7YzorjH0mTGtrOwlyGtg069PyblscrrITegYVgt_BgI6ggXIT616B8N_-pvfThpFcVi_-XOFsxJh5aynlLksqqos_ScuXN_z1tUcWff0IXefgoajBdyab4EufN_p3U8SEVEDf7ddrjPr8p4' },
-              { name: 'Julian', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCXd8r9bEu9_iz_CLI5qYB_7uF3kgKHuozs9dV3y5tKvC2mk5ML547DTVIJCOZfQ4QqRXC174b0weFeL5DbOMbK7Myk9X6OeCANigbMmTiiKl4oiLwK8cth6lNQTacl7XI5UWAmwfteEwptdMtrpQu8AYF9tT1D-mBK_l-glg9CnGJUOmtOWlt9H-ujJmc4JO3ZXlxsRyKG29OIoRoIt5o10_vE-5VWvO_p_v15SJ5ylNMEx5urmbFbu1OMNgBAhH0w5hcVHFi5OIM' }
+              { name: 'Shaolin', img: '/images/stories/shaolin.jpg' },
+              { name: 'Rudraksh', img: '/images/stories/rudraksh.jpg' },
+              { name: 'Mihir', img: '/images/stories/mihir.jpg' },
+              { name: 'Arjun', img: '/images/stories/arjun.jpg' },
+              { name: 'Charu', img: '/images/stories/charu.jpg' }
             ].map((story, i) => (
               <div key={i} className="flex flex-col items-center gap-2 flex-shrink-0 opacity-80 cursor-pointer">
                 <div className="p-1 rounded-full border-2 border-primary/30">
