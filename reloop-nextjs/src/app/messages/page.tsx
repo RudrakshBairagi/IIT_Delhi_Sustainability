@@ -32,22 +32,27 @@ export default function MessagesPage() {
         const loadMessages = async () => {
             setIsLoading(true);
             try {
-                if (isDemo || !user) {
-                    // Demo mode - use mock data
+                if (isDemo) {
+                    // Demo mode only - use mock data
                     setMessages(DemoManager.getMockMessages());
-                } else {
-                    // Firebase mode - load conversations
+                } else if (user) {
+                    // Firebase mode - load conversations for logged-in users
                     const conversations = await DBService.getConversations(user.uid);
+                    console.log('Loaded conversations:', conversations);
 
                     // Transform conversations to Message format
                     const formattedMessages: Message[] = conversations.map((conv: any) => {
                         const otherParticipantId = conv.participants?.find((p: string) => p !== user.uid) || '';
+                        // Try to get name from stored data or use fallback
+                        const senderName = conv.sellerName || conv.otherParticipantName || 'Seller';
+                        const senderAvatar = conv.sellerAvatar || conv.otherParticipantAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(senderName)}&background=4ce68a&color=fff`;
+
                         return {
                             id: conv.id,
                             senderId: otherParticipantId,
-                            senderName: conv.otherParticipant?.name || 'User',
-                            senderAvatar: conv.otherParticipant?.avatar || `https://ui-avatars.com/api/?name=User`,
-                            lastMessage: conv.lastMessage || 'No messages yet',
+                            senderName,
+                            senderAvatar,
+                            lastMessage: conv.lastMessage || 'Start chatting!',
                             timestamp: conv.lastMessageAt?.toDate?.() || new Date(),
                             unread: conv.unreadCount > 0,
                             conversationType: conv.listingId ? 'marketplace' : 'community',
@@ -58,11 +63,18 @@ export default function MessagesPage() {
                         };
                     });
                     setMessages(formattedMessages);
+                } else {
+                    // No user - show empty
+                    setMessages([]);
                 }
             } catch (error) {
                 console.error('Failed to load messages', error);
-                // Fallback to demo data on error
-                setMessages(DemoManager.getMockMessages());
+                // Don't fallback to demo data for logged-in users, just show empty
+                if (isDemo) {
+                    setMessages(DemoManager.getMockMessages());
+                } else {
+                    setMessages([]);
+                }
             } finally {
                 setIsLoading(false);
             }
@@ -71,12 +83,22 @@ export default function MessagesPage() {
         loadMessages();
 
         // Subscribe to demo data updates (demo mode only)
+        let unsubscribe = () => { };
+        let pollInterval: NodeJS.Timeout | null = null;
+
         if (isDemo) {
-            const unsubscribe = DemoManager.subscribe(() => {
+            unsubscribe = DemoManager.subscribe(() => {
                 setMessages([...DemoManager.getMockMessages()]);
             });
-            return unsubscribe;
+        } else if (user) {
+            // Poll Firebase every 3 seconds for real-time message updates
+            pollInterval = setInterval(loadMessages, 3000);
         }
+
+        return () => {
+            unsubscribe();
+            if (pollInterval) clearInterval(pollInterval);
+        };
     }, [isDemo, user]);
 
     // Format price as Indian Rupees

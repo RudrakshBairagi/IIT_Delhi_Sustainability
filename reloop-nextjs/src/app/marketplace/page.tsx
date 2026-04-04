@@ -90,6 +90,8 @@ export default function MarketplacePage() {
         load();
 
         let unsubscribe = () => { };
+        let pollInterval: NodeJS.Timeout | null = null;
+
         if (isDemo) {
             unsubscribe = DemoManager.subscribe(() => {
                 if (mounted) {
@@ -97,11 +99,21 @@ export default function MarketplacePage() {
                     setListings([...DemoManager.getMockListings()]);
                 }
             });
+        } else {
+            // Poll Firebase every 5 seconds for real-time updates
+            pollInterval = setInterval(() => {
+                if (mounted) {
+                    DBService.getListings().then(data => {
+                        if (mounted) setListings(data);
+                    });
+                }
+            }, 5000);
         }
 
         return () => {
             mounted = false;
             unsubscribe();
+            if (pollInterval) clearInterval(pollInterval);
         };
     }, [isDemo]);
 
@@ -132,18 +144,12 @@ export default function MarketplacePage() {
     };
 
 
-    // Filter and sort listings based on active tab
+    // Filter and sort listings for marketplace (excludes user's own listings)
     const getFilteredListings = () => {
         let filtered = listings;
 
-        // Tab filtering
-        if (activeTab === 'all') {
-            // Exclude current user's listings from "All Items"
-            filtered = filtered.filter(l => l.seller.id !== currentUserId);
-        } else {
-            // Show only current user's listings in "My Listings"
-            filtered = filtered.filter(l => l.seller.id === currentUserId);
-        }
+        // Exclude current user's listings from marketplace
+        filtered = filtered.filter(l => l.seller?.id !== currentUserId);
 
         // Category and search filtering
         filtered = filtered
@@ -180,13 +186,24 @@ export default function MarketplacePage() {
                     <div>
                         <h1 className="text-4xl font-black uppercase tracking-tight text-black dark:text-white leading-none whitespace-nowrap">Market Hub</h1>
                     </div>
-                    <button
-                        onClick={() => router.push('/notifications')}
-                        aria-label="Notifications"
-                        className="bg-[#FAFAFA] dark:bg-dark-surface w-12 h-12 rounded-full border-4 border-black dark:border-gray-600 shadow-[4px_4px_0px_0px_#000] flex items-center justify-center active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-150"
-                    >
-                        <span className="material-symbols-outlined text-black dark:text-white" style={{ fontSize: '28px' }}>notifications</span>
-                    </button>
+                    <div className="flex items-center gap-2">
+                        {/* My Listings Icon */}
+                        <Link
+                            href="/my-listings"
+                            aria-label="My Listings"
+                            className="bg-[#FAFAFA] dark:bg-dark-surface w-12 h-12 rounded-full border-4 border-black dark:border-gray-600 shadow-[4px_4px_0px_0px_#000] flex items-center justify-center active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-150 hover:bg-primary"
+                        >
+                            <span className="material-symbols-outlined text-black dark:text-white" style={{ fontSize: '24px' }}>inventory_2</span>
+                        </Link>
+                        {/* Notifications Icon */}
+                        <button
+                            onClick={() => router.push('/notifications')}
+                            aria-label="Notifications"
+                            className="bg-[#FAFAFA] dark:bg-dark-surface w-12 h-12 rounded-full border-4 border-black dark:border-gray-600 shadow-[4px_4px_0px_0px_#000] flex items-center justify-center active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-150"
+                        >
+                            <span className="material-symbols-outlined text-black dark:text-white" style={{ fontSize: '28px' }}>notifications</span>
+                        </button>
+                    </div>
                 </div>
 
                 {/* Search Bar */}
@@ -230,16 +247,6 @@ export default function MarketplacePage() {
                             {cat}
                         </button>
                     ))}
-                    {/* My Listings Pill */}
-                    <button
-                        onClick={() => { setActiveTab('my-listings'); setSelectedCategory('All'); }}
-                        className={`px-6 py-3 rounded-full border-4 border-black shadow-[4px_4px_0px_0px_#000] font-black uppercase whitespace-nowrap active:translate-y-[2px] active:shadow-none transition-all text-sm ${activeTab === 'my-listings'
-                            ? 'bg-[#9747FF] text-white'
-                            : 'bg-white hover:bg-yellow-100 text-black'
-                            }`}
-                    >
-                        My Listings
-                    </button>
                 </div>
             </div>
 
@@ -248,7 +255,7 @@ export default function MarketplacePage() {
                 {/* Section Header */}
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="text-xl font-black uppercase tracking-wide">
-                        {activeTab === 'my-listings' ? 'My Listings' : 'Fresh Picks'}
+                        Fresh Picks
                     </h2>
                     <Link href="/my-listings" className="text-xs font-bold underline uppercase">
                         View All
@@ -266,20 +273,11 @@ export default function MarketplacePage() {
                     >
                         <div className="w-20 h-20 bg-white dark:bg-dark-surface rounded-2xl border-2 border-gray-200 dark:border-gray-700 mx-auto flex items-center justify-center mb-4">
                             <span className="material-symbols-outlined text-4xl text-gray-300">
-                                {activeTab === 'my-listings' ? 'inventory_2' : 'search_off'}
+                                search_off
                             </span>
                         </div>
-                        {activeTab === 'my-listings' ? (
-                            <>
-                                <p className="text-gray-500 dark:text-gray-400 font-medium">No listings yet</p>
-                                <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Start selling your pre-loved items!</p>
-                            </>
-                        ) : (
-                            <>
-                                <p className="text-gray-500 dark:text-gray-400 font-medium">No items found</p>
-                                <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Try a different category or search term</p>
-                            </>
-                        )}
+                        <p className="text-gray-500 dark:text-gray-400 font-medium">No items found</p>
+                        <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Try a different category or search term</p>
                         <Link
                             href="/sell"
                             className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-primary text-dark font-bold rounded-xl border-2 border-dark shadow-brutal-sm hover:scale-105 active:scale-95 transition-transform"
@@ -299,7 +297,6 @@ export default function MarketplacePage() {
                             <motion.div key={listing.id} variants={itemVariants}>
                                 <ListingCard
                                     listing={listing}
-                                    isOwner={activeTab === 'my-listings'}
                                     onEdit={handleEdit}
                                     onDelete={handleDelete}
                                 />

@@ -17,7 +17,7 @@ class DemoManagerService {
         name: 'Demo User',
         email: 'demo@reloop.com',
         avatar: 'https://ui-avatars.com/api/?name=Demo+User',
-        coins: 450,
+        coins: 1450,
         xp: 2800,
         level: 3,
         levelTitle: 'Sapling',
@@ -294,18 +294,27 @@ class DemoManagerService {
 
     // ===== REWARDS (Mock) =====
     private _mockRewards = [
-        // Campus Services
-        { id: 'reward-laundry', title: 'Laundry Credit', description: '1 wash cycle at hostel laundry', icon: '🧺', cost: 50, category: 'voucher' as const, available: true },
-        { id: 'reward-canteen', title: 'Canteen Voucher', description: '₹25 credit at campus canteen', icon: '🍽️', cost: 25, category: 'voucher' as const, available: true },
-        { id: 'reward-coffee', title: 'Coffee Voucher', description: '1 free coffee at cafe', icon: '☕', cost: 15, category: 'voucher' as const, available: true },
+        // Campus Services - Popular
+        { id: 'reward-printing', title: 'Free Printing', description: '10 pages free printing at library', icon: '🖨️', cost: 50, category: 'voucher' as const, available: true, popular: true },  // ₹10
+        { id: 'reward-coffee', title: 'Free Coffee', description: '1 free coffee at campus cafe', icon: '☕', cost: 150, category: 'voucher' as const, available: true, popular: true },  // ₹30
+        { id: 'reward-canteen', title: 'Canteen Meal', description: '₹50 meal credit at canteen', icon: '🍽️', cost: 250, category: 'voucher' as const, available: true },  // ₹50
 
-        // Original Rewards
-        { id: 'reward-1', title: '10% Campus Cafe', description: 'Coffee discount for eco-warriors', icon: '☕', cost: 100, category: 'voucher' as const, available: true },
-        { id: 'reward-2', title: 'ReLoop Sticker Pack', description: 'Show off your sustainability', icon: '🎨', cost: 50, category: 'merch' as const, available: true },
-        { id: 'reward-3', title: 'Plant a Tree', description: 'We plant a tree in your name', icon: '🌳', cost: 200, category: 'donation' as const, available: true },
-        { id: 'reward-4', title: 'Premium Badge', description: 'Exclusive profile badge', icon: '🏅', cost: 150, category: 'merch' as const, available: true },
-        { id: 'reward-5', title: 'Book Store 15% Off', description: 'Discount at campus bookstore', icon: '📚', cost: 75, category: 'voucher' as const, available: true },
-        { id: 'reward-6', title: 'Ocean Cleanup Donation', description: 'Remove 1lb plastic from ocean', icon: '🌊', cost: 100, category: 'donation' as const, available: true },
+        // Welfare & Donations
+        { id: 'reward-welfare', title: 'Donate to Welfare', description: 'Contribute to student welfare fund', icon: '❤️', cost: 100, category: 'donation' as const, available: true, popular: true },  // ₹20
+        { id: 'reward-tree', title: 'Plant a Tree', description: 'We plant a tree in your name', icon: '🌳', cost: 500, category: 'donation' as const, available: true },  // ₹100
+        { id: 'reward-meals', title: 'Donate a Meal', description: 'Feed a student in need', icon: '🍱', cost: 200, category: 'donation' as const, available: true },  // ₹40
+        { id: 'reward-ocean', title: 'Ocean Cleanup', description: 'Remove 1kg plastic from oceans', icon: '🌊', cost: 250, category: 'donation' as const, available: true },  // ₹50
+
+        // Campus Perks
+        { id: 'reward-laundry', title: 'Laundry Credit', description: '1 wash cycle at hostel laundry', icon: '🧺', cost: 100, category: 'voucher' as const, available: true },  // ₹20
+        { id: 'reward-gym', title: 'Gym Day Pass', description: '1 day access to campus gym', icon: '💪', cost: 150, category: 'voucher' as const, available: true },  // ₹30
+        { id: 'reward-bookstore', title: 'Bookstore 10% Off', description: 'Discount at campus bookstore', icon: '📚', cost: 200, category: 'voucher' as const, available: true },  // ₹40
+        { id: 'reward-stationery', title: 'Stationery Pack', description: 'Free notebook + pens from store', icon: '📝', cost: 175, category: 'merch' as const, available: true },  // ₹35
+
+        // Special Rewards
+        { id: 'reward-badge', title: 'Eco Hero Badge', description: 'Exclusive profile badge', icon: '🏅', cost: 500, category: 'merch' as const, available: true },  // ₹100
+        { id: 'reward-tshirt', title: 'ReLoop T-Shirt', description: 'Limited edition eco tee', icon: '👕', cost: 1500, category: 'merch' as const, available: true },  // ₹300
+        { id: 'reward-priority', title: 'Priority Pickup', description: 'Skip the queue for 1 month', icon: '⚡', cost: 750, category: 'voucher' as const, available: true },  // ₹150
     ];
 
     private _redeemedRewards: string[] = [];
@@ -620,43 +629,68 @@ class DemoManagerService {
         return [
             {
                 id: 's1',
-                charityId: 'charity-1',
-                charityName: 'Trees for Future',
-                charityLogo: '🌳',
-                thumbnail: '🌱',
-                title: 'Just planted 50 trees in Kerala!',
-                timeAgo: '2h ago',
-                viewed: false,
-            },
-            {
-                id: 's2',
-                charityId: 'charity-2',
-                charityName: 'Ocean Cleanup',
-                charityLogo: '🌊',
-                thumbnail: '🐢',
-                title: 'Beach cleanup in Goa - 200kg collected!',
-                timeAgo: '5h ago',
-                viewed: false,
-            },
-            {
-                id: 's3',
                 charityId: 'charity-3',
                 charityName: 'Local Food Bank',
                 charityLogo: '🍎',
-                thumbnail: '👨‍👩‍👧',
-                title: 'Fed 150 families this week',
-                timeAgo: '1d ago',
-                viewed: true,
+                thumbnail: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=400&h=400&fit=crop',
+                title: 'Thanks to Ankush! 🙏',
+                subtitle: 'Your meal donation fed a family today',
+                timeAgo: '1h ago',
+                viewed: false,
+                donorName: 'Ankush J.',
+                impactImage: 'https://images.unsplash.com/photo-1593113598332-cd288d649433?w=800&h=600&fit=crop',
             },
             {
-                id: 's4',
+                id: 's2',
                 charityId: 'charity-1',
                 charityName: 'Trees for Future',
                 charityLogo: '🌳',
-                thumbnail: '🌿',
-                title: 'New nursery in Tamil Nadu',
+                thumbnail: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&h=400&fit=crop',
+                title: 'Uransh planted 2 trees! 🌱',
+                subtitle: 'Growing a greener future in Kerala',
+                timeAgo: '3h ago',
+                viewed: false,
+                donorName: 'Uransh B.',
+                impactImage: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?w=800&h=600&fit=crop',
+            },
+            {
+                id: 's3',
+                charityId: 'charity-2',
+                charityName: 'Ocean Cleanup',
+                charityLogo: '🌊',
+                thumbnail: 'https://images.unsplash.com/photo-1484291470158-b8f8d608850d?w=400&h=400&fit=crop',
+                title: 'Beach cleanup in Goa! 🐢',
+                subtitle: '200kg plastic collected - thanks to YOU',
+                timeAgo: '5h ago',
+                viewed: false,
+                donorName: 'Community',
+                impactImage: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop',
+            },
+            {
+                id: 's4',
+                charityId: 'charity-3',
+                charityName: 'Local Food Bank',
+                charityLogo: '🍎',
+                thumbnail: 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=400&h=400&fit=crop',
+                title: '150 Families Fed This Week 👨‍👩‍👧‍👦',
+                subtitle: 'Special thanks to Rudraksh & team',
+                timeAgo: '1d ago',
+                viewed: true,
+                donorName: 'Rudraksh S.',
+                impactImage: 'https://images.unsplash.com/photo-1593113598332-cd288d649433?w=800&h=600&fit=crop',
+            },
+            {
+                id: 's5',
+                charityId: 'charity-1',
+                charityName: 'Trees for Future',
+                charityLogo: '🌳',
+                thumbnail: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=400&fit=crop',
+                title: 'New Nursery in Tamil Nadu 🌿',
+                subtitle: '500 saplings ready for planting',
                 timeAgo: '2d ago',
                 viewed: true,
+                donorName: 'Community',
+                impactImage: 'https://images.unsplash.com/photo-1476304884326-cd2c88572c5f?w=800&h=600&fit=crop',
             },
         ];
     }

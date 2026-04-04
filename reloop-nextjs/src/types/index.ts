@@ -175,6 +175,7 @@ export interface Message {
     lastMessage: string;
     timestamp: Date;
     unread: boolean;
+    listingId?: string;
     listingTitle?: string;
     listingImage?: string;
     listingPrice?: number;
@@ -186,9 +187,30 @@ export interface Message {
 export interface ChatMessage {
     id: string;
     senderId: string;
+    senderName?: string;
+    senderAvatar?: string;
     text: string;
     timestamp: Date;
     isOwn: boolean;
+    read?: boolean;
+    // For message types
+    type?: 'text' | 'offer' | 'system' | 'qr';
+    // For offer messages
+    offerAmount?: number;
+    offerStatus?: 'pending' | 'accepted' | 'declined' | 'countered';
+    counterAmount?: number;
+    // For QR code messages
+    qrType?: 'dropoff' | 'pickup';
+    qrData?: {
+        type: string;
+        tradeId?: string;
+        listingId: string;
+        listingTitle: string;
+        sellerId: string;
+        buyerId?: string;
+        amount?: number;
+        createdAt: string;
+    };
 }
 
 export interface Notification {

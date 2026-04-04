@@ -187,10 +187,12 @@ export const DBService = {
         try {
             const q = query(collection(db, "listings"), orderBy("createdAt", "desc"));
             const querySnapshot = await getDocs(q);
-            return querySnapshot.docs.map(doc => ({
+            const allListings = querySnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
             })) as Listing[];
+            // Filter out sold items client-side
+            return allListings.filter(listing => listing.status !== 'sold');
         } catch (error) {
             console.error("Error fetching listings:", error);
             return [];
@@ -286,13 +288,22 @@ export const DBService = {
     // MESSAGES & CONVERSATIONS
     async getConversations(userId: string) {
         try {
+            // Simple query without orderBy to avoid composite index requirement
             const q = query(
                 collection(db, "conversations"),
-                where("participants", "array-contains", userId),
-                orderBy("lastMessageAt", "desc")
+                where("participants", "array-contains", userId)
             );
             const snapshot = await getDocs(q);
-            return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            const conversations = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+            // Sort in-memory by lastMessageAt (descending)
+            conversations.sort((a: any, b: any) => {
+                const aTime = a.lastMessageAt?.toDate?.()?.getTime() || 0;
+                const bTime = b.lastMessageAt?.toDate?.()?.getTime() || 0;
+                return bTime - aTime;
+            });
+
+            return conversations;
         } catch (error) {
             console.error("Error fetching conversations:", error);
             return [];
@@ -313,27 +324,167 @@ export const DBService = {
         }
     },
 
-    async sendMessage(conversationId: string, senderId: string, text: string) {
+    async sendMessage(
+        conversationId: string,
+        senderId: string,
+        text: string,
+        messageType: 'text' | 'offer' | 'system' = 'text',
+        offerAmount?: number
+    ) {
         try {
             const messagesRef = collection(db, "conversations", conversationId, "messages");
-            await addDoc(messagesRef, {
+            const messageData: any = {
                 senderId,
                 text,
-                timestamp: serverTimestamp()
-            });
+                type: messageType,
+                timestamp: serverTimestamp(),
+                read: false,
+            };
+
+            // Add offer-specific fields
+            if (messageType === 'offer' && offerAmount) {
+                messageData.offerAmount = offerAmount;
+                messageData.offerStatus = 'pending';
+            }
+
+            const docRef = await addDoc(messagesRef, messageData);
+
             // Update conversation's lastMessage
             const convRef = doc(db, "conversations", conversationId);
+            const lastMessageText = messageType === 'offer'
+                ? `💰 Offer: ${offerAmount} coins`
+                : text;
             await updateDoc(convRef, {
-                lastMessage: text,
+                lastMessage: lastMessageText,
                 lastMessageAt: serverTimestamp()
             });
+
+            return docRef.id;
         } catch (error) {
             console.error("Error sending message:", error);
             throw error;
         }
     },
 
-    async createConversation(participant1: string, participant2: string, listingId?: string, listingTitle?: string) {
+    // Send an offer message in chat
+    async sendOffer(conversationId: string, senderId: string, amount: number, listingTitle?: string) {
+        const text = `I'd like to offer ${amount} coins${listingTitle ? ` for "${listingTitle}"` : ''}. Let me know if that works!`;
+        return await this.sendMessage(conversationId, senderId, text, 'offer', amount);
+    },
+
+    // Update offer status (accept/decline/counter)
+    async updateOfferStatus(
+        conversationId: string,
+        messageId: string,
+        status: 'accepted' | 'declined' | 'countered',
+        counterAmount?: number,
+        offerAmount?: number,
+        listingId?: string,
+        listingTitle?: string,
+        sellerId?: string,
+        buyerId?: string
+    ) {
+        try {
+            const messageRef = doc(db, "conversations", conversationId, "messages", messageId);
+            const updateData: any = { offerStatus: status };
+            if (status === 'countered' && counterAmount) {
+                updateData.counterAmount = counterAmount;
+            }
+            await updateDoc(messageRef, updateData);
+
+            // Add system message about the status change
+            const statusMessages = {
+                accepted: '✅ Offer accepted! Deal confirmed.',
+                declined: '❌ Offer declined.',
+                countered: `🔄 Counter offer: ${counterAmount} coins`,
+            };
+            await this.sendMessage(conversationId, 'system', statusMessages[status], 'system');
+
+            // If accepted, update conversation deal status and send QR to buyer
+            if (status === 'accepted') {
+                const convRef = doc(db, "conversations", conversationId);
+                const amount = offerAmount || counterAmount || 0;
+
+                // Generate trade ID for this transaction
+                const tradeId = `trade_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+                await updateDoc(convRef, {
+                    dealStatus: 'agreed',
+                    agreedAmount: amount,
+                    tradeId: tradeId,
+                });
+
+                // Send QR code message to the buyer
+                if (listingId && buyerId) {
+                    await this.sendQRMessage(conversationId, {
+                        type: 'pickup',
+                        tradeId,
+                        listingId,
+                        listingTitle: listingTitle || 'Item',
+                        sellerId: sellerId || '',
+                        buyerId,
+                        amount,
+                    });
+                }
+            }
+        } catch (error) {
+            console.error("Error updating offer status:", error);
+            throw error;
+        }
+    },
+
+    // Send a QR code message in chat
+    async sendQRMessage(
+        conversationId: string,
+        qrData: {
+            type: 'dropoff' | 'pickup';
+            tradeId?: string;
+            listingId: string;
+            listingTitle: string;
+            sellerId: string;
+            buyerId?: string;
+            amount?: number;
+        }
+    ) {
+        try {
+            const messagesRef = collection(db, "conversations", conversationId, "messages");
+            await addDoc(messagesRef, {
+                senderId: 'system',
+                type: 'qr',
+                qrType: qrData.type,
+                qrData: {
+                    ...qrData,
+                    createdAt: new Date().toISOString(),
+                },
+                text: qrData.type === 'pickup'
+                    ? `🎉 Show this QR at the ReLoop Zone to pick up "${qrData.listingTitle}"`
+                    : `📦 Show this QR to drop off "${qrData.listingTitle}"`,
+                timestamp: serverTimestamp(),
+                read: false,
+            });
+
+            // Update last message
+            const convRef = doc(db, "conversations", conversationId);
+            await updateDoc(convRef, {
+                lastMessage: `📱 QR Code sent for ${qrData.type}`,
+                lastMessageAt: serverTimestamp(),
+            });
+        } catch (error) {
+            console.error("Error sending QR message:", error);
+            throw error;
+        }
+    },
+
+    async createConversation(
+        participant1: string,
+        participant2: string,
+        listingId?: string,
+        listingTitle?: string,
+        listingImage?: string,
+        listingPrice?: number,
+        sellerName?: string,
+        sellerAvatar?: string
+    ) {
         try {
             // Updated to single-write pattern
             const newRef = doc(collection(db, "conversations"));
@@ -342,6 +493,11 @@ export const DBService = {
                 participants: [participant1, participant2],
                 listingId: listingId || null,
                 listingTitle: listingTitle || null,
+                listingImage: listingImage || null,
+                listingPrice: listingPrice || null,
+                // Store seller info for display in messages list
+                sellerName: sellerName || null,
+                sellerAvatar: sellerAvatar || null,
                 lastMessage: '',
                 lastMessageAt: serverTimestamp(),
                 createdAt: serverTimestamp()
@@ -392,28 +548,38 @@ export const DBService = {
         userId: string,
         sellerId: string,
         listingId?: string,
-        listingTitle?: string
+        listingTitle?: string,
+        listingImage?: string,
+        listingPrice?: number,
+        sellerName?: string,
+        sellerAvatar?: string
     ): Promise<string> {
         try {
-            // Check if conversation exists
+            // Check if conversation exists for this specific listing
             const q = query(
                 collection(db, "conversations"),
                 where("participants", "array-contains", userId)
             );
             const snapshot = await getDocs(q);
 
-            // Find existing conversation with both participants
+            // Find existing conversation with both participants AND same listing
             const existing = snapshot.docs.find(doc => {
                 const data = doc.data();
-                return data.participants.includes(sellerId);
+                const hasBothParticipants = data.participants.includes(sellerId);
+                // If listingId is provided, also match by listingId
+                if (listingId) {
+                    return hasBothParticipants && data.listingId === listingId;
+                }
+                // For non-listing conversations, just match participants
+                return hasBothParticipants && !data.listingId;
             });
 
             if (existing) {
                 return existing.id;
             }
 
-            // Create new conversation
-            return await this.createConversation(userId, sellerId, listingId, listingTitle);
+            // Create new conversation for this listing
+            return await this.createConversation(userId, sellerId, listingId, listingTitle, listingImage, listingPrice, sellerName, sellerAvatar);
         } catch (error) {
             console.error("Error finding/creating conversation:", error);
             throw error;

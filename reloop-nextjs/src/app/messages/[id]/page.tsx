@@ -11,6 +11,8 @@ import { ChatMessage, Message } from '@/types';
 import { useNavContext, NavPresets } from '@/lib/hooks/useNavContext';
 import { QuickReplies } from '@/components/chat/QuickReplies';
 import { InlineOffer } from '@/components/chat/InlineOffer';
+import { OfferCard } from '@/components/chat/OfferCard';
+import { QRCodeMessage } from '@/components/chat/QRCodeMessage';
 
 // Format price as Indian Rupees
 const formatPrice = (price: number) => {
@@ -49,11 +51,15 @@ export default function ChatPage() {
                     if (conv) {
                         // Find the other participant
                         const otherParticipantId = conv.participants.find((p: string) => p !== user.uid);
+                        // Use stored seller info (from when conversation was created)
+                        const contactName = conv.sellerName || conv.otherParticipantName || 'User';
+                        const contactAvatar = conv.sellerAvatar || conv.otherParticipantAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(contactName)}&background=4ce68a&color=fff`;
+
                         setContact({
                             id: conv.id,
                             senderId: otherParticipantId || conversationId,
-                            senderName: conv.otherParticipant?.name || 'User',
-                            senderAvatar: conv.otherParticipant?.avatar || 'https://ui-avatars.com/api/?name=User',
+                            senderName: contactName,
+                            senderAvatar: contactAvatar,
                             lastMessage: '',
                             timestamp: new Date(),
                             unread: false,
@@ -61,6 +67,7 @@ export default function ChatPage() {
                             listingTitle: conv.listingTitle,
                             listingPrice: conv.listingPrice,
                             listingImage: conv.listingImage,
+                            listingId: conv.listingId,
                         });
                     }
 
@@ -71,7 +78,14 @@ export default function ChatPage() {
                             senderId: m.senderId,
                             text: m.text,
                             timestamp: m.timestamp?.toDate?.() || new Date(),
-                            isOwn: m.senderId === user.uid
+                            isOwn: m.senderId === user.uid,
+                            read: m.read || false,
+                            type: m.type || 'text',
+                            offerAmount: m.offerAmount,
+                            offerStatus: m.offerStatus,
+                            counterAmount: m.counterAmount,
+                            qrType: m.qrType,
+                            qrData: m.qrData,
                         }));
                         setChatMessages(formattedMessages);
                         setIsLoading(false);
@@ -285,17 +299,89 @@ export default function ChatPage() {
                             transition={{ delay: i * 0.02 }}
                             className={`flex ${msg.isOwn ? 'justify-end' : 'justify-start'}`}
                         >
-                            <div
-                                className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm font-medium ${msg.isOwn
-                                    ? 'bg-primary text-dark rounded-br-md border-2 border-dark dark:border-gray-600'
-                                    : 'bg-white dark:bg-dark-surface text-dark dark:text-white rounded-bl-md border-2 border-gray-200 dark:border-gray-700'
-                                    }`}
-                            >
-                                <p>{msg.text}</p>
-                                <p className={`text-[10px] mt-1 ${msg.isOwn ? 'text-dark/50 dark:text-white/50' : 'text-dark/40 dark:text-white/40'}`}>
-                                    {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                </p>
-                            </div>
+                            {/* Offer Card for offer-type messages */}
+                            {msg.type === 'offer' && msg.offerAmount ? (
+                                <OfferCard
+                                    amount={msg.offerAmount}
+                                    status={msg.offerStatus || 'pending'}
+                                    counterAmount={msg.counterAmount}
+                                    isSeller={!msg.isOwn} // If not my message, I'm the seller receiving the offer
+                                    isOwn={msg.isOwn}
+                                    onAccept={async () => {
+                                        if (user?.uid && msg.offerAmount && contact) {
+                                            try {
+                                                // Update offer status with all required data for QR generation
+                                                await DBService.updateOfferStatus(
+                                                    conversationId,
+                                                    msg.id,
+                                                    'accepted',
+                                                    undefined, // counterAmount
+                                                    msg.offerAmount,
+                                                    contact.listingId,
+                                                    contact.listingTitle,
+                                                    user.uid, // seller (current user accepting)
+                                                    msg.senderId // buyer (person who sent offer)
+                                                );
+
+                                                // Mark the listing as pending (will be sold after QR pickup scan)
+                                                if (contact.listingId) {
+                                                    await DBService.updateListingStatus(contact.listingId, 'pending');
+                                                    alert(`🎉 Deal confirmed! Pickup QR sent to buyer. Item will be removed from marketplace after pickup is complete.`);
+                                                }
+                                            } catch (error) {
+                                                console.error('Error accepting offer:', error);
+                                                alert('Failed to accept offer. Please try again.');
+                                            }
+                                        }
+                                    }}
+                                    onDecline={async () => {
+                                        if (user?.uid) {
+                                            try {
+                                                await DBService.updateOfferStatus(conversationId, msg.id, 'declined');
+                                            } catch (error) {
+                                                console.error('Error declining offer:', error);
+                                            }
+                                        }
+                                    }}
+                                    timestamp={msg.timestamp}
+                                />
+                            ) : msg.type === 'qr' && msg.qrData ? (
+                                /* QR Code message (pickup/dropoff) */
+                                <QRCodeMessage
+                                    type={msg.qrType || 'pickup'}
+                                    qrData={msg.qrData}
+                                    isOwn={msg.isOwn}
+                                    timestamp={msg.timestamp}
+                                />
+                            ) : msg.type === 'system' ? (
+                                /* System message (offer accepted/declined) */
+                                <div className="w-full text-center py-2">
+                                    <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full">
+                                        {msg.text}
+                                    </span>
+                                </div>
+                            ) : (
+                                /* Regular text message */
+                                <div
+                                    className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm font-medium ${msg.isOwn
+                                        ? 'bg-primary text-dark rounded-br-md border-2 border-dark dark:border-gray-600'
+                                        : 'bg-white dark:bg-dark-surface text-dark dark:text-white rounded-bl-md border-2 border-gray-200 dark:border-gray-700'
+                                        }`}
+                                >
+                                    <p className="whitespace-pre-wrap">{msg.text}</p>
+                                    <div className={`flex items-center gap-1 mt-1 ${msg.isOwn ? 'justify-end' : ''}`}>
+                                        <span className={`text-[10px] ${msg.isOwn ? 'text-dark/50 dark:text-white/50' : 'text-dark/40 dark:text-white/40'}`}>
+                                            {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </span>
+                                        {/* Read receipt for own messages */}
+                                        {msg.isOwn && (
+                                            <span className={`text-[10px] ${msg.read ? 'text-blue-500' : 'text-gray-400'}`}>
+                                                {msg.read ? '✓✓' : '✓'}
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
                         </motion.div>
                     ))
                 )}
@@ -307,23 +393,38 @@ export default function ChatPage() {
                 {showOfferUI && contact?.listingPrice && (
                     <InlineOffer
                         listingPrice={contact.listingPrice}
-                        onSubmit={(amount) => {
-                            const offerMessage = `💰 Offer: ${formatPrice(amount)}\n\nI'd like to offer ${formatPrice(amount)} for "${contact.listingTitle}". Let me know if that works!`;
-                            setNewMessage(offerMessage);
+                        onSubmit={async (amount) => {
                             setShowOfferUI(false);
-                            // Auto-send the offer
-                            setTimeout(() => {
+
+                            // If logged in, use Firebase
+                            if (user?.uid) {
+                                try {
+                                    await DBService.sendOffer(
+                                        conversationId,
+                                        user.uid,
+                                        amount,
+                                        contact.listingTitle
+                                    );
+                                } catch (error) {
+                                    console.error('Error sending offer:', error);
+                                    alert('Failed to send offer. Please try again.');
+                                }
+                            } else {
+                                // Demo mode - add as regular message
+                                const offerMessage = `💰 Offer: ${amount} coins\n\nI'd like to offer ${amount} coins for "${contact.listingTitle}". Let me know if that works!`;
                                 const msg: ChatMessage = {
                                     id: `chat-${Date.now()}`,
-                                    senderId: user?.uid || 'demo-user-123',
+                                    senderId: 'demo-user-123',
                                     text: offerMessage,
                                     timestamp: new Date(),
                                     isOwn: true,
+                                    type: 'offer',
+                                    offerAmount: amount,
+                                    offerStatus: 'pending',
                                 };
                                 setChatMessages(prev => [...prev, msg]);
-                                setNewMessage('');
                                 DemoManager.addMessage(conversationId, msg);
-                            }, 100);
+                            }
                         }}
                         onCancel={() => setShowOfferUI(false)}
                     />

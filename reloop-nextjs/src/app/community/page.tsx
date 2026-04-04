@@ -154,20 +154,30 @@ export default function CommunityPage() {
                     </div>
                 </header>
 
-                {/* Collaborate CTA - At Top */}
+                {/* Scan & Earn - Moved from Home */}
                 <div className="px-4 pt-4">
-                    <div className="bg-gradient-to-r from-[#9B5DE5] to-[#F15BB5] rounded-2xl border-2 border-dark shadow-brutal p-4">
-                        <div className="flex items-center gap-3">
-                            <div className="text-4xl">🤝</div>
-                            <div className="flex-1">
-                                <h3 className="font-black text-white uppercase text-sm mb-0.5">Find Collab Partners</h3>
-                                <p className="text-white/80 text-xs">Team up to create upcycled projects!</p>
+                    <Link href="/scanner" className="block">
+                        <div className="relative group">
+                            <div className="absolute inset-0 bg-dark rounded-2xl translate-x-1 translate-y-1"></div>
+                            <div className="relative bg-gradient-to-br from-primary via-green-400 to-emerald-500 rounded-2xl border-4 border-dark overflow-hidden transition-all group-hover:translate-x-0.5 group-hover:translate-y-0.5">
+                                <div className="p-4 flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-12 h-12 bg-dark rounded-xl flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-white text-2xl">photo_camera</span>
+                                        </div>
+                                        <div>
+                                            <p className="font-black text-dark uppercase tracking-tight text-base leading-tight">Scan to<br />DIY!</p>
+                                            <p className="text-[10px] font-bold text-dark/60 mt-0.5">Get upcycling ideas</p>
+                                        </div>
+                                    </div>
+                                    <div className="bg-dark text-white rounded-xl px-4 py-2.5 flex items-center gap-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]">
+                                        <span className="material-symbols-outlined text-lg">photo_camera</span>
+                                        <span className="font-black text-xs uppercase tracking-wide">Scan</span>
+                                    </div>
+                                </div>
                             </div>
-                            <button className="bg-white text-dark font-bold text-xs uppercase px-4 py-2 rounded-full border-2 border-dark shadow-brutal-sm active:shadow-none active:translate-x-0.5 active:translate-y-0.5 transition-all shrink-0">
-                                Browse
-                            </button>
                         </div>
-                    </div>
+                    </Link>
                 </div>
 
                 {/* Trending Creators */}

@@ -4,11 +4,12 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { DBService } from '@/lib/firebase/db';
-import { StorageService } from '@/lib/firebase/storage';
+// StorageService removed - using base64 images directly in Firestore (no billing needed)
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import type { WebcamCaptureRef } from '@/components/scanner/WebcamCapture';
+import { formatRupeeValue, coinsToRupees } from '@/lib/eco-coins';
 
 // Dynamically import WebcamCapture to avoid SSR issues
 const WebcamCapture = dynamic(
@@ -228,29 +229,26 @@ export function CreateListingWizard({ isOpen, onClose, onSuccess }: CreateListin
         console.log('[DEBUG] Starting submit process');
 
         try {
-            const tempId = `${Date.now()}-${user.uid.slice(0, 5)}`;
-            console.log('[DEBUG] Generated tempId:', tempId);
-
+            // Use base64 images directly from imagePreviews (no Firebase Storage needed)
+            // This stores the image data directly in Firestore
             let imageUrls: string[] = [];
-            if (formData.images.length > 0) {
-                console.log('[DEBUG] Uploading', formData.images.length, 'images...');
-                try {
-                    imageUrls = await Promise.race([
-                        StorageService.uploadListingImages(formData.images, tempId),
-                        new Promise<string[]>((_, reject) =>
-                            setTimeout(() => reject(new Error('Upload timeout after 30s')), 30000)
-                        )
-                    ]);
-                    console.log('[DEBUG] Images uploaded:', imageUrls);
-                } catch (uploadError) {
-                    console.error('[DEBUG] Image upload failed:', uploadError);
-                    // Continue without images if upload fails
-                    imageUrls = ['https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=500'];
-                    console.log('[DEBUG] Using fallback image');
-                }
+
+            if (imagePreviews.length > 0) {
+                // Use base64 data URLs directly - works without Firebase Storage billing
+                console.log('[DEBUG] Using', imagePreviews.length, 'base64 images');
+                imageUrls = imagePreviews;
             } else {
-                console.log('[DEBUG] No images to upload');
-                imageUrls = ['https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=500'];
+                // Generate a category-based placeholder
+                const placeholders: Record<string, string> = {
+                    electronics: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400',
+                    furniture: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400',
+                    clothing: 'https://images.unsplash.com/photo-1445205170230-053b83016050?w=400',
+                    books: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400',
+                    sports: 'https://images.unsplash.com/photo-1461896836934- voices?w=400',
+                    other: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400'
+                };
+                imageUrls = [placeholders[formData.category] || placeholders.other];
+                console.log('[DEBUG] Using category placeholder image');
             }
 
             console.log('[DEBUG] Creating listing in Firestore...');
@@ -615,6 +613,11 @@ export function CreateListingWizard({ isOpen, onClose, onSuccess }: CreateListin
                                             className={`w-full p-4 pl-14 rounded-2xl border-2 bg-gray-50 dark:bg-dark-bg focus:border-primary outline-none transition-all text-3xl font-black text-center ${aiSuggested ? 'border-primary/50' : 'border-gray-200 dark:border-gray-700'
                                                 }`}
                                         />
+                                        {formData.price && (
+                                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-500">
+                                                = {formatRupeeValue(parseFloat(formData.price) || 0)}
+                                            </span>
+                                        )}
                                     </div>
                                 </div>
 
@@ -641,7 +644,8 @@ export function CreateListingWizard({ isOpen, onClose, onSuccess }: CreateListin
                                         <p className="text-xs text-gray-500">{CATEGORIES.find(c => c.id === formData.category)?.label} • {formData.condition}</p>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-xl font-black text-primary">{formData.price || '0'}</p>
+                                        <p className="text-xl font-black text-primary">🪙 {formData.price || '0'}</p>
+                                        <p className="text-xs text-gray-500">{formatRupeeValue(parseFloat(formData.price) || 0)}</p>
                                     </div>
                                 </div>
 

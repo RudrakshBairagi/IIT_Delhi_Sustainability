@@ -9,6 +9,7 @@ import { StreakBadge } from '@/components/ui/StreakBadge';
 import { BadgeRevealModal } from '@/components/ui/BadgeRevealModal';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { EditProfileModal } from '@/components/profile/EditProfileModal';
+import { formatRupeeValue } from '@/lib/eco-coins';
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -110,7 +111,7 @@ export default function ProfilePage() {
                     </Link>
                     <Link href="/rewards" className="bg-card-pink rounded-xl border-2 border-dark shadow-brutal-sm p-3 text-center block transition-transform active:scale-95 hover:scale-105">
                         <p className="text-xl font-black text-dark dark:text-gray-900">{user.coins}</p>
-                        <p className="text-[10px] font-bold text-dark/60 dark:text-gray-900/70">Coins</p>
+                        <p className="text-[10px] font-bold text-dark/60 dark:text-gray-900/70">{formatRupeeValue(user.coins)}</p>
                     </Link>
                 </motion.div>
 

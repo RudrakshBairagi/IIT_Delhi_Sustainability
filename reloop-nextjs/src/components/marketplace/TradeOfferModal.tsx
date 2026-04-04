@@ -5,6 +5,7 @@ import { Listing, UpcycleIdea, Mission } from '@/types';
 import { MissionCompleteToast } from '@/components/ui/MissionCompleteToast';
 import { GamificationService } from '@/lib/firebase/gamification-service';
 import { useAuth } from '@/lib/contexts/AuthContext';
+import { formatRupeeValue } from '@/lib/eco-coins';
 
 interface TradeOfferModalProps {
     targetListing: Listing;
@@ -38,32 +39,94 @@ export const TradeOfferModal = ({ targetListing, onClose, onSuccess }: TradeOffe
 
     const handleSubmit = async () => {
         if (!selectedItemId && !offeredCoins) return;
+        if (!user?.uid) {
+            alert('Please log in to make an offer');
+            return;
+        }
+
+        // Validate seller data exists
+        if (!targetListing.seller?.id) {
+            console.error('Seller data missing:', targetListing);
+            alert('Unable to create offer - seller information is missing.');
+            return;
+        }
 
         setIsSubmitting(true);
-        await new Promise(resolve => setTimeout(resolve, 1500));
 
-        // Mock trade creation
-        console.log('Trade created:', {
-            targetId: targetListing.id,
-            offeredItemId: selectedItemId,
-            offeredCoins: parseInt(offeredCoins) || 0
-        });
+        try {
+            // Import DBService to create real trade
+            const { DBService } = await import('@/lib/firebase/db');
 
-        // Check for mission completion
-        // Note: In real app we would check if we have a user
-        // simplified for now assuming AuthContext is available up the tree, but we don't have user prop passed here.
-        // Ideally TradeOfferModal should use useAuth hook.
+            // Get the selected item details if any
+            const selectedItem = selectedItemId ? myInventory.find(i => i.id === selectedItemId) : null;
 
-        // Let's refactor to use useAuth temporarily locally inside component if possible or just skip for now?
-        // Actually, we should Import useAuth.
+            // Create trade data with proper validation
+            // Note: Don't include undefined values - Firestore rejects them
+            const offeredCoinsNum = parseInt(offeredCoins) || 0;
+            const tradeData = {
+                listingId: targetListing.id,
+                listingTitle: targetListing.title || 'Untitled',
+                listingImage: targetListing.images?.[0] || '',
+                sellerId: targetListing.seller.id,
+                sellerName: targetListing.seller.name || 'Seller',
+                sellerAvatar: targetListing.seller.avatar || '',
+                traderId: user.uid,
+                traderName: user.name || 'User',
+                traderAvatar: user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=4ce68a&color=fff`,
+                status: 'pending' as const,
+                // Only include optional fields if they have values
+                ...(selectedItem?.title ? { offeredItem: selectedItem.title } : {}),
+                ...(offeredCoinsNum > 0 ? { offeredCoins: offeredCoinsNum } : {}),
+            };
 
-        // Since we can't easily add hooks in replace_file if we didn't add import, let's assume valid import in next step.
-        // For now, I'll comment out the DemoManager call and fix imports + useAuth in next steps.
+            console.log('Creating trade with data:', tradeData);
 
-        // Wait, I can do it all in one go if I'm careful.
-        // But for this chunk, I'm replacing the submit logic.
+            // Save trade to Firestore
+            const tradeId = await DBService.createTrade(tradeData);
+            console.log('Trade created successfully:', tradeId);
 
-        if (user?.uid) {
+            // Create a conversation with the seller and send trade offer as offer card
+            try {
+                // Find or create conversation with listing context
+                const conversationId = await DBService.findOrCreateConversation(
+                    user.uid,
+                    targetListing.seller.id,
+                    targetListing.id,
+                    targetListing.title,
+                    targetListing.images?.[0],
+                    targetListing.price,
+                    targetListing.seller.name,
+                    targetListing.seller.avatar
+                );
+
+                // Send the trade offer as an offer-type message (shows as OfferCard)
+                await DBService.sendOffer(
+                    conversationId,
+                    user.uid,
+                    offeredCoinsNum,
+                    targetListing.title
+                );
+                console.log('Conversation created with offer card:', conversationId);
+            } catch (convError) {
+                console.warn('Failed to create conversation:', convError);
+                // Don't fail the whole trade if conversation creation fails
+            }
+
+            // Create notification for the seller (don't fail if this fails)
+            try {
+                await DBService.createNotification({
+                    userId: targetListing.seller.id,
+                    type: 'trade',
+                    title: 'New Trade Offer!',
+                    message: `${tradeData.traderName} wants to trade for your "${targetListing.title}"`,
+                    icon: 'swap_horiz',
+                    actionUrl: '/messages',
+                });
+            } catch (notifError) {
+                console.warn('Failed to create notification:', notifError);
+            }
+
+            // Check for mission completion
             try {
                 const mission = await GamificationService.updateMissionProgress(user.uid, 'trade');
                 if (mission) {
@@ -77,11 +140,16 @@ export const TradeOfferModal = ({ targetListing, onClose, onSuccess }: TradeOffe
             } catch (err) {
                 console.error('Error updating mission:', err);
             }
-        }
 
-        setIsSubmitting(false);
-        onSuccess();
-        onClose();
+            setIsSubmitting(false);
+            onSuccess();
+            onClose();
+        } catch (error: any) {
+            console.error('Error creating trade:', error);
+            console.error('Error details:', error?.message, error?.code);
+            alert(`Failed to create trade offer: ${error?.message || 'Unknown error'}`);
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -128,6 +196,11 @@ export const TradeOfferModal = ({ targetListing, onClose, onSuccess }: TradeOffe
                                 className="w-full pl-12 p-4 rounded-2xl border-2 border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-dark-bg focus:border-primary focus:bg-white dark:focus:bg-dark-surface focus:outline-none font-bold text-lg dark:text-white transition-all"
                             />
                         </div>
+                        {offeredCoins && (
+                            <p className="text-sm text-gray-500 mt-2 text-center font-bold">
+                                = {formatRupeeValue(parseInt(offeredCoins) || 0)}
+                            </p>
+                        )}
                     </div>
 
                     {/* 2. Offer Items */}
@@ -178,7 +251,7 @@ export const TradeOfferModal = ({ targetListing, onClose, onSuccess }: TradeOffe
                 </div>
 
                 {/* Footer */}
-                <div className="p-5 border-t-2 border-gray-100 dark:border-gray-700 flex gap-3 shrink-0 bg-white dark:bg-dark-surface z-10 safe-area-bottom">
+                <div className="p-5 pb-28 border-t-2 border-gray-100 dark:border-gray-700 flex gap-3 shrink-0 bg-white dark:bg-dark-surface z-10 safe-area-bottom">
                     <button
                         onClick={onClose}
                         className="flex-1 py-4 font-bold text-dark dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-2xl transition-colors"

@@ -82,7 +82,7 @@ export default function ScannerPage() {
             if (result.success) {
                 const params = new URLSearchParams();
                 params.set('result', JSON.stringify(result));
-                router.push(`/scanner/results?${params.toString()}`);
+                router.push(`/scanner/ideas?${params.toString()}`);
             } else {
                 setErrorMessage('Unable to analyze item. Please try again.');
             }
@@ -139,7 +139,7 @@ export default function ScannerPage() {
                 if (result.success) {
                     const params = new URLSearchParams();
                     params.set('result', JSON.stringify(result));
-                    router.push(`/scanner/results?${params.toString()}`);
+                    router.push(`/scanner/ideas?${params.toString()}`);
                 } else {
                     setErrorMessage('Unable to analyze item. Please try again.');
                 }

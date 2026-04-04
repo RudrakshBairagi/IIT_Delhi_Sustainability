@@ -13,6 +13,7 @@ import { StoriesBar } from '@/components/ui/StoriesBar';
 import { User } from '@/types';
 import DemoManager from '@/lib/demo-manager';
 import { DBService } from '@/lib/firebase/db';
+import { formatRupeeValue } from '@/lib/eco-coins';
 
 // Animation variants
 const containerVariants = {
@@ -115,7 +116,7 @@ export default function HomePage() {
               <div className="w-px h-3 bg-gray-300 dark:bg-gray-600" />
               <span className="text-xs font-black text-primary">⚡ {user.xp}</span>
               <div className="w-px h-3 bg-gray-300 dark:bg-gray-600" />
-              <span className="text-xs font-black text-amber-500">🪙 {user.coins}</span>
+              <span className="text-xs font-black text-amber-500">🪙 {user.coins} ({formatRupeeValue(user.coins)})</span>
             </div>
           </div>
           <Link href="/profile" className="relative group">
@@ -170,31 +171,7 @@ export default function HomePage() {
           </Link>
         </motion.div>
 
-        {/* Scan & Earn - Smaller Card */}
-        <motion.div variants={itemVariants}>
-          <Link href="/scanner" className="block">
-            <div className="relative group">
-              <div className="absolute inset-0 bg-dark rounded-2xl translate-x-1 translate-y-1"></div>
-              <div className="relative bg-gradient-to-br from-primary via-green-400 to-emerald-500 rounded-2xl border-4 border-dark overflow-hidden transition-all group-hover:translate-x-0.5 group-hover:translate-y-0.5">
-                <div className="p-4 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-dark rounded-xl flex items-center justify-center">
-                      <span className="material-symbols-outlined text-white text-2xl">photo_camera</span>
-                    </div>
-                    <div>
-                      <p className="font-black text-dark uppercase tracking-tight text-base leading-tight">Scan &<br />Earn!</p>
-                      <p className="text-[10px] font-bold text-dark/60 mt-0.5">Reveal upcycling ideas</p>
-                    </div>
-                  </div>
-                  <div className="bg-dark text-white rounded-xl px-4 py-2.5 flex items-center gap-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]">
-                    <span className="material-symbols-outlined text-lg">photo_camera</span>
-                    <span className="font-black text-xs uppercase tracking-wide">Scan</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Link>
-        </motion.div>
+
 
         {/* Stats Cards - Beautified */}
         <motion.div variants={itemVariants} className="grid grid-cols-2 gap-3">
@@ -242,15 +219,7 @@ export default function HomePage() {
         {/* Quick Actions - Compact Grid */}
         <motion.div variants={itemVariants}>
           <p className="font-black text-dark dark:text-white text-sm uppercase tracking-tight mb-2 ml-1">Quick Actions</p>
-          <div className="grid grid-cols-3 gap-2">
-            <Link href="/marketplace" className="relative h-20 rounded-xl bg-[#F4A261] neo-border shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all cursor-pointer overflow-hidden group">
-              <div className="relative h-full flex items-center gap-2 px-2 z-10">
-                <div className="w-9 h-9 rounded-full bg-dark flex items-center justify-center text-white border-2 border-white shrink-0">
-                  <span className="material-symbols-outlined text-base">storefront</span>
-                </div>
-                <p className="text-dark text-xs font-black uppercase leading-tight tracking-tight">Shop</p>
-              </div>
-            </Link>
+          <div className="grid grid-cols-2 gap-2">
             <Link href="/rewards" className="relative h-20 rounded-xl bg-[#2A9D8F] neo-border shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all cursor-pointer overflow-hidden group">
               <div className="relative h-full flex items-center gap-2 px-2 z-10">
                 <div className="w-9 h-9 rounded-full bg-dark flex items-center justify-center text-white border-2 border-white shrink-0">
@@ -265,14 +234,6 @@ export default function HomePage() {
                   <span className="material-symbols-outlined text-base">flag</span>
                 </div>
                 <p className="text-dark text-xs font-black uppercase leading-tight tracking-tight">Missions</p>
-              </div>
-            </Link>
-            <Link href="/leaderboard" className="relative h-20 rounded-xl bg-[#457B9D] neo-border shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all cursor-pointer overflow-hidden group">
-              <div className="relative h-full flex items-center gap-2 px-2 z-10">
-                <div className="w-9 h-9 rounded-full bg-dark flex items-center justify-center text-white border-2 border-white shrink-0">
-                  <span className="material-symbols-outlined text-base">leaderboard</span>
-                </div>
-                <p className="text-white text-xs font-black uppercase leading-tight tracking-tight">Ranks</p>
               </div>
             </Link>
             <Link href="/community" className="relative h-20 rounded-xl bg-[#9B5DE5] neo-border shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all cursor-pointer overflow-hidden group">

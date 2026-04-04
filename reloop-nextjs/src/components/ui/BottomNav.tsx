@@ -12,9 +12,9 @@ import { CreateListingWizard } from './CreateListingWizard';
 const navItems = [
     { href: '/', icon: 'home', label: 'Home' },
     { href: '/marketplace', icon: 'storefront', label: 'Market' },
-    { href: '/scanner', icon: 'qr_code_scanner', label: 'Scan', isFab: true },
+    { href: '/sell', icon: 'add', label: 'Sell', isFab: true },
     { href: '/community', icon: 'lightbulb', label: 'DIY' },
-    { href: '/settings', icon: 'settings', label: 'Settings' },
+    { href: '/messages', icon: 'chat', label: 'Chat' },
 ];
 
 // Quick actions for swipe-up panel

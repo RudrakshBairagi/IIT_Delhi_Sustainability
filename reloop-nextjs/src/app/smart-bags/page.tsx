@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { SmartBag } from '@/types';
+import { SmartBag, User } from '@/types';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { DBService } from '@/lib/firebase/db';
 
@@ -29,9 +29,15 @@ export default function SmartBagsPage() {
     const [bags, setBags] = useState<SmartBag[]>([]);
     const [totalCoins, setTotalCoins] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [userProfile, setUserProfile] = useState<User | null>(null);
 
     useEffect(() => {
         if (!user) return;
+
+        // Fetch user profile for accurate stats
+        DBService.getUserProfile(user.uid).then(profile => {
+            if (profile) setUserProfile(profile);
+        });
 
         if (isDemo) {
             // Demo mode - use mock data
@@ -58,7 +64,8 @@ export default function SmartBagsPage() {
     const activeBags = bags.filter(b => b.status !== 'processed');
     const historyBags = bags.filter(b => b.status === 'processed');
     const totalWeight = bags.reduce((sum, bag) => sum + (bag.estimatedWeight || 0), 0);
-    const co2Saved = (totalWeight * 2.5).toFixed(1); // Rough estimate: 2.5kg CO2 per kg waste recycled
+    // Use profile co2Saved if available, otherwise calculate from bags
+    const co2Saved = userProfile?.co2Saved?.toFixed(1) || (totalWeight * 2.5).toFixed(1);
 
     const getStepIndex = (status: SmartBag['status']) => {
         const index = STATUS_STEPS.findIndex(s => s.key === status);

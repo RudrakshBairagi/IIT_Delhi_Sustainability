@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { Listing } from '@/types';
+import { formatRupeeValue } from '@/lib/eco-coins';
 
 interface ListingCardProps {
     listing: Listing;
@@ -11,16 +12,6 @@ interface ListingCardProps {
 }
 
 export function ListingCard({ listing, isOwner, onEdit, onDelete }: ListingCardProps) {
-    // Format price as Indian Rupees
-    const formatPrice = (price: number) => {
-        return new Intl.NumberFormat('en-IN', {
-            style: 'currency',
-            currency: 'INR',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-        }).format(price);
-    };
-
     return (
         <Link href={`/marketplace/${listing.id}`} className="block h-full">
             <div className="bg-[#FAFAFA] rounded-2xl border-4 border-black shadow-[4px_4px_0px_0px_#000] overflow-hidden flex flex-col group active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all h-full">
@@ -65,12 +56,14 @@ export function ListingCard({ listing, isOwner, onEdit, onDelete }: ListingCardP
                             {listing.category} • {listing.condition}
                         </p>
                     </div>
-                    {/* Price */}
-                    <div className="flex justify-between items-end">
-                        <span className="font-black text-lg text-black">{formatPrice(listing.price)}</span>
+                    {/* Price - Coins with Rupee equivalent */}
+                    <div className="flex flex-col">
+                        <span className="font-black text-lg text-black">🪙 {listing.price}</span>
+                        <span className="text-xs text-gray-500 font-bold">{formatRupeeValue(listing.price)}</span>
                     </div>
                 </div>
             </div>
         </Link>
     );
 }
+

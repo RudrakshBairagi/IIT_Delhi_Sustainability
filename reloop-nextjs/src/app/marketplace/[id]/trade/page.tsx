@@ -7,6 +7,7 @@ import DemoManager from '@/lib/demo-manager';
 import { Listing } from '@/types';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { useNavStore } from '@/lib/store/nav-store';
+import { formatRupeeValue } from '@/lib/eco-coins';
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -148,7 +149,7 @@ export default function TradeRequestPage() {
                         <p className="font-black text-dark dark:text-white truncate">{listing.title}</p>
                         <p className="text-sm text-dark/60 dark:text-white/60">{listing.condition}</p>
                         <p className="text-sm font-bold text-primary flex items-center gap-1 mt-1">
-                            🪙 {listing.price} Eco Coins
+                            🪙 {listing.price} ({formatRupeeValue(listing.price)})
                         </p>
                     </div>
                 </motion.div>
@@ -206,7 +207,7 @@ export default function TradeRequestPage() {
                                 />
                             </div>
                             <p className="text-xs text-dark/40 dark:text-white/40 mt-2 ml-1">
-                                Your balance: <span className="font-bold text-primary">{user.coins} Eco Coins</span>
+                                Your balance: <span className="font-bold text-primary">🪙 {user.coins} ({formatRupeeValue(user.coins)})</span>
                             </p>
                         </div>
                     ) : (
@@ -241,6 +242,30 @@ export default function TradeRequestPage() {
                 )}
 
             </motion.div>
+
+            {/* Fixed Bottom Button - Above Navbar */}
+            <div className="fixed bottom-24 left-0 right-0 px-5 z-40">
+                <button
+                    onClick={handleSubmit}
+                    disabled={isSubmitting}
+                    className={`w-full h-14 rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal font-black uppercase tracking-wide flex items-center justify-center gap-2 transition-all ${isSubmitting
+                        ? 'bg-gray-300 dark:bg-gray-600 cursor-not-allowed'
+                        : 'bg-primary hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none active:translate-x-1 active:translate-y-1'
+                        }`}
+                >
+                    {isSubmitting ? (
+                        <>
+                            <div className="w-5 h-5 border-2 border-dark border-t-transparent rounded-full animate-spin" />
+                            <span className="text-dark">Sending...</span>
+                        </>
+                    ) : (
+                        <>
+                            <span className="material-symbols-outlined text-dark">send</span>
+                            <span className="text-dark">Send Trade Request</span>
+                        </>
+                    )}
+                </button>
+            </div>
         </div>
     );
 }
