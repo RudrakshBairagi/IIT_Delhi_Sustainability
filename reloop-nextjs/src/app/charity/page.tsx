@@ -185,39 +185,36 @@ function CharityModal({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-end justify-center"
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex items-center justify-center p-4"
             onClick={onClose}
         >
             <motion.div
-                initial={{ y: '100%' }}
-                animate={{ y: 0 }}
-                exit={{ y: '100%' }}
+                initial={{ scale: 0.9, y: 20, opacity: 0 }}
+                animate={{ scale: 1, y: 0, opacity: 1 }}
+                exit={{ scale: 0.9, y: 20, opacity: 0 }}
                 transition={{ type: 'spring', damping: 25 }}
                 onClick={e => e.stopPropagation()}
-                className="w-full max-w-lg bg-white rounded-t-3xl border-t-4 border-x-4 border-dark overflow-hidden"
+                className="w-full max-w-sm bg-white rounded-3xl border-3 border-dark shadow-brutal overflow-hidden mb-12"
             >
                 {/* Header */}
-                <div className={`bg-gradient-to-br ${colors.gradient} p-5`}>
-                    <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-3">
-                            <span className="text-5xl">{charity.logo}</span>
-                            <div>
-                                <h2 className="text-xl font-black text-dark">{charity.name}</h2>
-                                <p className="text-sm text-dark/70 font-bold">{charity.description}</p>
-                            </div>
-                        </div>
-                        <button onClick={onClose} className="p-2 bg-white/30 rounded-full">
+                <div className={`bg-gradient-to-br ${colors.gradient} p-5 relative`}>
+                    <div className="flex items-start justify-between mb-2">
+                        <span className="text-5xl drop-shadow-md">{charity.logo}</span>
+                        <button onClick={onClose} className="p-2 bg-white/20 hover:bg-white/40 transition-colors rounded-full backdrop-blur-md">
                             <span className="material-symbols-outlined text-dark">close</span>
                         </button>
                     </div>
 
+                    <h2 className="text-2xl font-black text-dark leading-tight">{charity.name}</h2>
+                    <p className="text-sm text-dark/80 font-bold mt-1 leading-snug">{charity.description}</p>
+
                     {/* Progress */}
-                    <div className="bg-white/80 rounded-xl p-3">
-                        <div className="flex justify-between text-xs font-bold text-dark/50 mb-1">
-                            <span>Community Goal</span>
-                            <span>{charity.current} / {charity.goal} {charity.impactMetric}</span>
+                    <div className="bg-white/90 backdrop-blur-sm rounded-xl p-3 mt-4 border border-dark/10 shadow-sm">
+                        <div className="flex justify-between text-[10px] font-black text-dark/50 mb-1.5 uppercase tracking-wide">
+                            <span>Goal Progress</span>
+                            <span>{Math.round(progress)}%</span>
                         </div>
-                        <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
+                        <div className="h-3 bg-gray-200 rounded-full overflow-hidden border border-black/5">
                             <motion.div
                                 className={`h-full ${colors.btn}`}
                                 initial={{ width: 0 }}
@@ -225,23 +222,27 @@ function CharityModal({
                                 transition={{ duration: 0.8 }}
                             />
                         </div>
+                        <div className="text-right mt-1">
+                            <span className="text-[10px] font-bold text-dark/60">{charity.current} / {charity.goal} {charity.impactMetric}</span>
+                        </div>
                     </div>
                 </div>
 
                 {/* Impact info */}
-                <div className="p-5 bg-gray-50">
-                    <div className="flex items-center justify-between mb-4">
+                <div className="p-5 bg-white">
+                    <div className="flex items-center justify-between mb-5 bg-gray-50 p-3 rounded-xl border border-gray-100">
                         <div>
-                            <p className="text-xs text-dark/50 font-bold">Your Impact</p>
+                            <p className="text-[10px] uppercase tracking-wide text-dark/40 font-black">Your Impact</p>
                             <p className="text-lg font-black text-dark">{charity.impact}</p>
                         </div>
                         <div className="text-right">
-                            <p className="text-xs text-dark/50 font-bold">Your Balance</p>
+                            <p className="text-[10px] uppercase tracking-wide text-dark/40 font-black">Balance</p>
                             <p className="text-xl font-black text-dark">🪙 {userCoins}</p>
                         </div>
                     </div>
 
                     {/* Donate buttons */}
+                    <p className="text-center text-xs font-bold text-dark/40 mb-2 uppercase tracking-wide">Select Amount</p>
                     <div className="flex gap-2">
                         {[1, 2, 5].map((multiplier) => {
                             const amount = charity.minDonation * multiplier;
@@ -252,9 +253,9 @@ function CharityModal({
                                     onClick={() => onDonate(amount)}
                                     disabled={!canAfford || isDonating}
                                     whileTap={{ scale: 0.95 }}
-                                    className={`flex-1 py-4 rounded-xl font-black border-2 border-dark ${canAfford
-                                        ? `${colors.btn} text-white shadow-brutal-sm`
-                                        : 'bg-gray-200 text-gray-400 border-gray-300'
+                                    className={`flex-1 py-3 rounded-xl font-black border-b-4 active:border-b-0 active:translate-y-1 transition-all border-2 border-dark ${canAfford
+                                        ? `${colors.btn} text-white`
+                                        : 'bg-gray-100 text-gray-400 border-gray-200'
                                         }`}
                                 >
                                     {isDonating ? '...' : `🪙 ${amount}`}
