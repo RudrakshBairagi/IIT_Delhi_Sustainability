@@ -10,10 +10,12 @@
   --color-background-blue: #dbeafe;
   --color-sky: #e0f7ff;
 
-  /* Dark theme colors - Forest Green Palette */
-  --color-dark: #000000;
-  --color-dark-bg: #102217;
-  --color-dark-surface: #1b2e23;
+  /* Dark theme colors - Optimized Forest Green Palette */
+  /* Avoid pure black (#000) - use dark gray for reduced eye strain */
+  --color-dark: #0d1a12;
+  --color-dark-bg: #141f18;
+  --color-dark-surface: #1c2b22;
+  --color-dark-elevated: #243a2e;
 
   /* Accent colors */
   --color-accent-blue: #e0f2fe;
@@ -48,35 +50,44 @@
 :root {
   --bg-main: var(--color-background);
   --text-main: var(--color-dark);
+  --text-secondary: #4b5563;
+  --text-muted: #9ca3af;
   --border-main: var(--color-dark);
 }
 
 .dark {
   --bg-main: var(--color-dark-bg);
-  --text-main: #e8ede9;
-  --border-main: rgba(37, 244, 120, 0.2);
+
+  /* Text colors - off-white for primary, muted grays for hierarchy */
+  --text-main: #E1E8E3;
+  --text-secondary: #9CA8A0;
+  --text-muted: #6B7770;
+
+  --border-main: rgba(37, 244, 120, 0.25);
 
   /* Override theme tokens for automatic dark mode on utility classes */
-  --color-background: #102217;
-  --color-background-light: #1b2e23;
-  --color-background-blue: #1b2e23;
+  --color-background: #141f18;
+  --color-background-light: #1c2b22;
+  --color-background-blue: #1c2b22;
 
-  /* Card accent colors — muted dark versions */
-  --color-card-green: #1a3a28;
-  --color-card-yellow: #33301a;
-  --color-card-pink: #331a28;
-  --color-card-blue: #1a2833;
-  --color-card-coral: #331a1a;
+  /* Card accent colors — brighter, more visible */
+  --color-card-green: #1e4430;
+  --color-card-yellow: #3d3920;
+  --color-card-pink: #3d2030;
+  --color-card-blue: #1e303d;
+  --color-card-coral: #3d2424;
 
-  /* Accent colors — muted */
-  --color-accent-blue: #1a2833;
+  /* Accent colors — slightly desaturated */
+  --color-accent-blue: #1e303d;
+  --color-accent-orange: #d4a520;
+  --color-accent-pink: #db8a98;
 
-  /* Shadows — glowing green for dark bg */
-  --shadow-soft: 0 8px 30px rgb(0 0 0 / 0.4);
-  --shadow-card: 0 4px 20px rgb(0 0 0 / 0.5);
-  --shadow-brutal: 4px 4px 0px 0px rgba(37, 244, 120, 0.15);
-  --shadow-brutal-sm: 3px 3px 0px 0px rgba(37, 244, 120, 0.15);
-  --shadow-brutal-lg: 6px 6px 0px 0px rgba(37, 244, 120, 0.15);
+  /* Shadows — subtle green glow for depth */
+  --shadow-soft: 0 8px 30px rgb(0 0 0 / 0.5);
+  --shadow-card: 0 4px 20px rgb(0 0 0 / 0.4);
+  --shadow-brutal: 4px 4px 0px 0px rgba(37, 244, 120, 0.2);
+  --shadow-brutal-sm: 3px 3px 0px 0px rgba(37, 244, 120, 0.2);
+  --shadow-brutal-lg: 6px 6px 0px 0px rgba(37, 244, 120, 0.2);
 }
 
 
@@ -265,6 +276,23 @@ body {
 /* Section label */
 .section-label {
   @apply text-gray-400 text-xs font-bold uppercase tracking-wider;
+}
+
+.dark .section-label {
+  color: var(--text-muted);
+}
+
+/* Semantic text color utilities */
+.text-primary-adaptive {
+  color: var(--text-main);
+}
+
+.text-secondary-adaptive {
+  color: var(--text-secondary);
+}
+
+.text-muted-adaptive {
+  color: var(--text-muted);
 }
 
 /* Material symbols filled */

@@ -133,7 +133,7 @@ export default function MarketplacePage() {
     const filteredListings = getFilteredListings();
 
     return (
-        <div className="min-h-screen bg-background-light font-sans text-[#111714]">
+        <div className="min-h-screen bg-background-light dark:bg-dark-bg font-sans text-[#111714] dark:text-white">
             {/* Header */}
             <motion.header
                 className="pt-4 pb-4 px-6 w-full z-10"
@@ -141,11 +141,11 @@ export default function MarketplacePage() {
                 animate={{ y: 0, opacity: 1 }}
             >
                 <div className="flex items-center justify-between mb-4">
-                    <Link href="/" className="p-2 -ml-2 rounded-full hover:bg-black/5 transition-colors group">
+                    <Link href="/" className="p-2 -ml-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors group">
                         <span className="material-symbols-outlined text-3xl font-bold group-hover:-translate-x-1 transition-transform">arrow_back</span>
                     </Link>
                     <div className="flex items-center gap-3">
-                        <div className="bg-white border-2 border-black rounded-full px-3 py-1 flex items-center gap-1 shadow-brutal-sm">
+                        <div className="bg-white dark:bg-dark-surface border-2 border-black dark:border-gray-600 rounded-full px-3 py-1 flex items-center gap-1 shadow-brutal-sm">
                             <span className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse"></span>
                             <button
                                 onClick={() => setActiveTab(activeTab === 'all' ? 'my-listings' : 'all')}
@@ -154,12 +154,12 @@ export default function MarketplacePage() {
                                 {activeTab === 'all' ? 'Live' : 'My Items'}
                             </button>
                         </div>
-                        <button className="w-10 h-10 flex items-center justify-center rounded-full border-2 border-black bg-white hover:bg-gray-50 transition-colors shadow-brutal-sm active:translate-y-0.5 active:shadow-none">
+                        <button className="w-10 h-10 flex items-center justify-center rounded-full border-2 border-black dark:border-gray-600 bg-white dark:bg-dark-surface hover:bg-gray-50 dark:hover:bg-dark-elevated transition-colors shadow-brutal-sm active:translate-y-0.5 active:shadow-none">
                             <span className="material-symbols-outlined text-xl font-bold">notifications</span>
                         </button>
                         <Link
                             href="/sell"
-                            className="w-10 h-10 flex items-center justify-center rounded-full border-2 border-black bg-accent-yellow hover:bg-yellow-400 transition-colors shadow-brutal-sm active:translate-y-0.5 active:shadow-none"
+                            className="w-10 h-10 flex items-center justify-center rounded-full border-2 border-black dark:border-gray-600 bg-accent-yellow hover:bg-yellow-400 transition-colors shadow-brutal-sm active:translate-y-0.5 active:shadow-none"
                         >
                             <span className="material-symbols-outlined text-xl font-bold">add</span>
                         </Link>
@@ -170,14 +170,14 @@ export default function MarketplacePage() {
                     <h1 className="text-4xl font-black uppercase tracking-tight leading-none mb-4">Market<br />Hub</h1>
                     <div className="relative group">
                         <input
-                            className="w-full bg-white border-[3px] border-[#111714] rounded-full py-3 pl-12 pr-12 font-bold placeholder:text-gray-400 focus:outline-none focus:ring-0 shadow-brutal transition-all group-hover:shadow-brutal-hover"
+                            className="w-full bg-white dark:bg-dark-surface border-[3px] border-[#111714] dark:border-gray-600 rounded-full py-3 pl-12 pr-12 font-bold dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-0 shadow-brutal transition-all group-hover:shadow-brutal-hover"
                             placeholder="Search for books, tech..."
                             type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
-                        <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-2xl text-[#111714]">search</span>
-                        <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-accent-yellow border-2 border-black p-1.5 rounded-full hover:bg-yellow-400 transition-colors">
+                        <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-2xl text-[#111714] dark:text-gray-400">search</span>
+                        <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-accent-yellow border-2 border-black dark:border-gray-600 p-1.5 rounded-full hover:bg-yellow-400 transition-colors">
                             <span className="material-symbols-outlined text-lg font-bold">tune</span>
                         </button>
                     </div>
@@ -189,8 +189,8 @@ export default function MarketplacePage() {
                         onClick={() => setSelectedCategory('All')}
                         className={`flex flex-col items-center gap-2 snap-start shrink-0 cursor-pointer group ${selectedCategory === 'All' ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}
                     >
-                        <div className={`w-16 h-16 rounded-full bg-white border-[3px] border-[#111714] flex items-center justify-center shadow-brutal group-hover:scale-110 group-active:scale-95 transition-all`}>
-                            <span className="material-symbols-outlined text-3xl font-bold text-[#111714]">grid_view</span>
+                        <div className={`w-16 h-16 rounded-full bg-white dark:bg-dark-surface border-[3px] border-[#111714] dark:border-gray-600 flex items-center justify-center shadow-brutal group-hover:scale-110 group-active:scale-95 transition-all`}>
+                            <span className="material-symbols-outlined text-3xl font-bold text-[#111714] dark:text-white">grid_view</span>
                         </div>
                         <span className="text-xs font-extrabold uppercase tracking-wide">All</span>
                     </div>
@@ -201,8 +201,8 @@ export default function MarketplacePage() {
                             onClick={() => setSelectedCategory(cat.id)}
                             className={`flex flex-col items-center gap-2 snap-start shrink-0 cursor-pointer group ${selectedCategory === cat.id ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}
                         >
-                            <div className={`w-16 h-16 rounded-full ${cat.color} border-[3px] border-[#111714] flex items-center justify-center shadow-brutal group-hover:scale-110 group-active:scale-95 transition-all`}>
-                                <span className="material-symbols-outlined text-3xl font-bold text-[#111714]" style={{ fontVariationSettings: "'FILL' 1" }}>{cat.icon}</span>
+                            <div className={`w-16 h-16 rounded-full ${cat.color} border-[3px] border-[#111714] dark:border-gray-600 flex items-center justify-center shadow-brutal group-hover:scale-110 group-active:scale-95 transition-all`}>
+                                <span className="material-symbols-outlined text-3xl font-bold text-[#111714] dark:text-white" style={{ fontVariationSettings: "'FILL' 1" }}>{cat.icon}</span>
                             </div>
                             <span className="text-xs font-extrabold uppercase tracking-wide">{cat.id}</span>
                         </div>

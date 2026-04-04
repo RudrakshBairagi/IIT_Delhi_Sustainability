@@ -6,6 +6,7 @@ import { useNavStore } from '@/lib/store/nav-store';
 import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import DemoManager from '@/lib/demo-manager';
+import { CreateListingWizard } from './CreateListingWizard';
 
 // Navigation items - symmetric 2-1-2 layout around center FAB
 const navItems = [
@@ -18,7 +19,7 @@ const navItems = [
 
 // Quick actions for swipe-up panel
 const quickActions = [
-    { icon: 'add_circle', label: 'New Trade', href: '/marketplace/create', color: 'bg-green-500' },
+    { icon: 'add_circle', label: 'New Trade', action: 'openListing', color: 'bg-green-500' },
     { icon: 'qr_code_scanner', label: 'Quick Scan', href: '/scanner', color: 'bg-blue-500' },
     { icon: 'favorite', label: 'Donate', href: '/charity', color: 'bg-pink-500' },
     { icon: 'recycling', label: 'Recycle', href: '/scanner/recycling-centers', color: 'bg-emerald-500' },
@@ -30,6 +31,7 @@ export function BottomNav() {
     const { navContext, primaryAction } = useNavStore();
     const [unreadCount, setUnreadCount] = useState(0);
     const [isQuickPanelOpen, setIsQuickPanelOpen] = useState(false);
+    const [isListingWizardOpen, setIsListingWizardOpen] = useState(false);
     const navRef = useRef<HTMLElement>(null);
 
     // Track unread messages for badge
@@ -98,10 +100,14 @@ export function BottomNav() {
                                 <div className="grid grid-cols-4 gap-3">
                                     {quickActions.map((action) => (
                                         <button
-                                            key={action.href}
+                                            key={action.label}
                                             onClick={() => {
                                                 setIsQuickPanelOpen(false);
-                                                router.push(action.href);
+                                                if (action.action === 'openListing') {
+                                                    setIsListingWizardOpen(true);
+                                                } else if (action.href) {
+                                                    router.push(action.href);
+                                                }
                                             }}
                                             className="flex flex-col items-center gap-2 p-3 rounded-2xl bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-all active:scale-95 group"
                                         >
@@ -297,6 +303,12 @@ export function BottomNav() {
                     </span>
                 </motion.div>
             </motion.nav>
+
+            {/* Create Listing Wizard Modal */}
+            <CreateListingWizard
+                isOpen={isListingWizardOpen}
+                onClose={() => setIsListingWizardOpen(false)}
+            />
         </>
     );
 }

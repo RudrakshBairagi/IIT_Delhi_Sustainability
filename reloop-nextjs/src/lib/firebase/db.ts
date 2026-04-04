@@ -2,6 +2,7 @@ import {
     collection,
     addDoc,
     updateDoc,
+    deleteDoc,
     doc,
     getDocs,
     getDoc,
@@ -81,6 +82,53 @@ export const DBService = {
         } catch (error) {
             console.error("Error fetching listing:", error);
             return null;
+        }
+    },
+
+    async getUserListings(userId: string): Promise<Listing[]> {
+        try {
+            const q = query(
+                collection(db, "listings"),
+                where("seller.id", "==", userId),
+                orderBy("createdAt", "desc")
+            );
+            const querySnapshot = await getDocs(q);
+            return querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            })) as Listing[];
+        } catch (error) {
+            console.error("Error fetching user listings:", error);
+            return [];
+        }
+    },
+
+    async deleteListing(listingId: string, userId: string): Promise<boolean> {
+        try {
+            // Verify ownership before deleting
+            const listing = await this.getListingById(listingId);
+            if (!listing || listing.seller.id !== userId) {
+                console.error("Unauthorized: Cannot delete listing");
+                return false;
+            }
+
+            const docRef = doc(db, "listings", listingId);
+            await deleteDoc(docRef);
+            return true;
+        } catch (error) {
+            console.error("Error deleting listing:", error);
+            return false;
+        }
+    },
+
+    async updateListingStatus(listingId: string, status: 'available' | 'sold' | 'pending'): Promise<boolean> {
+        try {
+            const docRef = doc(db, "listings", listingId);
+            await updateDoc(docRef, { status, updatedAt: serverTimestamp() });
+            return true;
+        } catch (error) {
+            console.error("Error updating listing status:", error);
+            return false;
         }
     },
 

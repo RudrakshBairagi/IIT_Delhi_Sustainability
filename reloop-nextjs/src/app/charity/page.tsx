@@ -36,8 +36,8 @@ function StoryBar({ stories, onStoryClick }: { stories: any[]; onStoryClick: (st
                         className="flex flex-col items-center gap-1 flex-shrink-0"
                     >
                         <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-2xl border-3 ${story.viewed
-                                ? 'border-gray-300 bg-gray-100'
-                                : 'border-primary bg-gradient-to-br from-green-100 to-emerald-200'
+                            ? 'border-gray-300 bg-gray-100'
+                            : 'border-primary bg-gradient-to-br from-green-100 to-emerald-200'
                             }`}>
                             {story.thumbnail}
                         </div>
@@ -253,8 +253,8 @@ function CharityModal({
                                     disabled={!canAfford || isDonating}
                                     whileTap={{ scale: 0.95 }}
                                     className={`flex-1 py-4 rounded-xl font-black border-2 border-dark ${canAfford
-                                            ? `${colors.btn} text-white shadow-brutal-sm`
-                                            : 'bg-gray-200 text-gray-400 border-gray-300'
+                                        ? `${colors.btn} text-white shadow-brutal-sm`
+                                        : 'bg-gray-200 text-gray-400 border-gray-300'
                                         }`}
                                 >
                                     {isDonating ? '...' : `🪙 ${amount}`}
@@ -340,7 +340,7 @@ export default function GiveBackPage() {
         <div className="min-h-screen bg-background">
             <PageHeader title="Give Back" backHref="/" />
 
-            <div className="px-4 pb-24 space-y-4">
+            <div className="px-4 pb-32 space-y-4">
                 {/* Story bar */}
                 {stories.length > 0 && (
                     <StoryBar stories={stories} onStoryClick={setActiveStory} />

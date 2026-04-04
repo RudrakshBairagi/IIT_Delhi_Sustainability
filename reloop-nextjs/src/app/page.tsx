@@ -168,19 +168,19 @@ export default function HomePage() {
           {/* Rank Card */}
           <Link href="/impact" className="relative group">
             <div className="absolute inset-0 bg-dark rounded-2xl translate-x-0.5 translate-y-0.5"></div>
-            <div className="relative bg-gradient-to-br from-blue-100 to-cyan-100 rounded-2xl border-2 border-dark p-4 transition-all group-hover:translate-x-0.5 group-hover:translate-y-0.5">
+            <div className="relative bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/40 dark:to-cyan-900/40 rounded-2xl border-2 border-dark dark:border-gray-600 p-4 transition-all group-hover:translate-x-0.5 group-hover:translate-y-0.5">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-xl border-2 border-dark flex items-center justify-center">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-xl border-2 border-dark dark:border-gray-600 flex items-center justify-center">
                   <span className="material-symbols-outlined text-xl text-white">leaderboard</span>
                 </div>
                 <div>
-                  <p className="text-2xl font-[900] text-dark leading-none">#{userRank}</p>
-                  <p className="text-[10px] text-dark/50 font-bold">Campus Rank</p>
+                  <p className="text-2xl font-[900] text-dark dark:text-white leading-none">#{userRank}</p>
+                  <p className="text-[10px] text-dark/50 dark:text-gray-400 font-bold">Campus Rank</p>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-xs font-black text-blue-600">Top {100 - percentile}%</span>
-                <span className="material-symbols-outlined text-sm text-dark/40">arrow_forward</span>
+                <span className="text-xs font-black text-blue-600 dark:text-blue-400">Top {100 - percentile}%</span>
+                <span className="material-symbols-outlined text-sm text-dark/40 dark:text-gray-500">arrow_forward</span>
               </div>
             </div>
           </Link>
@@ -188,19 +188,19 @@ export default function HomePage() {
           {/* CO2 Card */}
           <Link href="/impact" className="relative group">
             <div className="absolute inset-0 bg-dark rounded-2xl translate-x-0.5 translate-y-0.5"></div>
-            <div className="relative bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl border-2 border-dark p-4 transition-all group-hover:translate-x-0.5 group-hover:translate-y-0.5">
+            <div className="relative bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/40 dark:to-emerald-900/40 rounded-2xl border-2 border-dark dark:border-gray-600 p-4 transition-all group-hover:translate-x-0.5 group-hover:translate-y-0.5">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl border-2 border-dark flex items-center justify-center">
+                <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl border-2 border-dark dark:border-gray-600 flex items-center justify-center">
                   <span className="material-symbols-outlined text-xl text-white">eco</span>
                 </div>
                 <div>
-                  <p className="text-2xl font-[900] text-dark leading-none">{user.co2Saved}</p>
-                  <p className="text-[10px] text-dark/50 font-bold">kg CO₂ Saved</p>
+                  <p className="text-2xl font-[900] text-dark dark:text-white leading-none">{user.co2Saved}</p>
+                  <p className="text-[10px] text-dark/50 dark:text-gray-400 font-bold">kg CO₂ Saved</p>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-xs font-black text-green-600">Your Impact</span>
-                <span className="material-symbols-outlined text-sm text-dark/40">arrow_forward</span>
+                <span className="text-xs font-black text-green-600 dark:text-green-400">Your Impact</span>
+                <span className="material-symbols-outlined text-sm text-dark/40 dark:text-gray-500">arrow_forward</span>
               </div>
             </div>
           </Link>

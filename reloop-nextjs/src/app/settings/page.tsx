@@ -55,6 +55,16 @@ export default function SettingsPage() {
                             </div>
                             <span className="material-symbols-outlined text-dark/30 dark:text-white/30 text-lg">chevron_right</span>
                         </Link>
+                        <Link href="/my-listings" className="flex items-center gap-3 p-4 border-b-2 border-gray-100 dark:border-gray-700">
+                            <div className="w-10 h-10 bg-primary rounded-xl border-2 border-dark flex items-center justify-center">
+                                <span className="material-symbols-outlined text-dark">inventory_2</span>
+                            </div>
+                            <div className="flex-1">
+                                <p className="font-bold text-dark dark:text-white text-sm">My Listings</p>
+                                <p className="text-[10px] text-dark/50 dark:text-white/50">View and manage</p>
+                            </div>
+                            <span className="material-symbols-outlined text-dark/30 dark:text-white/30 text-lg">chevron_right</span>
+                        </Link>
                         <Link href="/notifications" className="flex items-center gap-3 p-4">
                             <div className="w-10 h-10 bg-card-pink rounded-xl border-2 border-dark flex items-center justify-center">
                                 <span className="material-symbols-outlined text-dark">notifications</span>

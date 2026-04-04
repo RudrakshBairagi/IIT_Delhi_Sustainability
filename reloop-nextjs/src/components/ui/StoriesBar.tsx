@@ -5,10 +5,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 const STORIES = [
-    { id: '1', name: 'Alex', image: 'https://ui-avatars.com/api/?name=Alex+Johnson&background=0D8ABC&color=fff', hasStory: true },
-    { id: '2', name: 'Sarah', image: 'https://ui-avatars.com/api/?name=Sarah+Chen&background=random', hasStory: true },
-    { id: '3', name: 'Mike', image: 'https://ui-avatars.com/api/?name=Mike+Smith&background=random', hasStory: true },
-    { id: '4', name: 'Emma', image: 'https://ui-avatars.com/api/?name=Emma+W&background=random', hasStory: true },
+    { id: '4', name: 'Ankush', image: '/images/ankush.png', hasStory: true },
+    { id: '1', name: 'Unnati', image: '/images/unnati.png', hasStory: true },
+    { id: '2', name: 'Uransh', image: '/images/uransh.png', hasStory: true },
+    { id: '3', name: 'Rudraksh', image: '/images/rudraksh.png', hasStory: true },
     { id: '5', name: 'You', image: '', isAdd: true },
 ];
 
