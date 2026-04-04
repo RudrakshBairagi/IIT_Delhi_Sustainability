@@ -34,56 +34,25 @@ export default function MarketplacePage() {
     useEffect(() => {
         let mounted = true;
 
-        const load = async () => {
-            setIsLoading(true);
-            try {
-                if (isDemo) {
-                    const mockData = DemoManager.getMockListings();
-                    if (mounted) setListings(mockData);
-                } else {
-                    const data = await DBService.getListings();
-                    const mockData = DemoManager.getMockListings();
-                    const realIds = new Set(data.map(d => d.id));
-                    const uniqueMockData = mockData.filter(m => !realIds.has(m.id));
-                    if (mounted) setListings([...data, ...uniqueMockData]);
-                }
-            } catch (error) {
-                console.error("Failed to load listings", error);
-            } finally {
-                if (mounted) setIsLoading(false);
-            }
-        };
-
-        load();
-
-        let unsubscribe = () => { };
-        let pollInterval: NodeJS.Timeout | null = null;
-
-        if (isDemo) {
-            unsubscribe = DemoManager.subscribe(() => {
-                if (mounted) {
-                    setListings([...DemoManager.getMockListings()]);
-                }
-            });
-        } else {
-            pollInterval = setInterval(() => {
-                if (mounted) {
-                    DBService.getListings().then(data => {
-                        const mockData = DemoManager.getMockListings();
-                        const realIds = new Set(data.map(d => d.id));
-                        const uniqueMockData = mockData.filter(m => !realIds.has(m.id));
-                        if (mounted) setListings([...data, ...uniqueMockData]);
-                    });
-                }
-            }, 5000);
+        // Load static demo listings
+        setIsLoading(true);
+        if (mounted) {
+            setListings([...DemoManager.getMockListings()]);
+            setIsLoading(false);
         }
+
+        // Subscribe to demo manager changes (e.g. if an item is bought during demo)
+        const unsubscribe = DemoManager.subscribe(() => {
+            if (mounted) {
+                setListings([...DemoManager.getMockListings()]);
+            }
+        });
 
         return () => {
             mounted = false;
             unsubscribe();
-            if (pollInterval) clearInterval(pollInterval);
         };
-    }, [isDemo]);
+    }, []);
 
     const getFilteredListings = () => {
         if (!listings || !Array.isArray(listings)) return [];
