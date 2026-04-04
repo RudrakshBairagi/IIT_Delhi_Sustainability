@@ -83,7 +83,7 @@ export default function HomePage() {
         <PageHeader showBackButton={false} />
       </motion.div>
 
-      <main className="px-6 py-8 space-y-10">
+      <main className="px-6 pt-2 pb-8 space-y-10">
         {/* Stories Section */}
         <motion.section variants={itemVariants} className="space-y-4">
           <div className="flex items-center justify-between">
@@ -221,12 +221,12 @@ export default function HomePage() {
               </div>
               <p className="font-extrabold text-lg leading-tight uppercase tracking-tighter">Green<br/>Travel</p>
             </div>
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-outline-variant/10 space-y-4 group cursor-pointer transition-shadow hover:shadow-md">
+            <Link href="/charity" className="bg-white p-6 rounded-xl shadow-sm border border-outline-variant/10 space-y-4 group cursor-pointer transition-shadow hover:shadow-md block">
               <div className="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center group-hover:bg-primary-container transition-colors">
                 <span className="material-symbols-outlined text-primary">volunteer_activism</span>
               </div>
               <p className="font-extrabold text-lg leading-tight uppercase tracking-tighter">Donated<br/>Items</p>
-            </div>
+            </Link>
           </div>
         </motion.section>
 
