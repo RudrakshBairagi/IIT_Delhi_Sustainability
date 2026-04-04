@@ -80,7 +80,7 @@ export function OfferCard({
             <div className="px-4 py-4 text-center">
                 <div className="flex items-center justify-center gap-2">
                     <span className="text-2xl">🪙</span>
-                    <span className="text-3xl font-black text-dark dark:text-white">{amount}</span>
+                    <span className="text-3xl font-extrabold text-dark dark:text-white">{amount}</span>
                     <span className="text-gray-500 font-medium">coins</span>
                 </div>
                 {status === 'countered' && counterAmount && (
@@ -103,7 +103,7 @@ export function OfferCard({
                     </button>
                     <button
                         onClick={onAccept}
-                        className="flex-1 py-2.5 rounded-xl bg-primary border-2 border-dark text-dark font-bold text-sm shadow-brutal-sm hover:shadow-none active:translate-y-0.5 transition-all flex items-center justify-center gap-1"
+                        className="flex-1 py-2.5 rounded-xl bg-primary border border-outline-variant/10 text-dark font-bold text-sm shadow-sm hover:shadow-none active:translate-y-0.5 transition-all flex items-center justify-center gap-1"
                     >
                         <span className="material-symbols-outlined text-lg">check</span>
                         Accept

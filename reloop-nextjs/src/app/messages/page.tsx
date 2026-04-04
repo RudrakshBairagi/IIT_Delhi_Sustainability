@@ -7,8 +7,6 @@ import DemoManager from '@/lib/demo-manager';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { DBService } from '@/lib/firebase/db';
 import { Message } from '@/types';
-import { PageHeader } from '@/components/ui/PageHeader';
-import { EmptyState } from '@/components/ui/EmptyState';
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -33,20 +31,13 @@ export default function MessagesPage() {
             setIsLoading(true);
             try {
                 if (isDemo) {
-                    // Demo mode only - use mock data
                     setMessages(DemoManager.getMockMessages());
                 } else if (user) {
-                    // Firebase mode - load conversations for logged-in users
                     const conversations = await DBService.getConversations(user.uid);
-                    console.log('Loaded conversations:', conversations);
-
-                    // Transform conversations to Message format
                     const formattedMessages: Message[] = conversations.map((conv: any) => {
                         const otherParticipantId = conv.participants?.find((p: string) => p !== user.uid) || '';
-                        // Try to get name from stored data or use fallback
                         const senderName = conv.sellerName || conv.otherParticipantName || 'Seller';
                         const senderAvatar = conv.sellerAvatar || conv.otherParticipantAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(senderName)}&background=4ce68a&color=fff`;
-
                         return {
                             id: conv.id,
                             senderId: otherParticipantId,
@@ -64,17 +55,12 @@ export default function MessagesPage() {
                     });
                     setMessages(formattedMessages);
                 } else {
-                    // No user - show empty
                     setMessages([]);
                 }
             } catch (error) {
                 console.error('Failed to load messages', error);
-                // Don't fallback to demo data for logged-in users, just show empty
-                if (isDemo) {
-                    setMessages(DemoManager.getMockMessages());
-                } else {
-                    setMessages([]);
-                }
+                if (isDemo) setMessages(DemoManager.getMockMessages());
+                else setMessages([]);
             } finally {
                 setIsLoading(false);
             }
@@ -82,7 +68,6 @@ export default function MessagesPage() {
 
         loadMessages();
 
-        // Subscribe to demo data updates (demo mode only)
         let unsubscribe = () => { };
         let pollInterval: NodeJS.Timeout | null = null;
 
@@ -91,7 +76,6 @@ export default function MessagesPage() {
                 setMessages([...DemoManager.getMockMessages()]);
             });
         } else if (user) {
-            // Poll Firebase every 3 seconds for real-time message updates
             pollInterval = setInterval(loadMessages, 3000);
         }
 
@@ -101,151 +85,135 @@ export default function MessagesPage() {
         };
     }, [isDemo, user]);
 
-    // Format price as Indian Rupees
-    const formatPrice = (price: number) => {
-        return new Intl.NumberFormat('en-IN', {
-            style: 'currency',
-            currency: 'INR',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-        }).format(price);
-    };
-
-    // Filter messages by tab
     const filteredMessages = messages.filter(m => m.conversationType === activeTab);
-
-    // Count unread by type
     const marketplaceUnread = messages.filter(m => m.conversationType === 'marketplace' && m.unread).length;
     const communityUnread = messages.filter(m => m.conversationType === 'community' && m.unread).length;
 
     return (
-        <div className="min-h-screen bg-background">
-            <PageHeader title="Messages" subtitle="Your conversations" />
+        <div className="min-h-screen text-[#29302f]" style={{ backgroundColor: '#f1f8f6' }}>
 
-            {/* Tabs */}
-            <div className="px-5 mb-4">
-                <div className="flex gap-2">
+            {/* Header */}
+            <header className="fixed top-0 w-full z-50 flex items-center px-6 h-16 backdrop-blur-3xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] max-w-md left-1/2 -translate-x-1/2" style={{ backgroundColor: 'rgba(241,248,246,0.8)' }}>
+                <div className="flex items-center gap-4 w-full">
+                    <Link href="/" className="material-symbols-outlined text-[#29664c] hover:bg-[#eaf2f0] p-2 rounded-full transition-colors active:scale-95 duration-200">
+                        arrow_back
+                    </Link>
+                    <h1 className="font-extrabold tracking-tight text-xl text-[#29302f]">Messages</h1>
+                </div>
+                <div className="absolute bottom-0 left-0 w-full h-[2px] bg-[#eaf2f0]" />
+            </header>
+
+            <main className="pt-24 pb-32 px-6 max-w-2xl mx-auto space-y-8">
+
+                {/* Segmented Controls */}
+                <section className="grid grid-cols-2 gap-4">
                     <button
                         onClick={() => setActiveTab('marketplace')}
-                        className={`flex-1 relative ${activeTab === 'marketplace' ? 'tab-pill-active' : 'tab-pill-inactive'}`}
+                        className={`relative flex items-center justify-center gap-2 py-4 px-6 rounded-full font-bold text-sm transition-all active:scale-95 border-2 ${activeTab === 'marketplace'
+                            ? 'bg-[#29302f] text-[#f1f8f6] border-[#29302f]'
+                            : 'bg-white text-[#29302f] border-[#29302f]/10 hover:border-[#29302f]/30'
+                            }`}
                     >
-                        <span className="flex items-center justify-center gap-2">
-                            <span className="material-symbols-outlined text-[18px]">storefront</span>
-                            Marketplace
-                            {marketplaceUnread > 0 && (
-                                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border border-dark">
-                                    {marketplaceUnread}
-                                </span>
-                            )}
-                        </span>
+                        <span className="material-symbols-outlined text-[20px]">storefront</span>
+                        <span>Marketplace</span>
+                        {marketplaceUnread > 0 && (
+                            <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#b31b25] text-white text-[10px] flex items-center justify-center rounded-full font-bold">
+                                {marketplaceUnread}
+                            </span>
+                        )}
                     </button>
                     <button
                         onClick={() => setActiveTab('community')}
-                        className={`flex-1 relative ${activeTab === 'community' ? 'tab-pill-active' : 'tab-pill-inactive'}`}
+                        className={`relative flex items-center justify-center gap-2 py-4 px-6 rounded-full font-bold text-sm transition-all active:scale-95 border-2 ${activeTab === 'community'
+                            ? 'bg-[#29302f] text-[#f1f8f6] border-[#29302f]'
+                            : 'bg-white text-[#29302f] border-[#29302f]/10 hover:border-[#29302f]/30'
+                            }`}
                     >
-                        <span className="flex items-center justify-center gap-2">
-                            <span className="material-symbols-outlined text-[18px]">lightbulb</span>
-                            DIY Community
-                            {communityUnread > 0 && (
-                                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border border-dark">
-                                    {communityUnread}
-                                </span>
-                            )}
-                        </span>
+                        <span className="material-symbols-outlined text-[20px]">lightbulb</span>
+                        <span>DIY Community</span>
+                        {communityUnread > 0 && (
+                            <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#b31b25] text-white text-[10px] flex items-center justify-center rounded-full font-bold">
+                                {communityUnread}
+                            </span>
+                        )}
                     </button>
-                </div>
-            </div>
+                </section>
 
-            <div className="px-5 pb-28">
-                {isLoading ? (
-                    <div className="flex items-center justify-center py-20">
-                        <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-                    </div>
-                ) : filteredMessages.length === 0 ? (
-                    <EmptyState
-                        icon={activeTab === 'marketplace' ? 'shopping_bag' : 'forum'}
-                        title={activeTab === 'marketplace' ? 'No marketplace chats' : 'No community discussions'}
-                        description={activeTab === 'marketplace'
-                            ? 'Start a conversation with a seller'
-                            : 'Connect with DIY creators'
-                        }
-                    />
-                ) : (
-                    <motion.div
-                        className="space-y-3"
-                        initial="hidden"
-                        animate="visible"
-                        variants={containerVariants}
-                    >
-                        {filteredMessages.map((msg) => (
-                            <motion.div key={msg.id} variants={itemVariants}>
-                                <Link href={`/messages/${msg.id}`}>
-                                    <div className={`p-4 rounded-2xl border-2 ${msg.unread ? 'bg-primary/10 border-primary' : 'bg-white dark:bg-dark-surface border-gray-200 dark:border-gray-700'} shadow-brutal-sm hover:-translate-y-0.5 transition-all`}>
-                                        <div className="flex gap-3">
-                                            {/* Thumbnail: Item or Project image */}
-                                            {(msg.listingImage || msg.projectId) && (
-                                                <div className="w-14 h-14 rounded-xl border-2 border-dark overflow-hidden bg-gray-100 shrink-0">
-                                                    <img
-                                                        src={msg.listingImage || 'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=100&h=100&fit=crop'}
-                                                        alt={msg.listingTitle || msg.projectTitle || 'Item'}
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                </div>
-                                            )}
-
+                {/* Message List */}
+                <section className="space-y-4">
+                    {isLoading ? (
+                        <div className="flex items-center justify-center py-20">
+                            <div className="w-10 h-10 border-4 border-[#29664c] border-t-transparent rounded-full animate-spin" />
+                        </div>
+                    ) : filteredMessages.length === 0 ? (
+                        <div className="pt-16 text-center space-y-3">
+                            <span className="material-symbols-outlined text-5xl text-[#29664c]/30">
+                                {activeTab === 'marketplace' ? 'shopping_bag' : 'forum'}
+                            </span>
+                            <p className="text-sm font-bold text-[#565d5c]">
+                                {activeTab === 'marketplace' ? 'No marketplace chats yet' : 'No community discussions yet'}
+                            </p>
+                        </div>
+                    ) : (
+                        <motion.div
+                            className="space-y-4"
+                            initial="hidden"
+                            animate="visible"
+                            variants={containerVariants}
+                        >
+                            {filteredMessages.map((msg) => (
+                                <motion.div key={msg.id} variants={itemVariants}>
+                                    <Link href={`/messages/${msg.id}`}>
+                                        <div className="group relative flex items-center gap-4 p-5 bg-white rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] hover:bg-[#eaf2f0] transition-colors duration-300">
                                             {/* Avatar */}
-                                            <div className="relative shrink-0">
-                                                <div className={`w-12 h-12 rounded-full border-2 ${msg.unread ? 'border-primary' : 'border-gray-300 dark:border-gray-600'} overflow-hidden bg-gray-200`}>
-                                                    <img
-                                                        src={msg.senderAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(msg.senderName)}`}
-                                                        alt={msg.senderName}
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                </div>
+                                            <div className="relative flex-shrink-0">
+                                                <img
+                                                    src={msg.senderAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(msg.senderName)}`}
+                                                    alt={msg.senderName}
+                                                    className="w-14 h-14 rounded-full object-cover border-2 border-[#b9f9d6]"
+                                                />
                                                 {msg.unread && (
-                                                    <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-primary rounded-full border-2 border-white dark:border-dark-surface" />
+                                                    <div className="absolute bottom-0 right-0 w-4 h-4 bg-[#006946] rounded-full border-2 border-white" />
                                                 )}
                                             </div>
 
                                             {/* Content */}
-                                            <div className="flex-1 min-w-0">
-                                                {/* Context badge showing item/project */}
-                                                {(msg.listingTitle || msg.projectTitle) && (
-                                                    <div className="flex items-center gap-1 mb-1">
-                                                        <span className="text-[10px] font-bold uppercase text-gray-400 tracking-wider">
-                                                            {activeTab === 'marketplace' ? 'About:' : 'Project:'}
-                                                        </span>
-                                                        <span className="text-[10px] font-bold text-dark dark:text-white truncate">
-                                                            {msg.listingTitle || msg.projectTitle}
-                                                        </span>
-                                                        {msg.listingPrice && (
-                                                            <span className="text-[10px] font-bold text-primary ml-1">
-                                                                {formatPrice(msg.listingPrice)}
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                )}
-
-                                                <div className="flex items-center justify-between mb-0.5">
-                                                    <p className={`font-bold ${msg.unread ? 'text-dark dark:text-white' : 'text-gray-700 dark:text-gray-300'} truncate`}>
-                                                        {msg.senderName}
-                                                    </p>
-                                                    <span className="text-[10px] text-gray-400 shrink-0 ml-2">
+                                            <div className="flex-grow min-w-0">
+                                                <div className="flex justify-between items-baseline mb-1">
+                                                    <h3 className="font-bold text-[#29302f] truncate">{msg.senderName}</h3>
+                                                    <span className="text-[11px] font-bold text-[#717877] uppercase tracking-wider ml-2 shrink-0">
                                                         {formatTime(msg.timestamp)}
                                                     </span>
                                                 </div>
-                                                <p className={`text-sm truncate ${msg.unread ? 'font-medium text-dark/80 dark:text-white/80' : 'text-gray-500 dark:text-gray-400'}`}>
-                                                    {msg.lastMessage}
+                                                <p className={`text-[#565d5c] text-sm line-clamp-1 font-medium ${msg.unread ? 'italic' : ''}`}>
+                                                    {msg.unread ? `"${msg.lastMessage}"` : msg.lastMessage}
                                                 </p>
                                             </div>
+
+                                            {/* Listing thumbnail */}
+                                            {msg.listingImage && (
+                                                <div className="flex-shrink-0 ml-2">
+                                                    <img
+                                                        src={msg.listingImage}
+                                                        alt={msg.listingTitle || 'Item'}
+                                                        className="w-12 h-12 rounded-xl object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                                                    />
+                                                </div>
+                                            )}
                                         </div>
-                                    </div>
-                                </Link>
-                            </motion.div>
-                        ))}
-                    </motion.div>
-                )}
-            </div>
+                                    </Link>
+                                </motion.div>
+                            ))}
+                        </motion.div>
+                    )}
+
+                    <div className="pt-8 text-center">
+                        <span className="text-[10px] font-bold text-[#717877] uppercase tracking-[0.2em] opacity-40">
+                            End of conversations
+                        </span>
+                    </div>
+                </section>
+            </main>
         </div>
     );
 }
@@ -254,7 +222,6 @@ function formatTime(date: Date): string {
     const now = new Date();
     const diff = now.getTime() - new Date(date).getTime();
     const hours = Math.floor(diff / (1000 * 60 * 60));
-
     if (hours < 1) return 'Just now';
     if (hours < 24) return `${hours}h ago`;
     if (hours < 48) return 'Yesterday';

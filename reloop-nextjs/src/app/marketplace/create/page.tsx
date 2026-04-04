@@ -165,11 +165,11 @@ function CreateListingContent() {
                                 <img
                                     src={photo}
                                     alt={`Photo ${index + 1}`}
-                                    className="w-full h-full object-cover rounded-2xl border-2 border-dark dark:border-gray-600"
+                                    className="w-full h-full object-cover rounded-2xl border border-outline-variant/10 dark:border-gray-600"
                                 />
                                 <button
                                     onClick={() => removePhoto(index)}
-                                    className="absolute -top-2 -right-2 w-6 h-6 bg-card-coral rounded-full border-2 border-dark flex items-center justify-center"
+                                    className="absolute -top-2 -right-2 w-6 h-6 bg-card-coral rounded-full border border-outline-variant/10 flex items-center justify-center"
                                 >
                                     <span className="material-symbols-outlined text-sm text-dark">close</span>
                                 </button>
@@ -178,7 +178,7 @@ function CreateListingContent() {
 
                         {/* Placeholder if no photos */}
                         {photos.length === 0 && (
-                            <div className="w-24 h-24 shrink-0 bg-card-green rounded-2xl border-2 border-dark dark:border-gray-600 flex items-center justify-center">
+                            <div className="w-24 h-24 shrink-0 bg-surface-container-low rounded-2xl border border-outline-variant/10 dark:border-gray-600 flex items-center justify-center">
                                 <span className="material-symbols-outlined text-3xl text-dark/30 dark:text-white/30">image</span>
                             </div>
                         )}
@@ -194,7 +194,7 @@ function CreateListingContent() {
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         placeholder="e.g., Vintage Denim Jacket"
-                        className="w-full h-14 rounded-2xl bg-white dark:bg-dark-surface border-2 border-dark dark:border-gray-600 px-5 font-medium placeholder:text-gray-400 dark:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="w-full h-14 rounded-2xl bg-white dark:bg-dark-surface border border-outline-variant/10 dark:border-gray-600 px-5 font-medium placeholder:text-gray-400 dark:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                 </motion.div>
 
@@ -206,7 +206,7 @@ function CreateListingContent() {
                         onChange={(e) => setDescription(e.target.value)}
                         placeholder="Describe your item..."
                         rows={3}
-                        className="w-full rounded-2xl bg-white dark:bg-dark-surface border-2 border-dark dark:border-gray-600 p-5 font-medium placeholder:text-gray-400 dark:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                        className="w-full rounded-2xl bg-white dark:bg-dark-surface border border-outline-variant/10 dark:border-gray-600 p-5 font-medium placeholder:text-gray-400 dark:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary resize-none"
                     />
                 </motion.div>
 
@@ -219,8 +219,8 @@ function CreateListingContent() {
                                 key={cat}
                                 onClick={() => setCategory(cat)}
                                 className={`px-4 py-2 rounded-full text-sm font-bold border-2 transition-all ${category === cat
-                                    ? 'bg-primary border-dark dark:border-gray-600 text-dark dark:text-white'
-                                    : 'bg-white dark:bg-dark-surface border-gray-200 dark:border-gray-700 text-dark/60 dark:text-white/60 hover:border-dark dark:border-gray-600'
+                                    ? 'bg-primary border-outline-variant/20 dark:border-gray-600 text-dark dark:text-white'
+                                    : 'bg-white dark:bg-dark-surface border-gray-200 dark:border-gray-700 text-dark/60 dark:text-white/60 hover:border-outline-variant/20 dark:border-gray-600'
                                     }`}
                             >
                                 {cat}
@@ -238,8 +238,8 @@ function CreateListingContent() {
                                 key={cond}
                                 onClick={() => setCondition(cond)}
                                 className={`flex-1 py-3 rounded-xl text-sm font-bold border-2 transition-all ${condition === cond
-                                    ? 'bg-primary border-dark dark:border-gray-600 text-dark dark:text-white'
-                                    : 'bg-white dark:bg-dark-surface border-gray-200 dark:border-gray-700 text-dark/60 dark:text-white/60 hover:border-dark dark:border-gray-600'
+                                    ? 'bg-primary border-outline-variant/20 dark:border-gray-600 text-dark dark:text-white'
+                                    : 'bg-white dark:bg-dark-surface border-gray-200 dark:border-gray-700 text-dark/60 dark:text-white/60 hover:border-outline-variant/20 dark:border-gray-600'
                                     }`}
                             >
                                 {cond}
@@ -259,7 +259,7 @@ function CreateListingContent() {
                                 value={price}
                                 onChange={(e) => setPrice(e.target.value)}
                                 placeholder="0"
-                                className="w-full h-14 rounded-2xl bg-white dark:bg-dark-surface border-2 border-dark dark:border-gray-600 pl-12 pr-5 font-bold placeholder:text-gray-400 dark:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary"
+                                className="w-full h-14 rounded-2xl bg-white dark:bg-dark-surface border border-outline-variant/10 dark:border-gray-600 pl-12 pr-5 font-bold placeholder:text-gray-400 dark:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary"
                             />
                         </div>
                     </div>
@@ -270,13 +270,13 @@ function CreateListingContent() {
                             value={location}
                             onChange={(e) => setLocation(e.target.value)}
                             placeholder="Campus Center"
-                            className="w-full h-14 rounded-2xl bg-white dark:bg-dark-surface border-2 border-dark dark:border-gray-600 px-5 font-medium placeholder:text-gray-400 dark:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary"
+                            className="w-full h-14 rounded-2xl bg-white dark:bg-dark-surface border border-outline-variant/10 dark:border-gray-600 px-5 font-medium placeholder:text-gray-400 dark:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary"
                         />
                     </div>
                 </motion.div>
 
                 {/* 14-Day Equity Protocol Warning */}
-                <motion.div variants={itemVariants} className="bg-card-yellow rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm p-4">
+                <motion.div variants={itemVariants} className="bg-surface-container-low rounded-2xl border border-outline-variant/10 dark:border-gray-600 shadow-sm p-4">
                     <div className="flex items-start gap-3">
                         <span className="material-symbols-outlined text-2xl text-dark">schedule</span>
                         <div className="flex-1">
@@ -295,7 +295,7 @@ function CreateListingContent() {
                 </motion.div>
 
                 {/* Eco Impact Info */}
-                <motion.div variants={itemVariants} className="bg-card-green rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm p-4 flex items-center gap-3">
+                <motion.div variants={itemVariants} className="bg-surface-container-low rounded-2xl border border-outline-variant/10 dark:border-gray-600 shadow-sm p-4 flex items-center gap-3">
                     <span className="material-symbols-outlined text-2xl text-dark dark:text-white">eco</span>
                     <div>
                         <p className="font-bold text-dark dark:text-white text-sm">Eco Impact</p>

@@ -17,12 +17,12 @@ export function PageHeader({ title, backHref = '/', rightAction, subtitle, class
         <header className={cn('px-5 pt-6 pb-4 flex items-center gap-4', className)}>
             <Link
                 href={backHref}
-                className="w-10 h-10 flex items-center justify-center bg-white dark:bg-dark-surface rounded-xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm shrink-0"
+                className="w-10 h-10 flex items-center justify-center bg-white dark:bg-dark-surface rounded-xl border border-outline-variant/10 dark:border-gray-600 shadow-sm shrink-0"
             >
                 <span className="material-symbols-outlined text-dark dark:text-white">arrow_back</span>
             </Link>
             <div className="flex-1 min-w-0">
-                <h1 className="font-black text-dark dark:text-white text-xl truncate">{title}</h1>
+                <h1 className="font-extrabold text-dark dark:text-white text-xl truncate">{title}</h1>
                 {subtitle && <p className="text-sm text-dark/60 dark:text-white/60 truncate">{subtitle}</p>}
             </div>
             {rightAction && <div className="shrink-0">{rightAction}</div>}

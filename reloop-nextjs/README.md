@@ -13,7 +13,7 @@
     Turn waste into value. Scan, Trade, Upcycle.
     <br />
     <br />
-    <a href="#live-demo"><strong>View Live Demo »</strong></a>
+    <a href="https://reloop-nextjs-flame.vercel.app/"><strong>View Live Demo »</strong></a>
     <br />
     <br />
     <a href="#key-features">Key Features</a>
@@ -30,13 +30,20 @@
 
 **ReLoop** is a hyper-local, gamified marketplace designed to solve the massive waste problem on university campuses. It empowers students to recirculate items instead of throwing them away, using **AI recognition**, **virtual currency (ReCoins)**, and **competitive gamification** to make sustainability effortless and addictive.
 
-![App Screenshot Placeholder](https://via.placeholder.com/800x400.png?text=ReLoop+App+Screenshots+Collage)
+<p align="center">
+  <img src="public/screenshots/home.jpg" width="200" alt="Home Dashboard" />
+  <img src="public/screenshots/marketplace.jpg" width="200" alt="Market Hub" />
+  <img src="public/screenshots/diy-hub.jpg" width="200" alt="DIY Hub" />
+  <img src="public/screenshots/smart-bags.jpg" width="200" alt="Smart Bags" />
+</p>
 
 ### The Problem
-Every year, students discard tons of usable furniture, textbooks, and electronics during move-out. Existing solutions are either too broad (Facebook Marketplace) or inconvenient (Recycling centers).
+Every year, students discard tons of usable furniture, textbooks, and electronics during move-out. Everyday household trash—bottles, paper, e-waste—ends up in landfills despite having real monetary value. Existing solutions are either too broad (Facebook Marketplace), inconvenient (Recycling centers), or offer no financial incentive to students.
 
 ### The Solution
-ReLoop closes the loop by providing a trusted, student-only platform where every sustainable action—scanning a bottle, selling a book, or upcycling a shirt—is verified and rewarded.
+ReLoop lets students **earn real money from their day-to-day trash**. Using our **Smart Trash Bags** system, students register a recycling bag, fill it with segregated waste, and earn **EcoCoins** (convertible to ₹) when it's collected. Every sustainable action—scanning a bottle, selling a book, upcycling a shirt, or filling a Smart Bag—is tracked, verified, and rewarded. The more you recycle, the more you earn.
+
+> **📝 Note on Commit History:** This repository has a limited number of commits because it builds upon the same model/codebase that was originally submitted during the **initial round of the Symbiosis Skill Hack hackathon**, developed by **Team WhyZeroOne**. The core architecture and features were carried forward from that submission, with iterative improvements made on top of it.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -109,8 +116,8 @@ To run ReLoop locally on your machine, follow these steps.
 
 1.  **Clone the repo**
     ```sh
-    git clone https://github.com/your-username/reloop.git
-    cd reloop/reloop-nextjs
+    git clone https://github.com/RudrakshBairagi/reloop-main-app.git
+    cd reloop-main-app
     ```
 
 2.  **Install dependencies**
@@ -136,9 +143,7 @@ To run ReLoop locally on your machine, follow these steps.
 
 ## 📱 Live Demo
 
-Check out the live deployment here:
-<!-- Replace with actual link -->
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/)
+🔗 **[https://reloop-nextjs-flame.vercel.app/](https://reloop-nextjs-flame.vercel.app/)**
 
 _Note: The app includes a "Demo Mode" toggle in Settings that populates it with realistic mock data, so you can test the full flow without a backend._
 

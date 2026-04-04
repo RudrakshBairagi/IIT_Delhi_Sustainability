@@ -3,12 +3,11 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { DBService } from '@/lib/firebase/db';
 import DemoManager from '@/lib/demo-manager';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { Listing } from '@/types';
-import { ListingCard } from '@/components/marketplace/ListingCard';
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -20,290 +19,202 @@ const itemVariants = {
     visible: { y: 0, opacity: 1, transition: { type: 'spring' as const, stiffness: 300, damping: 24 } },
 };
 
-const CATEGORIES = [
-    { id: 'Books', icon: 'menu_book', color: 'bg-accent-blue' },
-    { id: 'Tech', icon: 'devices', color: 'bg-primary' },
-    { id: 'Decor', icon: 'potted_plant', color: 'bg-accent-yellow' },
-    { id: 'Clothes', icon: 'checkroom', color: 'bg-white' },
-    { id: 'More', icon: 'more_horiz', color: 'bg-white' }
-];
-
-const SORT_OPTIONS = [
-    { value: 'newest', label: 'Newest' },
-    { value: 'price-asc', label: 'Price: Low to High' },
-    { value: 'price-desc', label: 'Price: High to Low' },
-];
-
-type TabType = 'all' | 'my-listings';
+const CATEGORIES = ['ALL ITEMS', 'FURNITURE', 'CLOTHING', 'ELECTRONICS'];
 
 export default function MarketplacePage() {
     const router = useRouter();
     const [listings, setListings] = useState<Listing[]>([]);
-    const [selectedCategory, setSelectedCategory] = useState('All');
+    const [selectedCategory, setSelectedCategory] = useState('ALL ITEMS');
     const [searchQuery, setSearchQuery] = useState('');
-    const [sortBy, setSortBy] = useState('newest');
     const [isLoading, setIsLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState<TabType>('all');
 
     const { user, isDemo } = useAuth();
     const currentUserId = isDemo ? 'demo-user-123' : user?.uid;
 
-    const loadListings = async () => {
-        setIsLoading(true);
-        try {
-            if (isDemo) {
-                setListings(DemoManager.getMockListings());
-            } else {
-                const data = await DBService.getListings();
-                setListings(data);
-            }
-        } catch (error) {
-            console.error("Failed to load listings", error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
     useEffect(() => {
         let mounted = true;
 
-        const load = async () => {
-            // Don't clear listings immediately to prevent flash
-            setIsLoading(true);
-            try {
-                if (isDemo) {
-                    console.log('Marketplace loading in Demo Mode');
-                    const mockData = DemoManager.getMockListings();
-                    if (mounted) setListings(mockData);
-                } else {
-                    console.log('Marketplace loading in Firebase Mode');
-                    const data = await DBService.getListings();
-                    if (mounted) setListings(data);
-                }
-            } catch (error) {
-                console.error("Failed to load listings", error);
-            } finally {
-                if (mounted) setIsLoading(false);
-            }
-        };
-
-        load();
-
-        let unsubscribe = () => { };
-        let pollInterval: NodeJS.Timeout | null = null;
-
-        if (isDemo) {
-            unsubscribe = DemoManager.subscribe(() => {
-                if (mounted) {
-                    console.log('Marketplace received DemoManager update');
-                    setListings([...DemoManager.getMockListings()]);
-                }
-            });
-        } else {
-            // Poll Firebase every 5 seconds for real-time updates
-            pollInterval = setInterval(() => {
-                if (mounted) {
-                    DBService.getListings().then(data => {
-                        if (mounted) setListings(data);
-                    });
-                }
-            }, 5000);
+        // Load static demo listings
+        setIsLoading(true);
+        if (mounted) {
+            setListings([...DemoManager.getMockListings()]);
+            setIsLoading(false);
         }
+
+        // Subscribe to demo manager changes (e.g. if an item is bought during demo)
+        const unsubscribe = DemoManager.subscribe(() => {
+            if (mounted) {
+                setListings([...DemoManager.getMockListings()]);
+            }
+        });
 
         return () => {
             mounted = false;
             unsubscribe();
-            if (pollInterval) clearInterval(pollInterval);
         };
-    }, [isDemo]);
+    }, []);
 
-    // Handle edit action
-    const handleEdit = (id: string) => {
-        router.push(`/marketplace/${id}/edit`);
-    };
-
-    // Handle delete action
-    const handleDelete = async (id: string) => {
-        if (confirm('Are you sure you want to delete this listing?')) {
-            if (isDemo) {
-                setListings(prev => prev.filter(l => l.id !== id));
-            } else if (currentUserId) {
-                try {
-                    const success = await DBService.deleteListing(id, currentUserId);
-                    if (success) {
-                        setListings(prev => prev.filter(l => l.id !== id));
-                    } else {
-                        alert('Failed to delete listing. You may not have permission.');
-                    }
-                } catch (error) {
-                    console.error('Error deleting listing:', error);
-                    alert('Failed to delete listing. Please try again.');
-                }
-            }
-        }
-    };
-
-
-    // Filter and sort listings for marketplace (excludes user's own listings)
     const getFilteredListings = () => {
-        let filtered = listings;
+        if (!listings || !Array.isArray(listings)) return [];
+        
+        let filtered = listings.filter(l => l && l.seller?.id !== currentUserId);
 
-        // Exclude current user's listings from marketplace
-        filtered = filtered.filter(l => l.seller?.id !== currentUserId);
+        filtered = filtered.filter(l => {
+            const catStr = l.category ? String(l.category).toUpperCase() : '';
+            const matchesCategory = selectedCategory === 'ALL ITEMS' || catStr.includes(selectedCategory);
+            
+            const titleStr = l.title ? String(l.title).toLowerCase() : '';
+            const descStr = l.description ? String(l.description).toLowerCase() : '';
+            const searchStr = searchQuery ? searchQuery.toLowerCase() : '';
+            
+            const matchesSearch = !searchQuery ||
+                titleStr.includes(searchStr) ||
+                descStr.includes(searchStr);
+                
+            return matchesCategory && matchesSearch;
+        });
 
-        // Category and search filtering
-        filtered = filtered
-            .filter(l => {
-                const matchesCategory = selectedCategory === 'All' || l.category.toLowerCase().includes(selectedCategory.toLowerCase());
-                const matchesSearch = !searchQuery ||
-                    l.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    l.description?.toLowerCase().includes(searchQuery.toLowerCase());
-                return matchesCategory && matchesSearch;
-            })
-            .sort((a, b) => {
-                switch (sortBy) {
-                    case 'price-asc':
-                        return a.price - b.price;
-                    case 'price-desc':
-                        return b.price - a.price;
-                    case 'newest':
-                    default:
-                        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-                }
-            });
+        // Default sort by newest, safely handling missing dates
+        filtered = filtered.sort((a, b) => {
+            const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+            const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+            return (timeB || 0) - (timeA || 0);
+        });
 
         return filtered;
     };
 
-    const filteredListings = getFilteredListings();
+    const staticListings = DemoManager.getMockListings();
 
     return (
-        <div className="min-h-screen bg-[#D0E8FF] dark:bg-dark-bg flex flex-col selection:bg-primary selection:text-black overflow-x-hidden text-black dark:text-white pb-32">
-            {/* Header */}
-            <header className="px-6 pt-12 pb-4 flex flex-col gap-6 z-20 relative">
-                {/* Title Row */}
-                <div className="flex justify-between items-center">
-                    <div>
-                        <h1 className="text-4xl font-black uppercase tracking-tight text-black dark:text-white leading-none whitespace-nowrap">Market Hub</h1>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        {/* My Listings Icon */}
-                        <Link
-                            href="/my-listings"
-                            aria-label="My Listings"
-                            className="bg-[#FAFAFA] dark:bg-dark-surface w-12 h-12 rounded-full border-4 border-black dark:border-gray-600 shadow-[4px_4px_0px_0px_#000] flex items-center justify-center active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-150 hover:bg-primary"
-                        >
-                            <span className="material-symbols-outlined text-black dark:text-white" style={{ fontSize: '24px' }}>inventory_2</span>
-                        </Link>
-                        {/* Notifications Icon */}
-                        <button
-                            onClick={() => router.push('/notifications')}
-                            aria-label="Notifications"
-                            className="bg-[#FAFAFA] dark:bg-dark-surface w-12 h-12 rounded-full border-4 border-black dark:border-gray-600 shadow-[4px_4px_0px_0px_#000] flex items-center justify-center active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-150"
-                        >
-                            <span className="material-symbols-outlined text-black dark:text-white" style={{ fontSize: '28px' }}>notifications</span>
-                        </button>
-                    </div>
+        <div className="bg-surface text-on-surface min-h-screen pb-32 font-['Plus_Jakarta_Sans']">
+            {/* TopAppBar */}
+            <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-20 bg-surface/80 dark:bg-[#1a1c1b]/80 backdrop-blur-3xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] max-w-md left-1/2 -translate-x-1/2">
+                <div className="flex items-center gap-4">
+                    <button onClick={() => router.push('/')} className="material-symbols-outlined text-[#29664c] dark:text-[#b9f9d6] cursor-pointer active:scale-95 transition-transform hover:bg-[#eaf2f0] p-2 rounded-full">arrow_back</button>
+                    <h1 className="font-extrabold tracking-tight text-2xl text-[#29664c] dark:text-[#b9f9d6] tracking-[-2%]">RELOOP</h1>
                 </div>
-
-                {/* Search Bar */}
-                <div className="relative w-full">
-                    <input
-                        className="w-full h-14 bg-white dark:bg-dark-surface rounded-full border-4 border-black dark:border-gray-600 px-6 pr-14 text-lg font-bold placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-0 shadow-[4px_4px_0px_0px_#000] uppercase"
-                        placeholder="Search eco items..."
-                        type="text"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                    <button className="absolute right-2 top-2 h-10 w-10 bg-primary rounded-full border-4 border-black flex items-center justify-center hover:bg-green-400 active:translate-y-0.5 active:shadow-none transition-all">
-                        <span className="material-symbols-outlined font-bold text-black">search</span>
-                    </button>
+                <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 bg-primary-container px-4 py-2 rounded-lg active:scale-95 transition-transform cursor-pointer">
+                        <span className="material-symbols-outlined text-on-primary-container text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>monetization_on</span>
+                        <span className="font-bold text-sm text-on-primary-container">{(typeof user !== 'undefined' && user?.coins) || 0} Coins</span>
+                    </div>
+                    <Link href="/profile" className="flex-shrink-0 transition-transform active:scale-95">
+                        <img alt="Profile" className="w-9 h-9 rounded-full object-cover border-2 border-primary/30" src={user?.avatar || ("https://ui-avatars.com/api/?name=" + (user?.name || 'User') + "&background=random")} />
+                    </Link>
                 </div>
             </header>
 
-            {/* Category Pills - Horizontal Scroll */}
-            <div className="pl-6 pb-8 overflow-x-auto no-scrollbar">
-                <div className="flex gap-3 w-max pr-6">
-                    {/* All Items Pill */}
-                    <button
-                        onClick={() => { setSelectedCategory('All'); setActiveTab('all'); }}
-                        className={`px-6 py-3 rounded-full border-4 border-black shadow-[4px_4px_0px_0px_#000] font-black uppercase whitespace-nowrap active:translate-y-[2px] active:shadow-none transition-all text-sm ${selectedCategory === 'All' && activeTab === 'all'
-                            ? 'bg-[#9747FF] text-white'
-                            : 'bg-white hover:bg-yellow-100 text-black'
-                            }`}
-                    >
-                        All Items
-                    </button>
-                    {/* Category Pills */}
-                    {['Furniture', 'Clothing', 'Electronics', 'Books'].map((cat) => (
-                        <button
+            <main className="pt-24 px-6 max-w-5xl mx-auto">
+                {/* Marketplace Hero / Search Section */}
+                <section className="mt-4 mb-6">
+                    <div className="flex flex-col mb-4">
+                        <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-on-surface">MARKET HUB</h2>
+                    </div>
+                    
+                    <div className="relative group">
+                        <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
+                            <span className="material-symbols-outlined text-outline">search</span>
+                        </div>
+                        <input 
+                            className="w-full h-16 pl-14 pr-6 bg-surface-container-high border-none rounded-xl font-bold text-sm tracking-wide focus:ring-2 focus:ring-primary-container transition-all placeholder:text-outline/60" 
+                            placeholder="SEARCH ECO ITEMS..." 
+                            type="text"
+                        />
+                    </div>
+                </section>
+
+                {/* Category Chips */}
+                <section className="flex gap-3 overflow-x-auto pb-4 no-scrollbar">
+                    {CATEGORIES.map(cat => (
+                        <button 
                             key={cat}
-                            onClick={() => { setSelectedCategory(cat); setActiveTab('all'); }}
-                            className={`px-6 py-3 rounded-full border-4 border-black shadow-[4px_4px_0px_0px_#000] font-black uppercase whitespace-nowrap active:translate-y-[2px] active:shadow-none transition-all text-sm ${selectedCategory === cat
-                                ? 'bg-[#9747FF] text-white'
-                                : 'bg-white hover:bg-yellow-100 text-black'
-                                }`}
+                            className={`whitespace-nowrap px-8 py-3 rounded-xl font-bold text-[10px] uppercase tracking-[5%] active:scale-95 transition-all ${cat === 'ALL ITEMS' ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container'}`}
                         >
                             {cat}
                         </button>
                     ))}
-                </div>
-            </div>
+                </section>
 
-            {/* Main Content */}
-            <main className="px-6 flex-grow">
-                {/* Section Header */}
-                <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-xl font-black uppercase tracking-wide">
-                        Fresh Picks
-                    </h2>
-                    <Link href="/my-listings" className="text-xs font-bold underline uppercase">
-                        View All
-                    </Link>
-                </div>
-                {isLoading ? (
-                    <div className="flex items-center justify-center py-20">
-                        <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-                    </div>
-                ) : filteredListings.length === 0 ? (
-                    <motion.div
-                        className="text-center py-20"
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                    >
-                        <div className="w-20 h-20 bg-white dark:bg-dark-surface rounded-2xl border-2 border-gray-200 dark:border-gray-700 mx-auto flex items-center justify-center mb-4">
-                            <span className="material-symbols-outlined text-4xl text-gray-300">
-                                search_off
-                            </span>
+                {/* Fresh Picks Grid */}
+                <section className="mt-6">
+                    <div className="flex justify-between items-end mb-4">
+                        <div>
+                            <h3 className="text-2xl font-extrabold tracking-tight text-on-surface uppercase">FRESH PICKS</h3>
+                            <div className="h-1.5 w-12 bg-primary mt-1 rounded-full"></div>
                         </div>
-                        <p className="text-gray-500 dark:text-gray-400 font-medium">No items found</p>
-                        <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Try a different category or search term</p>
-                        <Link
-                            href="/sell"
-                            className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-primary text-dark font-bold rounded-xl border-2 border-dark shadow-brutal-sm hover:scale-105 active:scale-95 transition-transform"
-                        >
-                            <span className="material-symbols-outlined text-lg">add</span>
-                            List an item
+                        <Link href="/my-listings" className="text-[10px] font-bold uppercase tracking-widest text-primary cursor-pointer hover:underline">
+                            My Items
                         </Link>
-                    </motion.div>
-                ) : (
-                    <motion.div
-                        className="grid grid-cols-2 gap-4 pb-4"
-                        initial="hidden"
-                        animate="visible"
-                        variants={containerVariants}
-                    >
-                        {filteredListings.map((listing) => (
-                            <motion.div key={listing.id} variants={itemVariants}>
-                                <ListingCard
-                                    listing={listing}
-                                    onEdit={handleEdit}
-                                    onDelete={handleDelete}
-                                />
-                            </motion.div>
-                        ))}
-                    </motion.div>
-                )}
+                    </div>
+
+                        <motion.div 
+                            className="grid grid-cols-2 lg:grid-cols-4 gap-4"
+                            variants={containerVariants}
+                            initial="hidden"
+                            animate="visible"
+                        >
+                            {staticListings.length === 0 ? (
+                                <div className="col-span-full py-12 flex flex-col items-center justify-center text-center">
+                                    <span className="material-symbols-outlined text-5xl text-outline mb-4">search_off</span>
+                                    <h3 className="font-extrabold text-lg">No Items Found</h3>
+                                    <p className="text-sm font-medium text-on-surface-variant">No demo items available</p>
+                                </div>
+                            ) : (
+                                staticListings.map((listing: any) => (
+                                    <motion.div key={listing.id} variants={itemVariants} className="flex">
+                                        <Link href={`/marketplace/${listing.id}`} className="flex flex-col group cursor-pointer bg-white p-3 rounded-xl border border-outline-variant/10 shadow-sm transition-all hover:shadow-md w-full h-full">
+                                            <div className="relative aspect-square rounded-lg overflow-hidden mb-4 bg-surface-container shadow-sm group-hover:shadow-md transition-all duration-500">
+                                                <img 
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                                                    alt={listing.title || 'Item'} 
+                                                    src={(listing.images && listing.images.length > 0) ? listing.images[0] : 'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=400&fit=crop'}
+                                                />
+                                                {listing.condition && (
+                                                    <div className="absolute top-2 left-2">
+                                                        <span className="bg-surface/90 backdrop-blur-md px-2 py-0.5 rounded-md text-[8px] font-extrabold text-primary uppercase tracking-tighter">
+                                                            {listing.condition}
+                                                        </span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="px-1 flex flex-col justify-between flex-grow">
+                                                <h4 className="font-extrabold text-sm text-on-surface leading-tight uppercase line-clamp-2">{listing.title || 'Untitled Item'}</h4>
+                                                <div className="flex items-center justify-between mt-3 pt-3 border-t border-outline-variant/10">
+                                                    <div className="flex items-center gap-1">
+                                                        <span className="material-symbols-outlined text-secondary text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>monetization_on</span>
+                                                        <span className="font-bold text-secondary text-xs">{listing.price > 0 ? `${listing.price} Coins` : 'FREE'}</span>
+                                                    </div>
+                                                    <div className="bg-surface-container-high px-2 py-1 rounded-md">
+                                                        <span className="font-bold text-on-surface-variant text-[10px]">₹{Math.round((listing.price * 1.6) || 0)}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    </motion.div>
+                                ))
+                            )}
+                        </motion.div>
+                </section>
+
+                {/* Asymmetric Promotion Card */}
+                <section className="mt-16 mb-12">
+                    <div className="bg-primary-container p-8 md:p-12 rounded-2xl flex flex-col md:flex-row items-center gap-10 overflow-hidden relative">
+                        <div className="z-10 flex-1">
+                            <span className="font-extrabold text-[10px] uppercase tracking-[15%] text-on-primary-container/70 mb-4 block">SELLER SPOTLIGHT</span>
+                            <h2 className="text-3xl md:text-5xl font-extrabold text-on-primary-container leading-none tracking-tight mb-6">TURN YOUR TRASH TO TREASURE</h2>
+                            <p className="text-on-primary-container/80 text-lg mb-8 max-w-md">List your pre-loved items and earn Coins instantly. It's time to close the loop.</p>
+                            <Link href="/sell" className="inline-block bg-primary text-on-primary px-10 py-4 rounded-xl font-bold text-sm tracking-tight active:scale-95 transition-transform uppercase tracking-widest">
+                                START SELLING
+                            </Link>
+                        </div>
+                        <div className="relative w-full md:w-1/3 aspect-square rounded-xl overflow-hidden rotate-3 shadow-2xl z-10">
+                            <img className="w-full h-full object-cover" alt="Recycling Promotion" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBythMf-wza9iVV5KX_De6_RHvfsb6pW06mfz9P8eVTfZWEV8qzQhyXYKe_OV0MNJE89xmFraYgZUUO0bacQm24IGBtnv-HGT-EfKKE6UZkoG0Hkfq1DRP0QImVBFV-n5vYpNYEHhxB4dnMiOm5DW6LBu35jR0tOZaXJOG5HMgrzGnZXKocCMY6KeH6Ut-TY4WgAssb-41qMnJwy0_7bF345uP9f8euBw2cXMwWQlYaXfBL76NoCkF5QSk1pZXXu1NrPhKQR_6sQzw"/>
+                        </div>
+                        {/* Decorative background text */}
+                        <div className="absolute -bottom-10 -right-20 text-[180px] font-extrabold text-primary/5 select-none pointer-events-none">LIST</div>
+                    </div>
+                </section>
             </main>
         </div>
     );

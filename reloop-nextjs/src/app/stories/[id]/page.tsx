@@ -63,12 +63,12 @@ export default function StoryDetailPage() {
                 transition={{ delay: 0.2 }}
             >
                 {/* Content Card */}
-                <div className="bg-white dark:bg-dark-surface rounded-3xl border-2 border-dark dark:border-gray-600 shadow-brutal p-6">
+                <div className="bg-white dark:bg-dark-surface rounded-3xl border border-outline-variant/10 dark:border-gray-600 shadow-[0_2px_10px_rgba(0,0,0,0.02)] p-6">
                     <h1 className="text-2xl font-[900] text-dark dark:text-white leading-tight">{story.title}</h1>
 
                     {/* Author */}
                     <div className="flex items-center gap-3 mt-4 pb-4 border-b-2 border-gray-100 dark:border-gray-700">
-                        <div className="w-10 h-10 rounded-full border-2 border-dark dark:border-gray-600 overflow-hidden bg-gray-200 dark:bg-gray-700">
+                        <div className="w-10 h-10 rounded-full border border-outline-variant/10 dark:border-gray-600 overflow-hidden bg-gray-200 dark:bg-gray-700">
                             <img src={story.authorAvatar} alt={story.author} className="w-full h-full object-cover" />
                         </div>
                         <div>
@@ -79,11 +79,11 @@ export default function StoryDetailPage() {
 
                     {/* Impact Stats */}
                     <div className="grid grid-cols-2 gap-3 my-5">
-                        <div className="bg-card-green rounded-xl p-3 text-center">
+                        <div className="bg-surface-container-low rounded-xl p-3 text-center">
                             <p className="text-xl font-[900] text-dark dark:text-white">{story.co2Saved}kg</p>
                             <p className="text-[10px] font-bold text-dark/60 dark:text-white/60">CO₂ Saved</p>
                         </div>
-                        <div className="bg-card-yellow rounded-xl p-3 text-center">
+                        <div className="bg-surface-container-low rounded-xl p-3 text-center">
                             <p className="text-xl font-[900] text-dark dark:text-white">{story.itemsTraded}</p>
                             <p className="text-[10px] font-bold text-dark/60 dark:text-white/60">Items Traded</p>
                         </div>
@@ -99,11 +99,11 @@ export default function StoryDetailPage() {
 
                 {/* Share */}
                 <div className="flex gap-3">
-                    <button className="flex-1 bg-dark text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-brutal-sm active:translate-y-1 active:shadow-none transition-all">
+                    <button className="flex-1 bg-dark text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-sm active:translate-y-1 active:shadow-none transition-all">
                         <span className="material-symbols-outlined text-lg">share</span>
                         Share Story
                     </button>
-                    <button className="flex-1 bg-card-pink text-dark dark:text-white py-4 rounded-2xl font-bold border-2 border-dark dark:border-gray-600 shadow-brutal-sm flex items-center justify-center gap-2 active:translate-y-1 active:shadow-none transition-all">
+                    <button className="flex-1 bg-card-pink text-dark dark:text-white py-4 rounded-2xl font-bold border border-outline-variant/10 dark:border-gray-600 shadow-sm flex items-center justify-center gap-2 active:translate-y-1 active:shadow-none transition-all">
                         <span className="material-symbols-outlined text-lg">favorite</span>
                         Inspire Me
                     </button>

@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import DemoManager from '@/lib/demo-manager';
 import { DBService } from '@/lib/firebase/db';
@@ -44,14 +43,11 @@ export default function ChatPage() {
         const setupRealtime = async () => {
             if (user?.uid) {
                 try {
-                    // Get conversation info
                     const conversations = await DBService.getConversations(user.uid);
                     const conv: any = conversations.find((c: any) => c.id === conversationId);
 
                     if (conv) {
-                        // Find the other participant
                         const otherParticipantId = conv.participants.find((p: string) => p !== user.uid);
-                        // Use stored seller info (from when conversation was created)
                         const contactName = conv.sellerName || conv.otherParticipantName || 'User';
                         const contactAvatar = conv.sellerAvatar || conv.otherParticipantAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(contactName)}&background=4ce68a&color=fff`;
 
@@ -71,7 +67,6 @@ export default function ChatPage() {
                         });
                     }
 
-                    // Subscribe to real-time messages
                     unsubscribe = DBService.subscribeToMessages(conversationId, (firebaseMessages) => {
                         const formattedMessages = firebaseMessages.map((m: any) => ({
                             id: m.id,
@@ -101,7 +96,6 @@ export default function ChatPage() {
 
         const loadMockData = () => {
             const allMessages = DemoManager.getMockMessages();
-            // Find by message id first, then fall back to senderId for legacy support
             const found = allMessages.find(m => m.id === conversationId) ||
                 allMessages.find(m => m.senderId === conversationId);
             if (found) setContact(found as Message);
@@ -112,7 +106,6 @@ export default function ChatPage() {
 
         setupRealtime();
 
-        // Cleanup subscription on unmount
         return () => {
             if (unsubscribe) {
                 unsubscribe();
@@ -128,13 +121,10 @@ export default function ChatPage() {
     // Dynamic navigation context for chat
     const navContextConfig = useMemo(() => {
         if (!contact) return null;
-
-        // Only show offer action for marketplace conversations
         if (contact.conversationType !== 'marketplace') return null;
 
         return NavPresets.chat({
             onOffer: () => {
-                // Pre-fill offer message
                 const offerAmount = contact.listingPrice
                     ? Math.round(contact.listingPrice * 0.9)
                     : 0;
@@ -142,11 +132,9 @@ export default function ChatPage() {
             },
             onBack: () => router.back(),
             onCall: () => {
-                // Could integrate with phone/video calling
                 alert('Calling feature coming soon!');
             },
             onAttach: () => {
-                // Could open media picker
                 alert('Attach media coming soon!');
             },
         });
@@ -165,21 +153,17 @@ export default function ChatPage() {
             isOwn: true,
         };
 
-        // Optimistic update for smoother UX
         setChatMessages(prev => [...prev, msg]);
         setNewMessage('');
 
-        // Send via Firebase if authenticated
         if (user?.uid) {
             try {
                 await DBService.sendMessage(conversationId, user.uid, msg.text);
             } catch (error) {
                 console.error('Failed to send message:', error);
-                // Revert on error
                 setChatMessages(prev => prev.filter(m => m.id !== msg.id));
             }
         } else {
-            // Mock mode - add to DemoManager and simulate reply
             DemoManager.addMessage(conversationId, msg);
 
             setTimeout(() => {
@@ -204,199 +188,220 @@ export default function ChatPage() {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-background flex items-center justify-center">
-                <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+            <div className="min-h-screen bg-[#f1f8f6] flex items-center justify-center">
+                <div className="w-10 h-10 border-4 border-[#29664c] border-t-transparent rounded-full animate-spin" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-background flex flex-col">
-            {/* Header */}
-            <header className="px-5 pt-6 pb-4 flex items-center gap-4 border-b-2 border-gray-100 dark:border-gray-700 bg-white/80 dark:bg-dark-bg/80 backdrop-blur-lg sticky top-0 z-20">
-                <Link
-                    href="/messages"
-                    className="w-10 h-10 flex items-center justify-center bg-white dark:bg-dark-surface rounded-xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm shrink-0"
-                >
-                    <span className="material-symbols-outlined text-dark dark:text-white">arrow_back</span>
-                </Link>
-                {contact && (
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                        <div className="w-10 h-10 rounded-full border-2 border-dark dark:border-gray-600 overflow-hidden bg-gray-200 dark:bg-gray-700 shrink-0">
-                            <img src={contact.senderAvatar} alt={contact.senderName} className="w-full h-full object-cover" />
-                        </div>
-                        <div className="min-w-0">
-                            <p className="font-black text-dark dark:text-white truncate">{contact.senderName}</p>
-                            {contact.listingTitle && (
-                                <p className="text-xs text-primary font-bold truncate">{contact.listingTitle}</p>
-                            )}
-                        </div>
+        <div className="min-h-screen bg-[#f1f8f6] text-[#29302f] font-body flex flex-col">
+            {/* TopAppBar */}
+            <header className="fixed top-0 w-full z-50 bg-[#f1f8f6]/80 backdrop-blur-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] max-w-md left-1/2 -translate-x-1/2">
+                <div className="flex justify-between items-center px-6 py-4 w-full">
+                    <div className="flex items-center gap-4">
+                        <button onClick={() => router.push('/messages')} className="w-10 h-10 flex items-center justify-center hover:bg-[#eaf2f0] transition-colors rounded-full active:scale-95 duration-200">
+                            <span className="material-symbols-outlined text-[#29664c]">arrow_back</span>
+                        </button>
+                        {contact && (
+                            <div className="flex items-center gap-3">
+                                <div className="relative">
+                                    <img
+                                        alt={contact.senderName}
+                                        className="w-10 h-10 rounded-full object-cover"
+                                        src={contact.senderAvatar}
+                                    />
+                                    {user?.uid && (
+                                        <span className="absolute bottom-0 right-0 w-3 h-3 bg-[#006946] border-2 border-[#f1f8f6] rounded-full"></span>
+                                    )}
+                                </div>
+                                <div>
+                                    <h1 className="text-[#29302f] font-headline font-extrabold tracking-tight">{contact.senderName}</h1>
+                                    {user?.uid ? (
+                                        <span className="text-[10px] font-label font-bold uppercase tracking-widest text-[#006946]">Live</span>
+                                    ) : (
+                                        <span className="text-[10px] font-label font-bold uppercase tracking-widest text-[#565d5c]">Demo Mode</span>
+                                    )}
+                                </div>
+                            </div>
+                        )}
                     </div>
-                )}
-                {/* Real-time indicator */}
-                {user?.uid && (
-                    <div className="flex items-center gap-1 text-xs text-green-500 font-bold">
-                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                        Live
-                    </div>
-                )}
+                    <button className="hover:bg-[#eaf2f0] transition-colors p-2 rounded-full active:scale-95 duration-200">
+                        <span className="material-symbols-outlined text-[#29664c]">more_vert</span>
+                    </button>
+                </div>
             </header>
 
-            {/* Context Header - Shows item/project info - STICKY */}
-            {contact && (contact.conversationType === 'marketplace' || contact.listingTitle || contact.projectId) && (
-                <div className="px-5 py-3 bg-gray-50/95 dark:bg-dark-surface/95 backdrop-blur-md border-b-2 border-gray-100 dark:border-gray-700 flex items-center gap-3 sticky top-[72px] z-10">
-                    {/* Item/Project Image */}
-                    <div className="w-14 h-14 rounded-xl border-2 border-dark overflow-hidden bg-gray-200 shrink-0">
-                        <img
-                            src={contact.listingImage || 'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=100&h=100&fit=crop'}
-                            alt={contact.listingTitle || contact.projectTitle || 'Item'}
-                            className="w-full h-full object-cover"
-                        />
-                    </div>
-
-                    {/* Item/Project Details */}
-                    <div className="flex-1 min-w-0">
-                        <p className="font-bold text-dark dark:text-white truncate text-sm">
-                            {contact.listingTitle || contact.projectTitle}
-                        </p>
-                        {contact.listingPrice && (
-                            <p className="text-primary font-black text-lg">
-                                {formatPrice(contact.listingPrice)}
-                            </p>
-                        )}
-                        {contact.projectTitle && !contact.listingPrice && (
-                            <p className="text-xs text-gray-500">DIY Project Discussion</p>
-                        )}
-                    </div>
-
-                    {/* Make Offer Button - Only for marketplace items */}
-                    {contact.conversationType === 'marketplace' && contact.listingPrice && (
-                        <button
-                            onClick={() => setShowOfferUI(true)}
-                            className="shrink-0 h-10 px-4 bg-[#fde047] text-dark font-bold text-sm rounded-xl border-2 border-dark shadow-brutal-sm flex items-center gap-2 active:shadow-none active:translate-x-[1px] active:translate-y-[1px] transition-all"
-                        >
-                            <span className="material-symbols-outlined text-[18px]">local_offer</span>
-                            Offer
-                        </button>
-                    )}
-                </div>
-            )}
-
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
-                {messages.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-20 text-center">
-                        <span className="material-symbols-outlined text-5xl text-gray-300 mb-4">chat_bubble</span>
-                        <p className="text-gray-500 font-medium">No messages yet</p>
-                        <p className="text-gray-400 text-sm">Start the conversation!</p>
-                    </div>
-                ) : (
-                    messages.map((msg, i) => (
-                        <motion.div
-                            key={msg.id}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: i * 0.02 }}
-                            className={`flex ${msg.isOwn ? 'justify-end' : 'justify-start'}`}
-                        >
-                            {/* Offer Card for offer-type messages */}
-                            {msg.type === 'offer' && msg.offerAmount ? (
-                                <OfferCard
-                                    amount={msg.offerAmount}
-                                    status={msg.offerStatus || 'pending'}
-                                    counterAmount={msg.counterAmount}
-                                    isSeller={!msg.isOwn} // If not my message, I'm the seller receiving the offer
-                                    isOwn={msg.isOwn}
-                                    onAccept={async () => {
-                                        if (user?.uid && msg.offerAmount && contact) {
-                                            try {
-                                                // Update offer status with all required data for QR generation
-                                                await DBService.updateOfferStatus(
-                                                    conversationId,
-                                                    msg.id,
-                                                    'accepted',
-                                                    undefined, // counterAmount
-                                                    msg.offerAmount,
-                                                    contact.listingId,
-                                                    contact.listingTitle,
-                                                    user.uid, // seller (current user accepting)
-                                                    msg.senderId // buyer (person who sent offer)
-                                                );
-
-                                                // Mark the listing as pending (will be sold after QR pickup scan)
-                                                if (contact.listingId) {
-                                                    await DBService.updateListingStatus(contact.listingId, 'pending');
-                                                    alert(`🎉 Deal confirmed! Pickup QR sent to buyer. Item will be removed from marketplace after pickup is complete.`);
-                                                }
-                                            } catch (error) {
-                                                console.error('Error accepting offer:', error);
-                                                alert('Failed to accept offer. Please try again.');
-                                            }
-                                        }
-                                    }}
-                                    onDecline={async () => {
-                                        if (user?.uid) {
-                                            try {
-                                                await DBService.updateOfferStatus(conversationId, msg.id, 'declined');
-                                            } catch (error) {
-                                                console.error('Error declining offer:', error);
-                                            }
-                                        }
-                                    }}
-                                    timestamp={msg.timestamp}
+            <main className="flex-1 pt-24 pb-32 overflow-y-auto no-scrollbar">
+                {/* Product Header Card */}
+                {contact && (contact.conversationType === 'marketplace' || contact.listingTitle) && (
+                    <div className="px-6 mb-8">
+                        <div className="bg-[#ffffff] rounded-xl p-4 flex items-center gap-4 shadow-[0_40px_64px_-10px_rgba(41,48,47,0.04)]">
+                            <div className="w-20 h-20 rounded-lg overflow-hidden bg-[#e1eae8] shrink-0">
+                                <img
+                                    alt={contact.listingTitle || 'Item'}
+                                    className="w-full h-full object-cover"
+                                    src={contact.listingImage || 'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=100&h=100&fit=crop'}
                                 />
-                            ) : msg.type === 'qr' && msg.qrData ? (
-                                /* QR Code message (pickup/dropoff) */
-                                <QRCodeMessage
-                                    type={msg.qrType || 'pickup'}
-                                    qrData={msg.qrData}
-                                    isOwn={msg.isOwn}
-                                    timestamp={msg.timestamp}
-                                />
-                            ) : msg.type === 'system' ? (
-                                /* System message (offer accepted/declined) */
-                                <div className="w-full text-center py-2">
-                                    <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full">
-                                        {msg.text}
-                                    </span>
-                                </div>
-                            ) : (
-                                /* Regular text message */
-                                <div
-                                    className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm font-medium ${msg.isOwn
-                                        ? 'bg-primary text-dark rounded-br-md border-2 border-dark dark:border-gray-600'
-                                        : 'bg-white dark:bg-dark-surface text-dark dark:text-white rounded-bl-md border-2 border-gray-200 dark:border-gray-700'
-                                        }`}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <h2 className="font-headline font-bold text-[#29302f] truncate">{contact.listingTitle}</h2>
+                                {contact.listingPrice && (
+                                    <p className="text-[#29664c] font-bold">{formatPrice(contact.listingPrice)}</p>
+                                )}
+                            </div>
+                            {contact.conversationType === 'marketplace' && contact.listingPrice && (
+                                <button
+                                    onClick={() => setShowOfferUI(true)}
+                                    className="bg-[#29664c] text-[#c8ffe0] px-5 py-2 rounded-lg font-bold text-sm hover:scale-95 transition-transform active:bg-[#1b5a40] shrink-0"
                                 >
-                                    <p className="whitespace-pre-wrap">{msg.text}</p>
-                                    <div className={`flex items-center gap-1 mt-1 ${msg.isOwn ? 'justify-end' : ''}`}>
-                                        <span className={`text-[10px] ${msg.isOwn ? 'text-dark/50 dark:text-white/50' : 'text-dark/40 dark:text-white/40'}`}>
-                                            {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                        </span>
-                                        {/* Read receipt for own messages */}
-                                        {msg.isOwn && (
-                                            <span className={`text-[10px] ${msg.read ? 'text-blue-500' : 'text-gray-400'}`}>
-                                                {msg.read ? '✓✓' : '✓'}
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
+                                    Offer
+                                </button>
                             )}
-                        </motion.div>
-                    ))
+                        </div>
+                    </div>
                 )}
-                <div ref={messagesEndRef} />
-            </div>
 
-            {/* Inline Offer UI - OLX Style */}
+                {/* Chat Area */}
+                <div className="bg-[#ffffff] rounded-t-[3rem] min-h-full px-6 pt-10 pb-20 space-y-6">
+                    {/* System/Date Message */}
+                    <div className="flex justify-center">
+                        <span className="bg-[#eaf2f0] text-[#565d5c] px-4 py-1 rounded-full text-[10px] font-label font-bold uppercase tracking-widest">Today</span>
+                    </div>
+
+                    {messages.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center py-20 text-center">
+                            <span className="material-symbols-outlined text-5xl text-[#a7afad] mb-4">chat_bubble</span>
+                            <p className="text-[#565d5c] font-medium">No messages yet</p>
+                            <p className="text-[#a7afad] text-sm">Start the conversation!</p>
+                        </div>
+                    ) : (
+                        messages.map((msg, i) => (
+                            <motion.div
+                                key={msg.id}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: i * 0.02 }}
+                                className={`flex ${msg.isOwn ? 'justify-end' : 'justify-start'}`}
+                            >
+                                {/* Offer Card */}
+                                {msg.type === 'offer' && msg.offerAmount ? (
+                                    <OfferCard
+                                        amount={msg.offerAmount}
+                                        status={msg.offerStatus || 'pending'}
+                                        counterAmount={msg.counterAmount}
+                                        isSeller={!msg.isOwn}
+                                        isOwn={msg.isOwn}
+                                        onAccept={async () => {
+                                            if (user?.uid && msg.offerAmount && contact) {
+                                                try {
+                                                    await DBService.updateOfferStatus(
+                                                        conversationId,
+                                                        msg.id,
+                                                        'accepted',
+                                                        undefined,
+                                                        msg.offerAmount,
+                                                        contact.listingId,
+                                                        contact.listingTitle,
+                                                        user.uid,
+                                                        msg.senderId
+                                                    );
+                                                    if (contact.listingId) {
+                                                        await DBService.updateListingStatus(contact.listingId, 'pending');
+                                                        alert(`🎉 Deal confirmed! Pickup QR sent to buyer.`);
+                                                    }
+                                                } catch (error) {
+                                                    console.error('Error accepting offer:', error);
+                                                    alert('Failed to accept offer. Please try again.');
+                                                }
+                                            }
+                                        }}
+                                        onDecline={async () => {
+                                            if (user?.uid) {
+                                                try {
+                                                    await DBService.updateOfferStatus(conversationId, msg.id, 'declined');
+                                                } catch (error) {
+                                                    console.error('Error declining offer:', error);
+                                                }
+                                            }
+                                        }}
+                                        timestamp={msg.timestamp}
+                                    />
+                                ) : msg.type === 'qr' && msg.qrData ? (
+                                    <QRCodeMessage
+                                        type={msg.qrType || 'pickup'}
+                                        qrData={msg.qrData}
+                                        isOwn={msg.isOwn}
+                                        timestamp={msg.timestamp}
+                                    />
+                                ) : msg.type === 'system' ? (
+                                    <div className="w-full text-center py-2">
+                                        <span className="text-xs text-[#565d5c] bg-[#eaf2f0] px-3 py-1 rounded-full">
+                                            {msg.text}
+                                        </span>
+                                    </div>
+                                ) : (
+                                    /* Regular text message */
+                                    <div className="flex flex-col gap-2 max-w-[80%]">
+                                        <div
+                                            className={`p-4 text-sm font-medium ${msg.isOwn
+                                                ? 'bg-[#29664c] text-[#c8ffe0] rounded-t-xl rounded-l-xl shadow-[0_10px_20px_-5px_rgba(41,102,76,0.2)]'
+                                                : 'bg-[#eaf2f0] text-[#29302f] rounded-t-xl rounded-r-xl'
+                                                }`}
+                                        >
+                                            <p className="whitespace-pre-wrap">{msg.text}</p>
+                                        </div>
+                                        <div className={`flex items-center gap-1 ${msg.isOwn ? 'justify-end mr-1' : 'ml-1'}`}>
+                                            <span className="text-[10px] text-[#717877]">
+                                                {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            </span>
+                                            {msg.isOwn && (
+                                                <span className={`text-[10px] ${msg.read ? 'text-[#006946]' : 'text-[#a7afad]'}`}>
+                                                    {msg.read ? '✓✓' : '✓'}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+                            </motion.div>
+                        ))
+                    )}
+
+                    {/* Quick Replies */}
+                    {contact && contact.conversationType === 'marketplace' && showQuickReplies && !showOfferUI && (
+                        <div className="flex flex-wrap gap-3 pt-4">
+                            <button
+                                onClick={() => { setNewMessage('Is this still available?'); setShowQuickReplies(false); }}
+                                className="bg-[#d4dfdd] text-[#29302f] px-4 py-2 rounded-full text-xs font-bold hover:bg-[#b9f9d6] transition-colors active:scale-95 border border-[#a7afad]/10"
+                            >
+                                Is this still available?
+                            </button>
+                            <button
+                                onClick={() => { setNewMessage("What's your best price?"); setShowQuickReplies(false); }}
+                                className="bg-[#d4dfdd] text-[#29302f] px-4 py-2 rounded-full text-xs font-bold hover:bg-[#b9f9d6] transition-colors active:scale-95 border border-[#a7afad]/10"
+                            >
+                                What&apos;s your best price?
+                            </button>
+                            <button
+                                onClick={() => { setNewMessage('Can you send your location?'); setShowQuickReplies(false); }}
+                                className="bg-[#d4dfdd] text-[#29302f] px-4 py-2 rounded-full text-xs font-bold hover:bg-[#b9f9d6] transition-colors active:scale-95 border border-[#a7afad]/10"
+                            >
+                                Send location
+                            </button>
+                        </div>
+                    )}
+
+                    <div ref={messagesEndRef} />
+                </div>
+            </main>
+
+            {/* Inline Offer UI */}
             <AnimatePresence>
                 {showOfferUI && contact?.listingPrice && (
                     <InlineOffer
                         listingPrice={contact.listingPrice}
                         onSubmit={async (amount) => {
                             setShowOfferUI(false);
-
-                            // If logged in, use Firebase
                             if (user?.uid) {
                                 try {
                                     await DBService.sendOffer(
@@ -410,7 +415,6 @@ export default function ChatPage() {
                                     alert('Failed to send offer. Please try again.');
                                 }
                             } else {
-                                // Demo mode - add as regular message
                                 const offerMessage = `💰 Offer: ${amount} coins\n\nI'd like to offer ${amount} coins for "${contact.listingTitle}". Let me know if that works!`;
                                 const msg: ChatMessage = {
                                     id: `chat-${Date.now()}`,
@@ -431,57 +435,46 @@ export default function ChatPage() {
                 )}
             </AnimatePresence>
 
-            {/* Standard Input - Hidden when offer UI is showing */}
+            {/* Bottom Input Area */}
             {!showOfferUI && (
-                <div className="sticky bottom-0">
-                    {/* Quick Replies - Inline with input, shown when user toggles or no messages */}
-                    <AnimatePresence>
-                        {contact && contact.conversationType === 'marketplace' && showQuickReplies && (
-                            <QuickReplies
-                                onSelect={(message) => {
-                                    setNewMessage(message);
-                                    setShowQuickReplies(false);
-                                }}
-                                listingTitle={contact.listingTitle}
-                                listingPrice={contact.listingPrice}
-                            />
+                <footer className="fixed bottom-0 w-full z-50 bg-[#f1f8f6]/80 backdrop-blur-xl pt-4 pb-10 px-6 max-w-md left-1/2 -translate-x-1/2">
+                    <div className="flex items-center gap-3">
+                        {contact?.conversationType === 'marketplace' && (
+                            <button
+                                onClick={() => setShowQuickReplies(!showQuickReplies)}
+                                className={`w-12 h-12 flex items-center justify-center rounded-full transition-all ${showQuickReplies
+                                    ? 'bg-[#d1fee5] text-[#3c6451]'
+                                    : 'bg-[#e1eae8] text-[#565d5c]'
+                                    }`}
+                            >
+                                <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>bolt</span>
+                            </button>
                         )}
-                    </AnimatePresence>
-
-                    <div className="p-4 bg-white/80 dark:bg-dark-bg/80 backdrop-blur-lg border-t-2 border-gray-100 dark:border-gray-700">
-                        <div className="flex items-center gap-2">
-                            {/* Quick Reply Toggle Button */}
-                            {contact?.conversationType === 'marketplace' && (
-                                <button
-                                    onClick={() => setShowQuickReplies(!showQuickReplies)}
-                                    className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all ${showQuickReplies
-                                        ? 'bg-primary border-dark text-dark'
-                                        : 'bg-gray-100 dark:bg-dark-surface border-gray-200 dark:border-gray-600 text-gray-500'
-                                        }`}
-                                    title="Quick replies"
-                                >
-                                    <span className="material-symbols-outlined text-[20px]">bolt</span>
-                                </button>
-                            )}
+                        <div className="flex-1 relative">
                             <input
+                                className="w-full h-12 bg-[#d4dfdd] border-none rounded-full px-6 text-[#29302f] placeholder:text-[#717877] font-medium focus:ring-2 focus:ring-[#b9f9d6] transition-all outline-none"
+                                placeholder="Type a message..."
                                 type="text"
                                 value={newMessage}
                                 onChange={(e) => setNewMessage(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-                                placeholder="Type a message..."
-                                className="flex-1 h-12 rounded-full bg-gray-100 dark:bg-dark-surface border border-gray-200 dark:border-gray-700 px-5 font-medium placeholder:text-gray-400 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
                             />
-                            <button
-                                onClick={sendMessage}
-                                disabled={!newMessage.trim()}
-                                className="w-12 h-12 bg-primary rounded-full border-2 border-dark dark:border-gray-600 flex items-center justify-center shadow-brutal-sm disabled:opacity-50 active:scale-95 transition-transform"
-                            >
-                                <span className="material-symbols-outlined text-dark dark:text-white">send</span>
-                            </button>
                         </div>
+                        <button
+                            onClick={sendMessage}
+                            disabled={!newMessage.trim()}
+                            className="w-12 h-12 flex items-center justify-center bg-[#29664c] text-[#c8ffe0] rounded-full hover:scale-95 transition-transform shadow-lg active:bg-[#1b5a40] disabled:opacity-50"
+                        >
+                            <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>send</span>
+                        </button>
                     </div>
-                </div>
+                </footer>
             )}
+
+            <style jsx>{`
+                .no-scrollbar::-webkit-scrollbar { display: none; }
+                .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+            `}</style>
         </div>
     );
 }

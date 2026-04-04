@@ -25,7 +25,7 @@ const FAQ = [
 
 const CONTACT_OPTIONS = [
     { icon: 'email', title: 'Email Us', desc: 'support@reloop.app', color: 'bg-card-blue' },
-    { icon: 'forum', title: 'Community', desc: 'Join the discussion', color: 'bg-card-green' },
+    { icon: 'forum', title: 'Community', desc: 'Join the discussion', color: 'bg-surface-container-low' },
     { icon: 'bug_report', title: 'Report Bug', desc: 'Help us improve', color: 'bg-card-pink' },
 ];
 
@@ -47,7 +47,7 @@ export default function HelpPage() {
                     {CONTACT_OPTIONS.map((opt) => (
                         <button
                             key={opt.icon}
-                            className={`${opt.color} rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm p-4 flex flex-col items-center gap-2 hover:-translate-y-1 transition-transform`}
+                            className={`${opt.color} rounded-2xl border border-outline-variant/10 dark:border-gray-600 shadow-sm p-4 flex flex-col items-center gap-2 hover:-translate-y-1 transition-transform`}
                         >
                             <span className="material-symbols-outlined text-2xl text-dark dark:text-white">{opt.icon}</span>
                             <span className="text-xs font-[800] text-dark dark:text-white text-center">{opt.title}</span>
@@ -62,7 +62,7 @@ export default function HelpPage() {
                         {FAQ.map((faq, i) => (
                             <div
                                 key={i}
-                                className="bg-white dark:bg-dark-surface rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm overflow-hidden"
+                                className="bg-white dark:bg-dark-surface rounded-2xl border border-outline-variant/10 dark:border-gray-600 shadow-sm overflow-hidden"
                             >
                                 <button
                                     onClick={() => setOpenFaq(openFaq === i ? null : i)}

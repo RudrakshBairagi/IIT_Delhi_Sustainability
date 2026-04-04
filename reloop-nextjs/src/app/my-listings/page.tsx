@@ -173,10 +173,10 @@ export default function MyListingsPage() {
             <div className="p-4">
                 {filteredListings.length === 0 ? (
                     <div className="text-center py-16">
-                        <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-dark shadow-brutal">
+                        <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-6 border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
                             <span className="text-5xl">📦</span>
                         </div>
-                        <h2 className="text-2xl font-black text-dark mb-2">
+                        <h2 className="text-2xl font-extrabold text-dark mb-2">
                             {filter === 'all' ? 'No listings yet' : `No ${filter} listings`}
                         </h2>
                         <p className="text-gray-500 mb-6">
@@ -187,7 +187,7 @@ export default function MyListingsPage() {
                         {filter === 'all' && (
                             <button
                                 onClick={() => setShowWizard(true)}
-                                className="px-8 py-4 bg-primary text-dark font-black rounded-full shadow-brutal hover:scale-105 active:scale-95 transition-transform"
+                                className="px-8 py-4 bg-primary text-dark font-extrabold rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:scale-105 active:scale-95 transition-transform"
                             >
                                 Create Listing
                             </button>
@@ -206,7 +206,7 @@ export default function MyListingsPage() {
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: i * 0.05 }}
-                                    className="bg-white rounded-2xl border-3 border-dark shadow-brutal overflow-hidden"
+                                    className="bg-white rounded-2xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] overflow-hidden"
                                 >
                                     <div className="flex gap-4 p-3">
                                         {/* Image */}
@@ -237,7 +237,7 @@ export default function MyListingsPage() {
                                             <div className="flex items-center gap-3 mt-1">
                                                 <div className="flex items-center gap-1">
                                                     <span className="text-lg">🪙</span>
-                                                    <span className="font-black text-dark">{listing.price}</span>
+                                                    <span className="font-extrabold text-dark">{listing.price}</span>
                                                 </div>
                                                 {/* Trade offers badge */}
                                                 {hasOffers && (
@@ -305,10 +305,10 @@ export default function MyListingsPage() {
                                                                 <button
                                                                     onClick={() => handleAcceptTrade(trade)}
                                                                     disabled={processingTradeId === trade.id}
-                                                                    className="flex-1 py-2 rounded-lg bg-primary border-2 border-dark text-dark font-bold text-xs shadow-brutal-sm hover:shadow-none active:translate-y-0.5 transition-all disabled:opacity-50 flex items-center justify-center gap-1"
+                                                                    className="flex-1 py-2 rounded-lg bg-primary border border-outline-variant/10 text-dark font-bold text-xs shadow-sm hover:shadow-none active:translate-y-0.5 transition-all disabled:opacity-50 flex items-center justify-center gap-1"
                                                                 >
                                                                     {processingTradeId === trade.id ? (
-                                                                        <div className="w-4 h-4 border-2 border-dark border-t-transparent rounded-full animate-spin" />
+                                                                        <div className="w-4 h-4 border border-outline-variant/10 border-t-transparent rounded-full animate-spin" />
                                                                     ) : (
                                                                         <>
                                                                             <span className="material-symbols-outlined text-sm">check</span>
@@ -376,7 +376,7 @@ export default function MyListingsPage() {
             {listings.length > 0 && (
                 <button
                     onClick={() => setShowWizard(true)}
-                    className="fixed bottom-24 right-4 w-14 h-14 bg-primary text-dark rounded-full border-3 border-dark shadow-brutal flex items-center justify-center hover:scale-110 active:scale-95 transition-transform"
+                    className="fixed bottom-24 right-4 w-14 h-14 bg-primary text-dark rounded-full border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex items-center justify-center hover:scale-110 active:scale-95 transition-transform"
                 >
                     <span className="material-symbols-outlined text-2xl">add</span>
                 </button>
@@ -389,7 +389,7 @@ export default function MyListingsPage() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 bg-dark/80 backdrop-blur-sm flex items-center justify-center p-4"
+                        className="fixed inset-0 z-50 bg-dark/80 backdrop-blur-sm flex items-center justify-center p-4 w-full max-w-md left-1/2 -translate-x-1/2"
                         onClick={() => !isDeleting && setDeleteTarget(null)}
                     >
                         <motion.div
@@ -397,13 +397,13 @@ export default function MyListingsPage() {
                             animate={{ scale: 1, y: 0 }}
                             exit={{ scale: 0.9, y: 20 }}
                             onClick={e => e.stopPropagation()}
-                            className="bg-white rounded-3xl p-6 w-full max-w-sm border-4 border-dark shadow-brutal"
+                            className="bg-white rounded-3xl p-6 w-full max-w-sm border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)]"
                         >
                             <div className="text-center">
                                 <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                     <span className="material-symbols-outlined text-3xl text-red-500">delete_forever</span>
                                 </div>
-                                <h3 className="text-xl font-black text-dark mb-2">Delete Listing?</h3>
+                                <h3 className="text-xl font-extrabold text-dark mb-2">Delete Listing?</h3>
                                 <p className="text-gray-500 text-sm mb-6">
                                     Are you sure you want to delete "{deleteTarget.title}"? This action cannot be undone.
                                 </p>

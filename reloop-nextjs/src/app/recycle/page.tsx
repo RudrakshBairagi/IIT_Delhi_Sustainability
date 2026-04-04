@@ -86,30 +86,30 @@ function RecycleContent() {
     if (qrGenerated) {
         return (
             <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 text-center">
-                <div className="w-28 h-28 bg-white rounded-2xl border-4 border-dark shadow-brutal flex items-center justify-center mb-6">
+                <div className="w-28 h-28 bg-white rounded-2xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex items-center justify-center mb-6">
                     <div className="grid grid-cols-5 gap-1">
                         {Array.from({ length: 25 }).map((_, i) => (
                             <div key={i} className={`w-3 h-3 ${Math.random() > 0.4 ? 'bg-dark' : 'bg-white'}`} />
                         ))}
                     </div>
                 </div>
-                <h1 className="text-2xl font-black text-dark dark:text-white mb-2">QR Ready!</h1>
+                <h1 className="text-2xl font-extrabold text-dark dark:text-white mb-2">QR Ready!</h1>
                 <p className="text-dark/70 dark:text-white/70 mb-6 text-sm">
                     Show at {zones.find(z => z.id === selectedZone)?.name}
                 </p>
-                <div className="bg-card-green rounded-2xl border-2 border-dark shadow-brutal-sm p-4 mb-6 w-full flex justify-center gap-6">
+                <div className="bg-surface-container-low rounded-2xl border border-outline-variant/10 shadow-sm p-4 mb-6 w-full flex justify-center gap-6">
                     <div className="text-center">
-                        <p className="text-2xl font-black text-dark">+{coinsEarned}</p>
+                        <p className="text-2xl font-extrabold text-dark">+{coinsEarned}</p>
                         <p className="text-xs font-bold text-dark/70">🪙 Coins</p>
                     </div>
                     <div className="text-center">
-                        <p className="text-2xl font-black text-dark">+{xpEarned}</p>
+                        <p className="text-2xl font-extrabold text-dark">+{xpEarned}</p>
                         <p className="text-xs font-bold text-dark/70">⭐ XP</p>
                     </div>
                 </div>
                 <button
                     onClick={() => router.push('/')}
-                    className="w-full bg-dark text-white font-black py-4 rounded-2xl border-2 border-dark shadow-brutal"
+                    className="w-full bg-dark text-white font-extrabold py-4 rounded-2xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)]"
                 >
                     Done
                 </button>
@@ -128,11 +128,11 @@ function RecycleContent() {
                 variants={{ visible: { transition: { staggerChildren: 0.08 } } }}
             >
                 {/* Compact rewards preview at top */}
-                <motion.div variants={itemVariants} className="flex items-center gap-3 bg-card-green rounded-xl border-2 border-dark shadow-brutal-sm px-4 py-3">
+                <motion.div variants={itemVariants} className="flex items-center gap-3 bg-surface-container-low rounded-xl border border-outline-variant/10 shadow-sm px-4 py-3">
                     <span className="material-symbols-outlined text-dark">recycling</span>
                     <span className="text-sm font-bold text-dark flex-1">Drop off to earn:</span>
-                    <span className="bg-white rounded-full px-2 py-1 border border-dark font-black text-xs">+5 🪙</span>
-                    <span className="bg-white rounded-full px-2 py-1 border border-dark font-black text-xs">+10 ⭐</span>
+                    <span className="bg-white rounded-full px-2 py-1 border border-outline-variant/20 font-extrabold text-xs">+5 🪙</span>
+                    <span className="bg-white rounded-full px-2 py-1 border border-outline-variant/20 font-extrabold text-xs">+10 ⭐</span>
                 </motion.div>
 
                 {/* Recycling Zones */}
@@ -149,8 +149,8 @@ function RecycleContent() {
                                 onClick={() => setSelectedZone(zone.id)}
                                 className={`bg-white dark:bg-dark-surface rounded-xl border-2 ${selectedZone === zone.id
                                     ? 'border-green-500 ring-2 ring-green-200'
-                                    : 'border-dark dark:border-gray-600'
-                                    } shadow-brutal-sm p-3 cursor-pointer transition-all flex items-center gap-3`}
+                                    : 'border-outline-variant/20 dark:border-gray-600'
+                                    } shadow-sm p-3 cursor-pointer transition-all flex items-center gap-3`}
                             >
                                 {selectedZone === zone.id ? (
                                     <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shrink-0">
@@ -164,7 +164,7 @@ function RecycleContent() {
                                     <p className="text-xs text-dark/50 dark:text-white/50 truncate">{zone.location}</p>
                                 </div>
                                 {zone.distance && (
-                                    <span className="bg-card-blue px-2 py-1 rounded-lg text-xs font-bold border border-dark shrink-0">
+                                    <span className="bg-card-blue px-2 py-1 rounded-lg text-xs font-bold border border-outline-variant/20 shrink-0">
                                         {zone.distance}
                                     </span>
                                 )}
@@ -178,7 +178,7 @@ function RecycleContent() {
                     <button
                         onClick={handleGenerateQR}
                         disabled={!selectedZone || generating}
-                        className={`w-full py-4 rounded-2xl border-2 border-dark shadow-brutal font-black text-lg transition-all flex items-center justify-center gap-2 ${selectedZone
+                        className={`w-full py-4 rounded-2xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] font-extrabold text-lg transition-all flex items-center justify-center gap-2 ${selectedZone
                             ? 'bg-green-500 text-white'
                             : 'bg-gray-200 text-gray-500 cursor-not-allowed'
                             }`}

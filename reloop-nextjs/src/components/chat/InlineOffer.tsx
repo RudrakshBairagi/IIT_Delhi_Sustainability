@@ -86,7 +86,7 @@ export function InlineOffer({ listingPrice, onSubmit, onCancel }: InlineOfferPro
                 <button
                     onClick={handleSubmit}
                     disabled={!amount || parseInt(amount) <= 0}
-                    className="px-6 py-3 bg-primary text-dark font-bold rounded-xl border-2 border-dark shadow-brutal-sm hover:scale-[1.02] active:scale-95 active:shadow-none disabled:opacity-50 disabled:pointer-events-none transition-all flex items-center gap-2"
+                    className="px-6 py-3 bg-primary text-dark font-bold rounded-xl border border-outline-variant/10 shadow-sm hover:scale-[1.02] active:scale-95 active:shadow-none disabled:opacity-50 disabled:pointer-events-none transition-all flex items-center gap-2"
                 >
                     <span>Send</span>
                     <span className="material-symbols-outlined text-lg">send</span>

@@ -45,6 +45,19 @@
   --radius-xl: 2rem;
   --radius-2xl: 2.5rem;
   --radius-full: 9999px;
+
+  /* Custom Design Palette */
+  --color-warm-sand: #f9f6f1;
+  --color-on-surface: #29302f;
+  --color-primary-container: #b9f9d6;
+  --color-primary: #29664c;
+  --color-primary-dim: #1b5a40;
+  --color-outline: #717877;
+  --color-outline-variant: #a7afad;
+  --color-terracotta: #d97757;
+  --color-on-terracotta: #fff4f0;
+  --color-surface-container-low: #eaf2f0;
+  --color-surface-container-highest: #d4dfdd;
 }
 
 :root {

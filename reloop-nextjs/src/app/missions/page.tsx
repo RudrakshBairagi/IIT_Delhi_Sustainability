@@ -96,16 +96,16 @@ export default function MissionsPage() {
                 variants={{ visible: { transition: { staggerChildren: 0.08 } } }}
             >
                 {/* Progress Summary */}
-                <motion.div variants={itemVariants} className="bg-gradient-to-br from-primary to-green-400 rounded-2xl border-2 border-dark shadow-brutal p-4">
+                <motion.div variants={itemVariants} className="bg-gradient-to-br from-primary to-green-400 rounded-2xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] p-4">
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-sm font-bold text-dark/70">Today's Progress</p>
-                            <p className="text-3xl font-black text-dark">{completedCount}/{missions.length}</p>
+                            <p className="text-3xl font-extrabold text-dark">{completedCount}/{missions.length}</p>
                             <p className="text-xs text-dark/60">missions completed</p>
                         </div>
                         <div className="text-right">
                             <p className="text-sm font-bold text-dark/70">XP Earned</p>
-                            <p className="text-3xl font-black text-dark">+{totalXP}</p>
+                            <p className="text-3xl font-extrabold text-dark">+{totalXP}</p>
                         </div>
                     </div>
                     {/* Reset timer */}
@@ -128,7 +128,7 @@ export default function MissionsPage() {
                                 className={`bg-white dark:bg-dark-surface rounded-xl border-2 ${mission.completed
                                     ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
                                     : 'border-gray-200 dark:border-gray-700'
-                                    } shadow-brutal-sm p-4`}
+                                    } shadow-sm p-4`}
                             >
                                 <div className="flex items-start gap-3">
                                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${mission.completed

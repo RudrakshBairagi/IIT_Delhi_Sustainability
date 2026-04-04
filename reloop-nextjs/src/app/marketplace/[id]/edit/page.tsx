@@ -116,13 +116,13 @@ export default function EditListingPage() {
     if (error && !listing) {
         return (
             <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
-                <div className="bg-white dark:bg-dark-surface rounded-2xl border-2 border-dark shadow-brutal p-6 text-center max-w-sm">
+                <div className="bg-white dark:bg-dark-surface rounded-2xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] p-6 text-center max-w-sm">
                     <span className="material-symbols-outlined text-5xl text-red-500 mb-4">error</span>
                     <h2 className="text-xl font-bold text-dark dark:text-white mb-2">Oops!</h2>
                     <p className="text-gray-600 dark:text-gray-400 mb-4">{error}</p>
                     <Link
                         href="/marketplace"
-                        className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-dark font-bold rounded-xl border-2 border-dark shadow-brutal-sm"
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-dark font-bold rounded-xl border border-outline-variant/10 shadow-sm"
                     >
                         <span className="material-symbols-outlined">arrow_back</span>
                         Back to Marketplace
@@ -180,7 +180,7 @@ export default function EditListingPage() {
                                 type="button"
                                 onClick={() => setFormData(prev => ({ ...prev, category: cat.id }))}
                                 className={`p-3 rounded-xl border-2 flex flex-col items-center gap-1 transition-all ${formData.category === cat.id
-                                    ? 'bg-primary border-dark shadow-brutal-sm'
+                                    ? 'bg-primary border-outline-variant/20 shadow-sm'
                                     : 'bg-gray-50 dark:bg-dark-bg border-transparent hover:border-primary/50'
                                     }`}
                             >
@@ -201,7 +201,7 @@ export default function EditListingPage() {
                                 type="button"
                                 onClick={() => setFormData(prev => ({ ...prev, condition: cond }))}
                                 className={`px-4 py-2 rounded-full text-sm font-bold border-2 transition-all ${formData.condition === cond
-                                    ? 'bg-dark border-dark text-white'
+                                    ? 'bg-dark border-outline-variant/20 text-white'
                                     : 'bg-white dark:bg-dark-bg border-gray-200 dark:border-gray-700 text-gray-500'
                                     }`}
                             >
@@ -221,7 +221,7 @@ export default function EditListingPage() {
                             value={formData.price}
                             onChange={(e) => setFormData(prev => ({ ...prev, price: e.target.value }))}
                             required
-                            className="w-full p-4 pl-14 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-surface focus:border-primary outline-none transition-all text-2xl font-black text-dark dark:text-white"
+                            className="w-full p-4 pl-14 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-surface focus:border-primary outline-none transition-all text-2xl font-extrabold text-dark dark:text-white"
                         />
                     </div>
                 </div>
@@ -230,10 +230,10 @@ export default function EditListingPage() {
                 <button
                     type="submit"
                     disabled={isSaving || !formData.title || !formData.price || !formData.category}
-                    className="w-full py-4 bg-primary text-dark font-black uppercase tracking-wide rounded-xl border-2 border-dark shadow-brutal hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+                    className="w-full py-4 bg-primary text-dark font-extrabold uppercase tracking-wide rounded-xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
                 >
                     {isSaving ? (
-                        <div className="w-5 h-5 border-2 border-dark/30 border-t-dark rounded-full animate-spin" />
+                        <div className="w-5 h-5 border border-outline-variant/10/30 border-t-dark rounded-full animate-spin" />
                     ) : (
                         <>
                             <span className="material-symbols-outlined">save</span>

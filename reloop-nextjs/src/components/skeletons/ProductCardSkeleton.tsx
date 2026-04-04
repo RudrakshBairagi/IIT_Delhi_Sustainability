@@ -10,7 +10,7 @@ export function ProductCardSkeleton({ count = 1 }: ProductCardSkeletonProps) {
             {Array.from({ length: count }).map((_, index) => (
                 <div
                     key={index}
-                    className="bg-white rounded-[2rem] border-[3px] border-[#111714] p-4 flex flex-col items-center relative shadow-brutal h-full animate-pulse"
+                    className="bg-white rounded-[2rem] border-[3px] border-[#111714] p-4 flex flex-col items-center relative shadow-[0_2px_10px_rgba(0,0,0,0.02)] h-full animate-pulse"
                 >
                     {/* Image skeleton */}
                     <div className="w-full aspect-square border-[3px] border-[#111714] overflow-hidden mb-3 bg-gray-200 shrink-0 rounded-2xl" />

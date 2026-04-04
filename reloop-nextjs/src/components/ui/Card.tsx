@@ -12,8 +12,8 @@ export function Card({ children, className, shadow = true, onClick }: CardProps)
     return (
         <div
             className={cn(
-                'relative bg-white dark:bg-dark-surface border-[3px] border-dark dark:border-gray-600 rounded-2xl',
-                shadow && 'shadow-brutal',
+                'relative bg-white dark:bg-dark-surface border border-outline-variant/10 dark:border-gray-600 rounded-2xl',
+                shadow && 'shadow-[0_2px_10px_rgba(0,0,0,0.02)]',
                 onClick && 'cursor-pointer active:translate-x-1 active:translate-y-1 active:shadow-none transition-all',
                 className
             )}

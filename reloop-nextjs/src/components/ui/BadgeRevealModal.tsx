@@ -34,7 +34,7 @@ export function BadgeRevealModal({ isOpen, onClose, badge, onViewCollection }: B
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-dark/90 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-dark/90 backdrop-blur-sm w-full max-w-md left-1/2 -translate-x-1/2">
             {/* Sparkle particles */}
             {showSparkles && (
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -53,7 +53,7 @@ export function BadgeRevealModal({ isOpen, onClose, badge, onViewCollection }: B
             )}
 
             {/* Modal Content */}
-            <div className="relative bg-white dark:bg-dark-surface rounded-[2rem] border-[3px] border-dark dark:border-gray-600 shadow-brutal p-8 mx-4 max-w-sm w-full text-center">
+            <div className="relative bg-white dark:bg-dark-surface rounded-[2rem] border border-outline-variant/10 dark:border-gray-600 shadow-[0_2px_10px_rgba(0,0,0,0.02)] p-8 mx-4 max-w-sm w-full text-center">
                 {/* Header */}
                 <div className="text-sm font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-6">
                     New Badge Unlocked!
@@ -69,7 +69,7 @@ export function BadgeRevealModal({ isOpen, onClose, badge, onViewCollection }: B
 
                     {/* Badge Circle */}
                     <div
-                        className="relative w-32 h-32 rounded-full border-4 border-dark dark:border-gray-600 flex items-center justify-center shadow-brutal"
+                        className="relative w-32 h-32 rounded-full border border-outline-variant/10 dark:border-gray-600 flex items-center justify-center shadow-[0_2px_10px_rgba(0,0,0,0.02)]"
                         style={{ backgroundColor: badge.color }}
                     >
                         <span className="text-6xl">{badge.icon}</span>
@@ -85,7 +85,7 @@ export function BadgeRevealModal({ isOpen, onClose, badge, onViewCollection }: B
                 </div>
 
                 {/* Badge Info */}
-                <h2 className="text-2xl font-black text-dark dark:text-white mb-2">{badge.name}</h2>
+                <h2 className="text-2xl font-extrabold text-dark dark:text-white mb-2">{badge.name}</h2>
                 <p className="text-gray-600 dark:text-gray-400 font-medium mb-6">{badge.description}</p>
 
                 {/* Buttons */}

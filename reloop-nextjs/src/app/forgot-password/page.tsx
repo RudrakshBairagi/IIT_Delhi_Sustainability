@@ -46,18 +46,18 @@ export default function ForgotPasswordPage() {
                 {/* Header */}
                 <div className="text-center mb-8">
                     <Link href="/" className="inline-block mb-6">
-                        <div className="w-16 h-16 bg-primary rounded-2xl border-4 border-dark shadow-brutal flex items-center justify-center mx-auto">
+                        <div className="w-16 h-16 bg-primary rounded-2xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex items-center justify-center mx-auto">
                             <span className="material-symbols-outlined text-3xl text-dark" style={{ fontVariationSettings: "'FILL' 1" }}>recycling</span>
                         </div>
                     </Link>
-                    <h1 className="text-3xl font-black uppercase text-dark dark:text-white tracking-tight">Reset Password</h1>
+                    <h1 className="text-3xl font-extrabold uppercase text-dark dark:text-white tracking-tight">Reset Password</h1>
                     <p className="text-gray-500 dark:text-gray-400 mt-2">
                         Enter your email to receive a reset link
                     </p>
                 </div>
 
                 {/* Form Card */}
-                <div className="bg-white dark:bg-dark-surface rounded-2xl border-4 border-dark shadow-brutal p-6">
+                <div className="bg-white dark:bg-dark-surface rounded-2xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] p-6">
                     {success ? (
                         <motion.div
                             initial={{ opacity: 0, scale: 0.9 }}
@@ -73,7 +73,7 @@ export default function ForgotPasswordPage() {
                             </p>
                             <Link
                                 href="/login"
-                                className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-dark font-bold rounded-xl border-2 border-dark shadow-brutal-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all"
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-dark font-bold rounded-xl border border-outline-variant/10 shadow-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all"
                             >
                                 <span className="material-symbols-outlined">arrow_back</span>
                                 Back to Login
@@ -108,10 +108,10 @@ export default function ForgotPasswordPage() {
                             <button
                                 type="submit"
                                 disabled={isLoading || !email}
-                                className="w-full py-4 bg-primary text-dark font-black uppercase tracking-wide rounded-xl border-2 border-dark shadow-brutal hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+                                className="w-full py-4 bg-primary text-dark font-extrabold uppercase tracking-wide rounded-xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
                             >
                                 {isLoading ? (
-                                    <div className="w-5 h-5 border-2 border-dark/30 border-t-dark rounded-full animate-spin" />
+                                    <div className="w-5 h-5 border border-outline-variant/10/30 border-t-dark rounded-full animate-spin" />
                                 ) : (
                                     <>
                                         <span className="material-symbols-outlined">mail</span>

@@ -93,12 +93,12 @@ export default function ScanResultPage() {
                             >
                             </div>
                             <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-[#4ce68a] border-[3px] border-[#111714] px-4 py-1.5 rounded-full shadow-[2px_2px_0px_0px_rgba(17,23,20,1)] -rotate-3 z-10 whitespace-nowrap">
-                                <span className="text-[#111714] text-sm font-black tracking-wider">{badgeText}</span>
+                                <span className="text-[#111714] text-sm font-extrabold tracking-wider">{badgeText}</span>
                             </div>
                             <span className="material-symbols-outlined absolute -top-2 -right-4 text-[#111714] text-4xl animate-bounce" style={{ fontVariationSettings: "'FILL' 1" }}>spark</span>
                         </div>
                         <div className="mt-2 space-y-2">
-                            <h1 className="text-4xl font-black uppercase leading-[0.9] tracking-tight text-[#111714] dark:text-white">
+                            <h1 className="text-4xl font-extrabold uppercase leading-[0.9] tracking-tight text-[#111714] dark:text-white">
                                 Ready<br />To Loop!
                             </h1>
                             <p className="text-lg font-bold leading-tight text-[#111714]/80 dark:text-white/80 max-w-[240px] mx-auto mt-3">
@@ -119,7 +119,7 @@ export default function ScanResultPage() {
                                 <div className="absolute inset-0 bg-white dark:bg-white/10 rounded-2xl border-[3px] border-[#111714] dark:border-white shadow-[4px_4px_0px_0px_rgba(17,23,20,1)] group-hover:shadow-[8px_8px_0px_0px_#4ce68a] transition-all"></div>
                                 <div className="relative p-5 flex flex-col items-center justify-center gap-2 z-10 text-center min-h-[140px]">
                                     <span className="material-symbols-outlined text-4xl text-[#111714] dark:text-white">palette</span>
-                                    <span className="text-[#111714] dark:text-white font-black text-lg uppercase tracking-wide leading-tight">Reuse<br />It</span>
+                                    <span className="text-[#111714] dark:text-white font-extrabold text-lg uppercase tracking-wide leading-tight">Reuse<br />It</span>
                                 </div>
                             </Link>
 
@@ -128,7 +128,7 @@ export default function ScanResultPage() {
                                 <div className="absolute inset-0 bg-white dark:bg-white/10 rounded-2xl border-[3px] border-[#111714] dark:border-white shadow-[4px_4px_0px_0px_rgba(17,23,20,1)] group-hover:shadow-[8px_8px_0px_0px_#4ce68a] transition-all"></div>
                                 <div className="relative p-5 flex flex-col items-center justify-center gap-2 z-10 text-center min-h-[140px]">
                                     <span className="material-symbols-outlined text-4xl text-[#111714] dark:text-white">handshake</span>
-                                    <span className="text-[#111714] dark:text-white font-black text-lg uppercase tracking-wide leading-tight">Trade<br />It</span>
+                                    <span className="text-[#111714] dark:text-white font-extrabold text-lg uppercase tracking-wide leading-tight">Trade<br />It</span>
                                 </div>
                             </Link>
 
@@ -137,7 +137,7 @@ export default function ScanResultPage() {
                                 <div className="absolute inset-0 bg-white dark:bg-white/10 rounded-2xl border-[3px] border-[#111714] dark:border-white shadow-[4px_4px_0px_0px_rgba(17,23,20,1)] group-hover:shadow-[8px_8px_0px_0px_#4ce68a] transition-all"></div>
                                 <div className="relative p-5 flex flex-col items-center justify-center gap-2 z-10 text-center min-h-[140px]">
                                     <span className="material-symbols-outlined text-4xl text-[#111714] dark:text-white">favorite</span>
-                                    <span className="text-[#111714] dark:text-white font-black text-lg uppercase tracking-wide leading-tight">Donate<br />It</span>
+                                    <span className="text-[#111714] dark:text-white font-extrabold text-lg uppercase tracking-wide leading-tight">Donate<br />It</span>
                                 </div>
                             </Link>
 
@@ -146,7 +146,7 @@ export default function ScanResultPage() {
                                 <div className="absolute inset-0 bg-white dark:bg-white/10 rounded-2xl border-[3px] border-[#111714] dark:border-white shadow-[4px_4px_0px_0px_rgba(17,23,20,1)] group-hover:shadow-[8px_8px_0px_0px_#4ce68a] transition-all"></div>
                                 <div className="relative p-5 flex flex-col items-center justify-center gap-2 z-10 text-center min-h-[140px]">
                                     <span className="material-symbols-outlined text-4xl text-[#111714] dark:text-white">recycling</span>
-                                    <span className="text-[#111714] dark:text-white font-black text-lg uppercase tracking-wide leading-tight">Recycle<br />It</span>
+                                    <span className="text-[#111714] dark:text-white font-extrabold text-lg uppercase tracking-wide leading-tight">Recycle<br />It</span>
                                 </div>
                             </Link>
                         </div>
@@ -154,7 +154,7 @@ export default function ScanResultPage() {
                 </main>
 
                 {/* Sticky Save Button */}
-                <div className="fixed bottom-6 w-full max-w-md px-6 z-50 pointer-events-none left-1/2 -translate-x-1/2">
+                <div className="fixed bottom-6 w-full px-6 z-50 pointer-events-none -translate-x-1/2 max-w-md left-1/2 -translate-x-1/2">
                     <button
                         onClick={() => router.push('/')}
                         className="pointer-events-auto active:scale-95 transition-transform group relative w-full h-16 cursor-pointer flex items-center justify-center"
@@ -162,7 +162,7 @@ export default function ScanResultPage() {
                         <div className="absolute inset-0 bg-[#4ce68a] rounded-xl translate-y-1.5 translate-x-1.5 border-2 border-[#111714] transition-transform group-hover:translate-y-2 group-hover:translate-x-2"></div>
                         <div className="absolute inset-0 bg-[#111714] dark:bg-white rounded-xl border-2 border-[#111714] flex items-center justify-center gap-2 transition-transform group-active:translate-y-1 group-active:translate-x-1">
                             <span className="material-symbols-outlined text-white dark:text-[#111714] text-2xl">save</span>
-                            <span className="text-white dark:text-[#111714] text-xl font-black tracking-widest uppercase">Save Result</span>
+                            <span className="text-white dark:text-[#111714] text-xl font-extrabold tracking-widest uppercase">Save Result</span>
                         </div>
                     </button>
                 </div>

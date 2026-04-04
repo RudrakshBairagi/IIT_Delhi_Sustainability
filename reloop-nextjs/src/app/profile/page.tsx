@@ -61,7 +61,7 @@ export default function ProfilePage() {
                 title="Profile"
                 backHref="/"
                 rightAction={
-                    <Link href="/settings" className="w-10 h-10 flex items-center justify-center bg-white dark:bg-dark-surface rounded-xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm">
+                    <Link href="/settings" className="w-10 h-10 flex items-center justify-center bg-white dark:bg-dark-surface rounded-xl border border-outline-variant/10 dark:border-gray-600 shadow-sm">
                         <span className="material-symbols-outlined text-dark dark:text-white">settings</span>
                     </Link>
                 }
@@ -74,18 +74,18 @@ export default function ProfilePage() {
                 variants={containerVariants}
             >
                 {/* Profile Card - Compact */}
-                <motion.div variants={itemVariants} className="bg-white dark:bg-dark-surface rounded-2xl border-2 border-dark shadow-brutal p-5 flex items-center gap-4">
+                <motion.div variants={itemVariants} className="bg-white dark:bg-dark-surface rounded-2xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] p-5 flex items-center gap-4">
                     <div className="relative">
-                        <div className="w-20 h-20 rounded-full border-4 border-dark overflow-hidden bg-gray-200">
+                        <div className="w-20 h-20 rounded-full border border-outline-variant/10 overflow-hidden bg-gray-200">
                             <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
                         </div>
-                        <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-primary rounded-full border-2 border-dark flex items-center justify-center">
-                            <span className="text-sm font-black text-dark">{user.level}</span>
+                        <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-primary rounded-full border border-outline-variant/10 flex items-center justify-center">
+                            <span className="text-sm font-extrabold text-dark">{user.level}</span>
                         </div>
                     </div>
                     <div className="flex-1">
                         <div className="flex items-center gap-2">
-                            <h2 className="text-xl font-black text-dark dark:text-white">{user.name}</h2>
+                            <h2 className="text-xl font-extrabold text-dark dark:text-white">{user.name}</h2>
                             <StreakBadge streak={streak} />
                         </div>
                         <p className="text-dark/50 dark:text-white/50 font-medium text-sm">{user.levelTitle}</p>
@@ -101,16 +101,16 @@ export default function ProfilePage() {
 
                 {/* Stats - 3 Column */}
                 <motion.div variants={itemVariants} className="grid grid-cols-3 gap-2">
-                    <Link href="/impact" className="bg-card-green rounded-xl border-2 border-dark shadow-brutal-sm p-3 text-center block transition-transform active:scale-95 hover:scale-105">
-                        <p className="text-xl font-black text-dark dark:text-gray-900">{user.co2Saved}</p>
+                    <Link href="/impact" className="bg-surface-container-low rounded-xl border border-outline-variant/10 shadow-sm p-3 text-center block transition-transform active:scale-95 hover:scale-105">
+                        <p className="text-xl font-extrabold text-dark dark:text-gray-900">{user.co2Saved}</p>
                         <p className="text-[10px] font-bold text-dark/60 dark:text-gray-900/70">kg CO₂</p>
                     </Link>
-                    <Link href="/trade-history" className="bg-card-yellow rounded-xl border-2 border-dark shadow-brutal-sm p-3 text-center block transition-transform active:scale-95 hover:scale-105">
-                        <p className="text-xl font-black text-dark dark:text-gray-900">{user.itemsTraded}</p>
+                    <Link href="/trade-history" className="bg-surface-container-low rounded-xl border border-outline-variant/10 shadow-sm p-3 text-center block transition-transform active:scale-95 hover:scale-105">
+                        <p className="text-xl font-extrabold text-dark dark:text-gray-900">{user.itemsTraded}</p>
                         <p className="text-[10px] font-bold text-dark/60 dark:text-gray-900/70">Items</p>
                     </Link>
-                    <Link href="/rewards" className="bg-card-pink rounded-xl border-2 border-dark shadow-brutal-sm p-3 text-center block transition-transform active:scale-95 hover:scale-105">
-                        <p className="text-xl font-black text-dark dark:text-gray-900">{user.coins}</p>
+                    <Link href="/rewards" className="bg-card-pink rounded-xl border border-outline-variant/10 shadow-sm p-3 text-center block transition-transform active:scale-95 hover:scale-105">
+                        <p className="text-xl font-extrabold text-dark dark:text-gray-900">{user.coins}</p>
                         <p className="text-[10px] font-bold text-dark/60 dark:text-gray-900/70">{formatRupeeValue(user.coins)}</p>
                     </Link>
                 </motion.div>
@@ -118,7 +118,7 @@ export default function ProfilePage() {
                 {/* Badges - Horizontal scroll */}
                 <motion.div variants={itemVariants}>
                     <p className="text-xs font-bold text-dark/50 dark:text-white/50 mb-2 ml-1">Badges Earned</p>
-                    <div className="bg-white dark:bg-dark-surface rounded-xl border-2 border-dark shadow-brutal-sm p-3">
+                    <div className="bg-white dark:bg-dark-surface rounded-xl border border-outline-variant/10 shadow-sm p-3">
                         <div className="flex gap-2 overflow-x-auto no-scrollbar">
                             {user.badges.map((badgeId) => {
                                 const meta = BADGE_META[badgeId] || { name: badgeId, icon: '🏆', color: '#e5e7eb', description: 'Badge' };
@@ -126,7 +126,7 @@ export default function ProfilePage() {
                                     <button
                                         key={badgeId}
                                         onClick={() => { setSelectedBadge({ id: badgeId, ...meta }); setShowBadgeReveal(true); }}
-                                        className="w-12 h-12 rounded-xl border-2 border-dark flex items-center justify-center shrink-0 hover:scale-110 transition-transform"
+                                        className="w-12 h-12 rounded-xl border border-outline-variant/10 flex items-center justify-center shrink-0 hover:scale-110 transition-transform"
                                         style={{ backgroundColor: meta.color }}
                                     >
                                         <span className="text-xl">{meta.icon}</span>
@@ -172,19 +172,19 @@ export default function ProfilePage() {
                     <p className="text-xs font-bold text-dark/50 dark:text-white/50 mb-2 ml-1">Quick Links</p>
                     <div className="grid grid-cols-4 gap-2">
 
-                        <Link href="/trade-history" className="bg-card-yellow rounded-xl border-2 border-dark shadow-brutal-sm p-3 flex flex-col items-center gap-1 hover:-translate-y-1 transition-transform">
+                        <Link href="/trade-history" className="bg-surface-container-low rounded-xl border border-outline-variant/10 shadow-sm p-3 flex flex-col items-center gap-1 hover:-translate-y-1 transition-transform">
                             <span className="material-symbols-outlined text-xl text-dark">history</span>
                             <span className="text-[10px] font-[800] text-dark uppercase">Trades</span>
                         </Link>
-                        <Link href="/messages" className="bg-card-blue rounded-xl border-2 border-dark shadow-brutal-sm p-3 flex flex-col items-center gap-1 hover:-translate-y-1 transition-transform">
+                        <Link href="/messages" className="bg-card-blue rounded-xl border border-outline-variant/10 shadow-sm p-3 flex flex-col items-center gap-1 hover:-translate-y-1 transition-transform">
                             <span className="material-symbols-outlined text-xl text-dark">chat</span>
                             <span className="text-[10px] font-[800] text-dark uppercase">Chat</span>
                         </Link>
-                        <Link href="/rewards" className="bg-card-pink rounded-xl border-2 border-dark shadow-brutal-sm p-3 flex flex-col items-center gap-1 hover:-translate-y-1 transition-transform">
+                        <Link href="/rewards" className="bg-card-pink rounded-xl border border-outline-variant/10 shadow-sm p-3 flex flex-col items-center gap-1 hover:-translate-y-1 transition-transform">
                             <span className="material-symbols-outlined text-xl text-dark">redeem</span>
                             <span className="text-[10px] font-[800] text-dark uppercase">Rewards</span>
                         </Link>
-                        <Link href="/impact" className="bg-card-green rounded-xl border-2 border-dark shadow-brutal-sm p-3 flex flex-col items-center gap-1 hover:-translate-y-1 transition-transform">
+                        <Link href="/impact" className="bg-surface-container-low rounded-xl border border-outline-variant/10 shadow-sm p-3 flex flex-col items-center gap-1 hover:-translate-y-1 transition-transform">
                             <span className="material-symbols-outlined text-xl text-dark">eco</span>
                             <span className="text-[10px] font-[800] text-dark uppercase">Impact</span>
                         </Link>
@@ -195,7 +195,7 @@ export default function ProfilePage() {
                 <motion.div variants={itemVariants} className="grid grid-cols-2 gap-2">
                     <button
                         onClick={() => setShowEditModal(true)}
-                        className="bg-dark text-white py-3 rounded-xl font-bold shadow-brutal-sm flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                        className="bg-dark text-white py-3 rounded-xl font-bold shadow-sm flex items-center justify-center gap-2 active:scale-95 transition-transform"
                     >
                         <span className="material-symbols-outlined text-lg">edit</span>
                         Edit Profile
@@ -207,7 +207,7 @@ export default function ProfilePage() {
                             setToast('Copied!');
                             setTimeout(() => setToast(''), 2000);
                         }}
-                        className="bg-card-yellow text-dark py-3 rounded-xl font-bold border-2 border-dark shadow-brutal-sm flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                        className="bg-surface-container-low text-dark py-3 rounded-xl font-bold border border-outline-variant/10 shadow-sm flex items-center justify-center gap-2 active:scale-95 transition-transform"
                     >
                         <span className="material-symbols-outlined text-lg">share</span>
                         Share

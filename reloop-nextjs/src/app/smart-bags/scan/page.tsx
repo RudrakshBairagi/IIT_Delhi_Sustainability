@@ -7,11 +7,12 @@ import { PageHeader } from '@/components/ui/PageHeader';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { DBService } from '@/lib/firebase/db';
 import { Html5Qrcode } from 'html5-qrcode';
+import Link from 'next/link';
 
 export default function ScanBagPage() {
     const router = useRouter();
     const { user, isDemo } = useAuth();
-    const [scanning, setScanning] = useState(false);
+    const [scanning, setScanning] = useState(true);
     const [scannedQR, setScannedQR] = useState<string | null>(null);
     const [registering, setRegistering] = useState(false);
     const [error, setError] = useState('');
@@ -21,7 +22,6 @@ export default function ScanBagPage() {
     const scannerInitialized = useRef(false);
 
     useEffect(() => {
-        // Cleanup on unmount
         return () => {
             if (html5QrCodeRef.current && scannerInitialized.current) {
                 html5QrCodeRef.current.stop().catch(err => console.error('Error stopping scanner:', err));
@@ -29,78 +29,43 @@ export default function ScanBagPage() {
         };
     }, []);
 
-    // Initialize camera scanner when scanning state becomes true (after qr-reader div is in DOM)
     useEffect(() => {
-        if (!scanning || isDemo || scannedQR) return;
+        if (!scanning || scannedQR) return;
 
         const initScanner = async () => {
-            // Wait a small moment for DOM to be ready
-            await new Promise(resolve => setTimeout(resolve, 100));
-
+            await new Promise(resolve => setTimeout(resolve, 500)); // slightly longer delay to ensure DOM is fully ready
             const qrReaderEl = document.getElementById('qr-reader');
             if (!qrReaderEl) {
-                console.error('qr-reader element not found');
                 setCameraError('Scanner element not found. Please try again.');
-                setScanning(false);
                 return;
             }
 
             try {
                 const html5QrCode = new Html5Qrcode('qr-reader');
                 html5QrCodeRef.current = html5QrCode;
-
-                const config = {
-                    fps: 10,
-                    qrbox: { width: 250, height: 250 },
-                    aspectRatio: 1.0
-                };
-
+                const config = { fps: 10, qrbox: { width: 250, height: 250 }, aspectRatio: 1.0 };
+                
                 await html5QrCode.start(
-                    { facingMode: 'environment' }, // Use back camera
+                    { facingMode: 'environment' },
                     config,
                     (decodedText) => {
-                        // Success callback
                         setScannedQR(decodedText.toUpperCase());
                         html5QrCode.stop().then(() => {
                             scannerInitialized.current = false;
                             setScanning(false);
                         }).catch(err => console.error('Error stopping:', err));
                     },
-                    () => {
-                        // Scanning error callback (not critical, happens every frame without QR)
-                    }
+                    () => {}
                 );
-
                 scannerInitialized.current = true;
-
             } catch (err: any) {
-                console.error('Camera error:', err);
-                setCameraError(err.message || 'Failed to access camera. Please allow camera permissions or use manual input.');
+                setCameraError(err.message || 'Failed to access camera.');
                 setScanning(false);
             }
         };
 
         initScanner();
     }, [scanning, isDemo, scannedQR]);
-
-    const handleScan = async () => {
-        setError('');
-        setCameraError('');
-
-        if (isDemo) {
-            // Demo mode - generate a random QR code
-            setScanning(true);
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            const DemoManager = require('@/lib/demo-manager').default;
-            const qr = DemoManager.getUnregisteredBagQR();
-            setScannedQR(qr);
-            setScanning(false);
-            return;
-        }
-
-        // Set scanning to true - useEffect will initialize the camera after the qr-reader div renders
-        setScanning(true);
-    };
 
     const handleManualSubmit = () => {
         if (manualInput.trim()) {
@@ -110,13 +75,11 @@ export default function ScanBagPage() {
 
     const handleRegister = async () => {
         if (!scannedQR || !user) return;
-
         setRegistering(true);
         setError('');
 
         try {
             if (isDemo) {
-                // Demo mode
                 const DemoManager = require('@/lib/demo-manager').default;
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 const result = DemoManager.registerSmartBag(scannedQR);
@@ -128,7 +91,6 @@ export default function ScanBagPage() {
                     setScannedQR(null);
                 }
             } else {
-                // Real Firebase registration
                 const bagId = await DBService.createSmartBag({
                     qrCode: scannedQR,
                     userId: user.uid,
@@ -137,9 +99,7 @@ export default function ScanBagPage() {
                 router.push(`/smart-bags/${bagId}`);
             }
         } catch (err: any) {
-            console.error('Error registering bag:', err);
             setError(err.message || 'Failed to register bag');
-            // Don't clear scannedQR so user can see the error
         } finally {
             setRegistering(false);
         }
@@ -147,12 +107,12 @@ export default function ScanBagPage() {
 
     if (scannedQR) {
         return (
-            <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
+            <div className="min-h-screen flex flex-col items-center justify-center p-6 text-[#29302f]" style={{ backgroundColor: '#f1f8f6' }}>
                 <motion.div
                     initial={{ scale: 0, rotate: -180 }}
                     animate={{ scale: 1, rotate: 0 }}
                     transition={{ type: 'spring', damping: 15 }}
-                    className="w-32 h-32 bg-green-500 rounded-full border-4 border-dark shadow-brutal flex items-center justify-center mb-6"
+                    className="w-32 h-32 bg-[#29664c] rounded-full shadow-[0_20px_40px_rgba(41,102,76,0.25)] flex items-center justify-center mb-6"
                 >
                     <span className="material-symbols-outlined text-white text-7xl" style={{ fontVariationSettings: "'FILL' 1" }}>qr_code_scanner</span>
                 </motion.div>
@@ -163,9 +123,9 @@ export default function ScanBagPage() {
                     transition={{ delay: 0.2 }}
                     className="text-center mb-6"
                 >
-                    <h1 className="text-2xl font-black text-dark dark:text-white mb-2">Bag Found!</h1>
-                    <p className="text-dark/70 dark:text-white/70 text-sm max-w-xs">
-                        Register this bag to your account to start earning coins
+                    <h1 className="text-2xl font-extrabold tracking-tight text-[#29302f] mb-2">Bag Found!</h1>
+                    <p className="text-[#565d5c] text-sm max-w-xs">
+                        Register this bag to your account to start tracking impact
                     </p>
                 </motion.div>
 
@@ -173,7 +133,7 @@ export default function ScanBagPage() {
                     <motion.div
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
-                        className="bg-card-coral text-dark p-3 rounded-xl mb-4 text-sm font-bold border-2 border-dark w-full max-w-xs text-center"
+                        className="bg-[#fb5151]/10 text-[#b31b25] p-3 rounded-xl mb-4 text-sm font-bold border-2 border-[#fb5151]/20 w-full max-w-sm text-center"
                     >
                         ⚠️ {error}
                     </motion.div>
@@ -183,18 +143,18 @@ export default function ScanBagPage() {
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.3 }}
-                    className="bg-white dark:bg-dark-surface rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal p-6 mb-6 w-full max-w-xs"
+                    className="bg-white rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] p-6 mb-6 w-full max-w-sm"
                 >
-                    <p className="text-xs font-bold text-dark/50 dark:text-white/50 mb-1">QR CODE</p>
-                    <p className="text-lg font-black text-dark dark:text-white">{scannedQR}</p>
+                    <p className="text-xs font-bold text-[#a7afad] uppercase tracking-widest mb-1">QR CODE</p>
+                    <p className="text-xl font-extrabold tracking-tight text-[#29302f]">{scannedQR}</p>
 
-                    <div className="mt-4 pt-4 border-t-2 border-dashed border-dark/10 space-y-2">
-                        <div className="flex items-center gap-2 text-sm text-dark/70 dark:text-white/70">
-                            <span className="material-symbols-outlined text-green-500 text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                    <div className="mt-4 pt-4 border-t border-[#d4dfdd] space-y-2">
+                        <div className="flex items-center gap-2 text-sm text-[#565d5c] font-medium">
+                            <span className="material-symbols-outlined text-[#29664c] text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
                             Dynamic QR - Not assigned
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-dark/70 dark:text-white/70">
-                            <span className="material-symbols-outlined text-green-500 text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                        <div className="flex items-center gap-2 text-sm text-[#565d5c] font-medium">
+                            <span className="material-symbols-outlined text-[#29664c] text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
                             Ready for registration
                         </div>
                     </div>
@@ -204,12 +164,12 @@ export default function ScanBagPage() {
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.4 }}
-                    className="space-y-3 w-full max-w-xs"
+                    className="space-y-3 w-full max-w-sm"
                 >
                     <button
                         onClick={handleRegister}
                         disabled={registering}
-                        className="w-full bg-green-500 text-white font-black py-4 rounded-2xl border-2 border-dark shadow-brutal flex items-center justify-center gap-2 active:translate-y-0.5 transition-transform disabled:opacity-50"
+                        className="w-full bg-[#29664c] text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-[#1b5a40] active:scale-95 transition-all disabled:opacity-50"
                     >
                         {registering ? (
                             <>
@@ -225,7 +185,7 @@ export default function ScanBagPage() {
                     </button>
                     <button
                         onClick={() => { setScannedQR(null); setError(''); }}
-                        className="w-full bg-white dark:bg-dark-surface text-dark dark:text-white font-bold py-3 rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm"
+                        className="w-full bg-white text-[#29302f] font-bold py-4 rounded-xl border border-[#d4dfdd] hover:bg-[#eaf2f0] active:scale-95 transition-all"
                     >
                         Scan Different Bag
                     </button>
@@ -235,114 +195,95 @@ export default function ScanBagPage() {
     }
 
     return (
-        <div className="min-h-screen bg-background">
-            <PageHeader title="Scan Smart Bag" backHref="/smart-bags" />
+        <div className="min-h-screen text-[#29302f] flex flex-col" style={{ backgroundColor: '#f1f8f6' }}>
+            {/* Header */}
+            <header className="w-full sticky top-0 z-50 backdrop-blur-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] flex items-center justify-between px-6 py-4" style={{ backgroundColor: 'rgba(241,248,246,0.8)' }}>
+                <div className="flex items-center gap-4">
+                    <Link href="/smart-bags" className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#eaf2f0] transition-colors active:scale-95 duration-200 text-[#29664c]">
+                        <span className="material-symbols-outlined">arrow_back</span>
+                    </Link>
+                    <h1 className="text-xl font-extrabold tracking-tight text-[#29664c]">Scan Smart Bag</h1>
+                </div>
+                <div className="w-10 h-10" />
+            </header>
 
-            <div className="px-5 pb-28 flex flex-col items-center justify-center min-h-[calc(100vh-80px)]">
-                {/* Camera View */}
-                <motion.div
-                    initial={{ scale: 0.9, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    className="relative w-full max-w-sm aspect-square bg-dark rounded-3xl border-4 border-dark shadow-brutal overflow-hidden mb-6"
-                >
-                    {scanning ? (
-                        // Real QR Scanner
-                        <div
-                            id="qr-reader"
-                            className="w-full h-full"
-                            style={{ border: 'none' }}
-                        ></div>
-                    ) : (
-                        // Placeholder when not scanning
-                        <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+            <main className="flex-1 flex flex-col items-center px-6 pt-8 pb-32">
+                {/* Viewport */}
+                <div className="w-full max-w-md aspect-square relative group">
+                    <div className="absolute inset-0 border-[12px] border-[#29664c] rounded-xl z-10 pointer-events-none" />
+                    <div className="absolute top-4 left-4 w-8 h-8 border-t-4 border-l-4 border-[#c8ffe0] rounded-tl-md z-20" />
+                    <div className="absolute top-4 right-4 w-8 h-8 border-t-4 border-r-4 border-[#c8ffe0] rounded-tr-md z-20" />
+                    <div className="absolute bottom-4 left-4 w-8 h-8 border-b-4 border-l-4 border-[#c8ffe0] rounded-bl-md z-20" />
+                    <div className="absolute bottom-4 right-4 w-8 h-8 border-b-4 border-r-4 border-[#c8ffe0] rounded-br-md z-20" />
+
+                    <div className="w-full h-full rounded-xl overflow-hidden bg-[#dbe5e2] relative">
+                        <div id="qr-reader" className="w-full h-full object-cover [&>video]:object-cover" />
+                        {scanning && (
                             <motion.div
-                                animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.8, 0.5] }}
-                                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                                className="w-48 h-48 border-4 border-green-400 rounded-2xl"
+                                animate={{ y: ['0%', '100%', '0%'] }}
+                                transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+                                className="absolute top-0 left-0 w-full h-[2px] bg-[#92f7c3] shadow-[0_0_15px_rgba(146,247,195,0.8)] z-15 pointer-events-none"
                             />
-                        </div>
-                    )}
-                </motion.div>
+                        )}
+                    </div>
+                </div>
 
-                {/* Camera Error */}
                 {cameraError && (
-                    <motion.div
-                        initial={{ y: -10, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        className="bg-red-100 border-2 border-red-500 rounded-xl p-3 mb-4 w-full max-w-sm"
-                    >
-                        <p className="text-sm font-bold text-red-700">📷 {cameraError}</p>
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4 bg-[#fb5151]/10 text-[#b31b25] p-3 rounded-xl border border-[#fb5151]/20 w-full max-w-sm text-center font-bold text-sm">
+                        {cameraError}
                     </motion.div>
                 )}
 
-                <div className="text-center mb-6">
-                    <p className="text-lg font-black text-dark dark:text-white mb-2">
-                        {scanning ? 'Scanning...' : 'Ready to Scan'}
-                    </p>
-                    <p className="text-sm text-dark/60 dark:text-white/60 max-w-xs">
-                        {scanning ? 'Point your camera at the QR code' : 'Tap the camera button to start scanning'}
+                {/* Status */}
+                <div className="mt-8 text-center space-y-2">
+                    <h2 className="text-2xl font-extrabold tracking-tight">
+                        Scanning...
+                    </h2>
+                    <p className="text-[#565d5c] text-sm max-w-[280px] mx-auto font-medium">
+                        Point your camera at the QR code on your REBAG
                     </p>
                 </div>
 
-                <button
-                    onClick={handleScan}
-                    disabled={scanning}
-                    className="w-20 h-20 bg-green-500 rounded-full border-4 border-dark shadow-brutal flex items-center justify-center active:scale-95 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    {scanning ? (
-                        <motion.span
-                            animate={{ rotate: 360 }}
-                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                            className="material-symbols-outlined text-white text-4xl"
-                        >
-                            refresh
-                        </motion.span>
-                    ) : (
-                        <span className="material-symbols-outlined text-white text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>camera</span>
-                    )}
-                </button>
-
-                {/* Manual Input Option */}
-                <motion.div
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                    className="mt-8 w-full max-w-sm"
-                >
-                    <p className="text-xs font-bold text-dark/50 dark:text-white/50 text-center mb-2">Or enter QR code manually</p>
-                    <div className="flex gap-2">
-                        <input
-                            type="text"
-                            value={manualInput}
-                            onChange={(e) => setManualInput(e.target.value)}
-                            placeholder="e.g. BAG-ABC123"
-                            className="flex-1 px-4 py-3 rounded-xl border-2 border-dark dark:border-gray-600 bg-white dark:bg-dark-surface font-bold text-dark dark:text-white"
-                        />
+                {/* Manual Entry */}
+                <div className="mt-16 w-full max-w-md bg-[#eaf2f0] p-8 rounded-xl space-y-6">
+                    <div className="flex flex-col items-center gap-1">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.05em] text-[#565d5c]">Alternative Entry</span>
+                        <h3 className="text-lg font-bold">Or enter QR code manually</h3>
+                    </div>
+                    <div className="flex gap-3">
+                        <div className="flex-1 bg-[#d4dfdd] p-4 rounded-lg relative">
+                            <span className="absolute -top-2.5 left-4 px-2 bg-[#eaf2f0] text-[10px] font-bold uppercase text-[#29664c]">Bag ID</span>
+                            <input
+                                type="text"
+                                value={manualInput}
+                                onChange={(e) => setManualInput(e.target.value)}
+                                className="bg-transparent border-none outline-none focus:ring-0 w-full text-[#29302f] font-semibold placeholder:text-[#29302f]/40 p-0"
+                                placeholder="e.g. BAG-ABC123"
+                            />
+                        </div>
                         <button
                             onClick={handleManualSubmit}
                             disabled={!manualInput.trim()}
-                            className="px-4 py-3 bg-primary text-dark font-black rounded-xl border-2 border-dark shadow-brutal-sm disabled:opacity-50"
+                            className="px-8 bg-[#29664c] text-white font-bold rounded-lg hover:bg-[#1b5a40] active:scale-95 transition-all disabled:opacity-50"
                         >
                             Go
                         </button>
                     </div>
-                </motion.div>
+                </div>
 
                 {/* Demo Hint */}
                 {isDemo && (
-                    <motion.div
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.5 }}
-                        className="mt-6 bg-card-yellow rounded-xl border-2 border-dark shadow-brutal-sm px-4 py-3 max-w-sm"
-                    >
-                        <p className="text-xs font-bold text-dark">💡 Demo Mode</p>
-                        <p className="text-xs text-dark/70 mt-1">
-                            Tap the camera button to simulate scanning a QR code.
-                        </p>
-                    </motion.div>
+                    <div className="mt-8 w-full max-w-md bg-[#fffbeb] border border-[#fef3c7] p-4 rounded-lg flex items-start gap-3 shadow-sm">
+                        <span className="material-symbols-outlined text-[#b45309]">info</span>
+                        <div className="flex-1">
+                            <p className="text-sm font-bold text-[#b45309]">Demo Mode Target</p>
+                            <p className="text-xs text-[#92400e] leading-relaxed mt-1">
+                                Because you are in demo mode, you can scan <strong>any QR code</strong> from your environment to simulate a successful read. Or use manual entry.
+                            </p>
+                        </div>
+                    </div>
                 )}
-            </div>
+            </main>
         </div>
     );
 }

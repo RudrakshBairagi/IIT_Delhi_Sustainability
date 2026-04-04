@@ -34,10 +34,10 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className={`${jakarta.className} bg-background dark:bg-dark-bg text-dark dark:text-white overflow-x-hidden transition-colors duration-300`}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <body className={`${jakarta.className} bg-background text-dark overflow-x-hidden transition-colors duration-300`}>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} forcedTheme="light">
           <AuthProvider>
-            <div className="relative flex min-h-screen flex-col w-full max-w-md mx-auto border-x border-gray-200 dark:border-gray-700 shadow-xl bg-white/50 dark:bg-dark-bg transition-colors duration-300">
+            <div className="relative flex min-h-screen flex-col w-full max-w-md mx-auto border-x border-gray-200 shadow-xl bg-white/50 transition-colors duration-300">
               <main className="flex-1 pb-28">
                 {children}
               </main>

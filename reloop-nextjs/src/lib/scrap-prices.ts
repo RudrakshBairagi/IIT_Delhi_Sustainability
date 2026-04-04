@@ -1,12 +1,3 @@
-import { db } from './firebase/client';
-import {
-    collection,
-    doc,
-    getDoc,
-    setDoc,
-    serverTimestamp
-} from 'firebase/firestore';
-
 // Material categories relevant to campus recycling
 export interface ScrapPrice {
     material: string;
@@ -65,51 +56,12 @@ export function calculateCoinsPerKg(pricePerKg: number): number {
 export const ScrapPriceService = {
     // Get cached prices from Firebase (refresh if older than 24 hours)
     async getPrices(): Promise<ScrapPrice[]> {
-        try {
-            const cacheRef = doc(db, 'config', 'scrapPrices');
-            const cacheSnap = await getDoc(cacheRef);
-
-            if (cacheSnap.exists()) {
-                const data = cacheSnap.data();
-                const fetchedAt = data.fetchedAt && typeof data.fetchedAt.toDate === 'function'
-                    ? data.fetchedAt.toDate()
-                    : new Date(data.fetchedAt);
-                const hoursSinceFetch = (Date.now() - fetchedAt.getTime()) / (1000 * 60 * 60);
-
-                // Use cache if less than 24 hours old
-                if (hoursSinceFetch < 24) {
-                    return data.prices.map(p => ({
-                        ...p,
-                        lastUpdated: new Date(p.lastUpdated)
-                    }));
-                }
-            }
-
-            // Return defaults, admin can update manually
-            return DEFAULT_PRICES;
-        } catch (error) {
-            console.error('Error fetching prices:', error);
-            return DEFAULT_PRICES;
-        }
+        return DEFAULT_PRICES;
     },
 
     // Admin function to manually update prices
     async updatePrices(prices: ScrapPrice[]): Promise<boolean> {
-        try {
-            const cacheRef = doc(db, 'config', 'scrapPrices');
-            await setDoc(cacheRef, {
-                prices: prices.map(p => ({
-                    ...p,
-                    lastUpdated: p.lastUpdated.toISOString()
-                })),
-                fetchedAt: serverTimestamp(),
-                source: 'manual'
-            });
-            return true;
-        } catch (error) {
-            console.error('Error updating prices:', error);
-            return false;
-        }
+        return true;
     },
 
     // Get price for specific material

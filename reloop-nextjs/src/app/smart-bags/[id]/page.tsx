@@ -86,7 +86,7 @@ export default function SmartBagDetailPage() {
                     <p className="text-dark/60 dark:text-white/60 font-bold">Bag not found</p>
                     <button
                         onClick={() => router.push('/smart-bags')}
-                        className="mt-4 bg-primary text-dark font-black px-6 py-3 rounded-xl border-2 border-dark shadow-brutal-sm"
+                        className="mt-4 bg-primary text-dark font-extrabold px-6 py-3 rounded-xl border border-outline-variant/10 shadow-sm"
                     >
                         Go Back
                     </button>
@@ -108,19 +108,19 @@ export default function SmartBagDetailPage() {
                 animate={{ opacity: 1, y: 0 }}
             >
                 {/* QR Code Card */}
-                <div className="bg-white dark:bg-dark-surface rounded-2xl border-3 border-dark shadow-brutal p-6">
+                <div className="bg-white dark:bg-dark-surface rounded-2xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] p-6">
                     <div className="flex justify-center mb-4">
-                        <div className="bg-white p-4 rounded-xl border-2 border-dark">
+                        <div className="bg-white p-4 rounded-xl border border-outline-variant/10">
                             <QRCode value={bag.qrCode} size={180} />
                         </div>
                     </div>
-                    <p className="text-center font-black text-dark dark:text-white text-lg">{bag.qrCode}</p>
+                    <p className="text-center font-extrabold text-dark dark:text-white text-lg">{bag.qrCode}</p>
                     <p className="text-center text-sm text-dark/60 dark:text-white/60 mt-1">Worker scans this QR for collection</p>
                 </div>
 
                 {/* Status Timeline */}
-                <div className="bg-white dark:bg-dark-surface rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm p-6">
-                    <p className="font-black text-dark dark:text-white mb-4">Status Timeline</p>
+                <div className="bg-white dark:bg-dark-surface rounded-2xl border border-outline-variant/10 dark:border-gray-600 shadow-sm p-6">
+                    <p className="font-extrabold text-dark dark:text-white mb-4">Status Timeline</p>
 
                     {/* Progress Bar */}
                     <div className="relative h-2 bg-gray-200 dark:bg-gray-700 rounded-full mb-6 overflow-hidden">
@@ -185,7 +185,7 @@ export default function SmartBagDetailPage() {
                 </div>
 
                 {/* Bag Info */}
-                <div className="bg-white dark:bg-dark-surface rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm p-4 space-y-3">
+                <div className="bg-white dark:bg-dark-surface rounded-2xl border border-outline-variant/10 dark:border-gray-600 shadow-sm p-4 space-y-3">
                     <div className="flex justify-between">
                         <span className="text-sm text-dark/60 dark:text-white/60">Waste Type</span>
                         <span className="text-sm font-bold text-dark dark:text-white capitalize">{bag.wasteType || 'Recyclable'}</span>
@@ -199,7 +199,7 @@ export default function SmartBagDetailPage() {
                     {bag.coinsAwarded && (
                         <div className="flex justify-between items-center pt-3 border-t-2 border-dashed border-dark/10">
                             <span className="text-sm text-dark/60 dark:text-white/60">Coins Earned</span>
-                            <span className="text-2xl font-black text-green-600 dark:text-green-400">+{bag.coinsAwarded}</span>
+                            <span className="text-2xl font-extrabold text-green-600 dark:text-green-400">+{bag.coinsAwarded}</span>
                         </div>
                     )}
                 </div>
@@ -209,7 +209,7 @@ export default function SmartBagDetailPage() {
                     <button
                         onClick={handleMarkAsFilled}
                         disabled={marking}
-                        className="w-full bg-green-500 text-white font-black py-4 rounded-2xl border-2 border-dark shadow-brutal flex items-center justify-center gap-2 active:translate-y-0.5 transition-transform disabled:opacity-50"
+                        className="w-full bg-green-500 text-white font-extrabold py-4 rounded-2xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex items-center justify-center gap-2 active:translate-y-0.5 transition-transform disabled:opacity-50"
                     >
                         {marking ? (
                             <>
@@ -226,7 +226,7 @@ export default function SmartBagDetailPage() {
                 )}
 
                 {bag.status === 'filled' && (
-                    <div className="bg-card-yellow rounded-xl border-2 border-dark shadow-brutal-sm px-4 py-3">
+                    <div className="bg-surface-container-low rounded-xl border border-outline-variant/10 shadow-sm px-4 py-3">
                         <p className="text-sm font-bold text-dark">✅ Ready for Collection</p>
                         <p className="text-xs text-dark/70 mt-1">
                             Drop this bag at any Reloop Point. A worker will scan and weigh it to award you coins!
@@ -235,7 +235,7 @@ export default function SmartBagDetailPage() {
                 )}
 
                 {bag.status === 'collected' && (
-                    <div className="bg-blue-100 dark:bg-blue-900/30 rounded-xl border-2 border-dark shadow-brutal-sm px-4 py-3">
+                    <div className="bg-blue-100 dark:bg-blue-900/30 rounded-xl border border-outline-variant/10 shadow-sm px-4 py-3">
                         <p className="text-sm font-bold text-dark dark:text-white">🚚 In Transit</p>
                         <p className="text-xs text-dark/70 dark:text-white/70 mt-1">
                             Your bag has been collected and is being transported to the recycling center.
@@ -244,7 +244,7 @@ export default function SmartBagDetailPage() {
                 )}
 
                 {bag.status === 'processed' && (
-                    <div className="bg-green-100 dark:bg-green-900/30 rounded-xl border-2 border-dark shadow-brutal-sm px-4 py-3">
+                    <div className="bg-green-100 dark:bg-green-900/30 rounded-xl border border-outline-variant/10 shadow-sm px-4 py-3">
                         <p className="text-sm font-bold text-dark dark:text-white">🎉 Processed!</p>
                         <p className="text-xs text-dark/70 dark:text-white/70 mt-1">
                             Your bag has been processed and coins have been added to your account!

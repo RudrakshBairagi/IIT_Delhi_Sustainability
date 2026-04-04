@@ -22,7 +22,7 @@ export function StoriesBar() {
                         whileTap={{ scale: 0.95 }}
                         className={`w-16 h-16 rounded-full p-[3px] ${story.isAdd ? 'border-2 border-dashed border-gray-400' : 'bg-gradient-to-tr from-yellow-400 to-primary'}`}
                     >
-                        <div className="w-full h-full rounded-full border-2 border-white dark:border-dark-bg overflow-hidden relative bg-gray-200">
+                        <div className="w-full h-full rounded-full border-2 border-white dark:border-outline-variant/20-bg overflow-hidden relative bg-gray-200">
                             {story.isAdd ? (
                                 <div className="w-full h-full flex items-center justify-center bg-white dark:bg-dark-surface">
                                     <span className="material-symbols-outlined text-dark dark:text-white">add</span>

@@ -73,7 +73,7 @@ export default function VerifyTradePage() {
                     initial={{ scale: 0, rotate: -180 }}
                     animate={{ scale: 1, rotate: 0 }}
                     transition={{ type: 'spring' as const, stiffness: 200, damping: 15 }}
-                    className="w-32 h-32 bg-primary rounded-[2.5rem] border-[3px] border-dark dark:border-gray-600 shadow-brutal flex items-center justify-center mb-6"
+                    className="w-32 h-32 bg-primary rounded-[2.5rem] border border-outline-variant/10 dark:border-gray-600 shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex items-center justify-center mb-6"
                 >
                     <span className="material-symbols-outlined text-6xl text-dark dark:text-white">verified</span>
                 </motion.div>
@@ -106,11 +106,11 @@ export default function VerifyTradePage() {
                         <div
                             key={i}
                             className={`rounded-2xl border-2 p-4 flex items-center gap-4 transition-all ${i <= step
-                                ? 'bg-card-green border-dark dark:border-gray-600 shadow-brutal-sm'
+                                ? 'bg-surface-container-low border-outline-variant/20 dark:border-gray-600 shadow-sm'
                                 : 'bg-white dark:bg-dark-surface border-gray-200 dark:border-gray-700 opacity-50'
                                 }`}
                         >
-                            <div className={`w-12 h-12 rounded-xl border-2 border-dark dark:border-gray-600 flex items-center justify-center ${i < step ? 'bg-primary' : 'bg-white dark:bg-dark-surface'}`}>
+                            <div className={`w-12 h-12 rounded-xl border border-outline-variant/10 dark:border-gray-600 flex items-center justify-center ${i < step ? 'bg-primary' : 'bg-white dark:bg-dark-surface'}`}>
                                 {i < step ? (
                                     <span className="material-symbols-outlined text-dark dark:text-white">check</span>
                                 ) : (
@@ -130,7 +130,7 @@ export default function VerifyTradePage() {
                     <motion.div variants={itemVariants}>
                         <button
                             onClick={() => setStep(step + 1)}
-                            className="w-full bg-primary text-dark py-4 rounded-2xl font-bold border-2 border-dark dark:border-gray-600 shadow-brutal active:translate-y-1 active:shadow-none transition-all"
+                            className="w-full bg-primary text-dark py-4 rounded-2xl font-bold border border-outline-variant/10 dark:border-gray-600 shadow-[0_2px_10px_rgba(0,0,0,0.02)] active:translate-y-1 active:shadow-none transition-all"
                         >
                             {step === 0 ? 'I\'ve Met the Trader' : 'Item Looks Good'}
                         </button>
@@ -140,7 +140,7 @@ export default function VerifyTradePage() {
                 {/* Verification Code */}
                 {step === 2 && (
                     <motion.div variants={itemVariants} className="space-y-4">
-                        <div className="bg-white dark:bg-dark-surface rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm p-5">
+                        <div className="bg-white dark:bg-dark-surface rounded-2xl border border-outline-variant/10 dark:border-gray-600 shadow-sm p-5">
                             <p className="font-bold text-dark dark:text-white text-sm mb-3">Enter Verification Code</p>
                             <input
                                 type="text"
@@ -148,7 +148,7 @@ export default function VerifyTradePage() {
                                 onChange={(e) => setCode(e.target.value.toUpperCase())}
                                 placeholder="e.g., RELOOP-1234"
                                 maxLength={12}
-                                className="w-full h-16 rounded-2xl bg-gray-100 dark:bg-dark-surface border-2 border-dark dark:border-gray-600 px-5 text-2xl font-black text-center tracking-widest uppercase placeholder:text-gray-300 placeholder:text-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                className="w-full h-16 rounded-2xl bg-gray-100 dark:bg-dark-surface border border-outline-variant/10 dark:border-gray-600 px-5 text-2xl font-extrabold text-center tracking-widest uppercase placeholder:text-gray-300 placeholder:text-lg focus:outline-none focus:ring-2 focus:ring-primary"
                             />
                             <p className="text-xs text-dark/40 dark:text-white/40 mt-2 text-center">Ask the other trader for their code</p>
                         </div>
@@ -156,7 +156,7 @@ export default function VerifyTradePage() {
                         <button
                             onClick={handleVerify}
                             disabled={!code || isVerifying}
-                            className="w-full bg-dark text-white py-5 rounded-2xl font-[900] uppercase tracking-wider shadow-brutal disabled:opacity-50 active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-3"
+                            className="w-full bg-dark text-white py-5 rounded-2xl font-[900] uppercase tracking-wider shadow-[0_2px_10px_rgba(0,0,0,0.02)] disabled:opacity-50 active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-3"
                         >
                             {isVerifying ? (
                                 <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin" />
@@ -176,7 +176,7 @@ export default function VerifyTradePage() {
                         <p className="text-dark/40 dark:text-white/40 text-sm mb-3">or</p>
                         <button
                             onClick={() => setShowScanner(true)}
-                            className="px-6 py-3 bg-white dark:bg-dark-surface border-2 border-dark dark:border-gray-600 rounded-full font-bold text-dark dark:text-white shadow-brutal-sm active:scale-95 transition-transform flex items-center gap-2 mx-auto"
+                            className="px-6 py-3 bg-white dark:bg-dark-surface border border-outline-variant/10 dark:border-gray-600 rounded-full font-bold text-dark dark:text-white shadow-sm active:scale-95 transition-transform flex items-center gap-2 mx-auto"
                         >
                             <span className="material-symbols-outlined text-lg">qr_code_scanner</span>
                             Scan QR Code
@@ -192,7 +192,7 @@ export default function VerifyTradePage() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50"
+                        className="fixed inset-0 z-50 w-full max-w-md left-1/2 -translate-x-1/2"
                     >
                         <ScanningOverlay onCancel={() => setShowScanner(false)} />
                     </motion.div>

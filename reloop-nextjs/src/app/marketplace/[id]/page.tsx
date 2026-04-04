@@ -124,224 +124,157 @@ export default function ItemDetailPage() {
     const ecoPoints = Math.round((listing.price || 0) * 1.5);
 
     return (
-        <div className="relative min-h-screen flex flex-col pb-28 bg-background overflow-x-hidden">
-            {/* Hero Image Section */}
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="relative w-full pt-6 pb-16 px-6 flex flex-col items-center justify-start bg-gradient-to-b from-blue-100 via-blue-50 to-background dark:from-blue-900/30 dark:via-blue-900/10 dark:to-background"
-            >
-                {/* Header */}
-                <div className="w-full flex items-center justify-between mb-6 z-10">
-                    <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }}>
-                        <Link href="/marketplace" className="flex items-center justify-center w-12 h-12 bg-white dark:bg-dark-surface rounded-full border-2 border-dark shadow-brutal-sm active:scale-95 transition-transform">
-                            <span className="material-symbols-outlined text-dark dark:text-white">arrow_back</span>
-                        </Link>
-                    </motion.div>
-                    <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="text-xs font-bold tracking-widest uppercase text-dark/50 dark:text-white/50"
-                    >
-                        Item Detail
-                    </motion.p>
-                    <motion.button
-                        initial={{ x: 20, opacity: 0 }}
-                        animate={{ x: 0, opacity: 1 }}
-                        onClick={() => setIsFavorited(!isFavorited)}
-                        className="flex items-center justify-center w-12 h-12 bg-white dark:bg-dark-surface rounded-full border-2 border-dark shadow-brutal-sm active:scale-95 transition-transform"
-                    >
-                        <span
-                            className={`material-symbols-outlined ${isFavorited ? 'text-red-500' : 'text-dark dark:text-white'}`}
-                            style={{ fontVariationSettings: isFavorited ? "'FILL' 1" : "'FILL' 0" }}
-                        >
-                            favorite
-                        </span>
-                    </motion.button>
+        <div className="bg-surface text-on-surface antialiased overflow-x-hidden min-h-screen">
+            {/* TopAppBar */}
+            <header className="fixed top-0 w-full z-50 bg-[#f1f8f6]/80 dark:bg-[#1a1c1b]/80 backdrop-blur-3xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] max-w-md left-1/2 -translate-x-1/2">
+                <div className="flex justify-between items-center px-6 h-16 w-full">
+                    <button onClick={() => router.push('/marketplace')} className="active:scale-95 transition-transform duration-200 hover:bg-[#eaf2f0] dark:hover:bg-[#2d312f] p-2 rounded-full flex items-center justify-center">
+                        <span className="material-symbols-outlined text-[#29664c] dark:text-[#b9f9d6]">arrow_back</span>
+                    </button>
+                    <h1 className="text-[#29664c] dark:text-[#b9f9d6] font-['Plus_Jakarta_Sans'] font-extrabold tracking-tight text-lg">Item Details</h1>
+                    <button onClick={() => setIsFavorited(!isFavorited)} className="active:scale-95 transition-transform duration-200 hover:bg-[#eaf2f0] dark:hover:bg-[#2d312f] p-2 rounded-full flex items-center justify-center">
+                        <span className="material-symbols-outlined text-[#29664c] dark:text-[#b9f9d6]" style={{ fontVariationSettings: isFavorited ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
+                    </button>
                 </div>
+                <div className="bg-[#eaf2f0] dark:bg-[#2d312f] h-[1px]"></div>
+            </header>
 
-                {/* Product Image */}
-                <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-                    className="relative w-full max-w-sm mx-auto"
-                >
-                    <div className="aspect-square w-full rounded-3xl border-4 border-dark shadow-brutal overflow-hidden bg-white dark:bg-dark-surface">
-                        <img
-                            src={listing.images[0]}
-                            alt={listing.title}
-                            className="w-full h-full object-cover"
+            <main className="pt-20 pb-32 px-6 space-y-8 max-w-lg mx-auto">
+                {/* Hero Section */}
+                <section className="w-full">
+                    <div className="relative w-full aspect-square bg-surface-container-low rounded-xl overflow-hidden shadow-sm">
+                        <img 
+                            className="w-full h-full object-cover" 
+                            alt={listing.title} 
+                            src={(listing.images && listing.images.length > 0) ? listing.images[0] : 'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=400&fit=crop'}
                         />
                     </div>
-                    {listing.isTopImpact && (
-                        <motion.div
-                            initial={{ scale: 0, rotate: -10 }}
-                            animate={{ scale: 1, rotate: -2 }}
-                            transition={{ delay: 0.3, type: 'spring' }}
-                            className="absolute -bottom-4 -right-4 bg-primary text-dark px-4 py-2 rounded-full border-4 border-dark shadow-brutal-sm flex items-center gap-2 z-10 rotate-[-2deg]"
+                </section>
+
+                {/* Impact Badge */}
+                <section className="bg-primary shadow-[0_20px_40px_rgba(41,102,76,0.15)] rounded-lg p-5 flex items-center gap-4 text-white">
+                    <div className="bg-primary-dim p-3 rounded-full flex items-center justify-center">
+                        <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>eco</span>
+                    </div>
+                    <div>
+                        <p className="text-[10px] font-bold uppercase tracking-widest opacity-80">Eco Impact</p>
+                        <p className="font-extrabold text-lg leading-tight">YOU CAN SAVE {co2Saved} KG OF CO2</p>
+                    </div>
+                </section>
+
+                {/* Product Info Title */}
+                <section>
+                    <h2 className="text-3xl font-extrabold tracking-tight text-on-surface uppercase">{listing.title}</h2>
+                    <p className="text-on-surface-variant text-sm mt-1 flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[16px] text-primary">verified</span>
+                        Sustainability Score: {listing.isTopImpact ? '95/100' : '88/100'}
+                    </p>
+                </section>
+
+                {/* Price & Action */}
+                <section className="flex items-center justify-between gap-4">
+                    <div className="flex flex-col">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Price</span>
+                        <span className="text-2xl font-extrabold text-primary">{listing.price > 0 ? `${listing.price} Coins` : 'FREE'}</span>
+                    </div>
+                    {!isOwner ? (
+                        <button 
+                            onClick={() => setShowTradeModal(true)}
+                            className="flex-1 bg-gradient-to-br from-primary to-primary-dim text-white h-14 rounded-full flex items-center justify-center gap-2 font-bold shadow-lg hover:shadow-primary/20 active:scale-95 transition-all"
                         >
-                            <span className="material-symbols-outlined material-symbols-filled text-lg">eco</span>
-                            <span className="text-xs font-black uppercase tracking-wider">Top Impact</span>
-                        </motion.div>
-                    )}
-                </motion.div>
-            </motion.div>
-
-            {/* Content Card */}
-            <motion.div
-                className="flex-1 w-full px-4 -mt-6 z-10"
-                initial="hidden"
-                animate="visible"
-                variants={containerVariants}
-            >
-                <div className="bg-white dark:bg-dark-surface w-full rounded-3xl border-3 border-dark shadow-brutal p-5 space-y-5">
-
-                    {/* Eco Impact Banner */}
-                    <motion.div
-                        variants={itemVariants}
-                        className="bg-primary rounded-2xl border-4 border-dark shadow-[4px_4px_0px_0px_#000] p-4 relative overflow-hidden group"
-                    >
-                        <div className="flex items-center gap-3 relative z-10">
-                            <span className="material-symbols-outlined text-2xl text-dark">forest</span>
-                            <div>
-                                <span className="block text-[10px] font-bold uppercase opacity-80 mb-0.5 text-dark">Eco Impact</span>
-                                <span className="block text-xl font-black uppercase leading-none text-dark">YOU CAN SAVE {co2Saved} KG OF CO<sub>2</sub></span>
-                            </div>
-                        </div>
-                    </motion.div>
-
-                    {/* Title & Price */}
-                    <motion.div variants={itemVariants}>
-                        <h2 className="text-4xl font-black uppercase leading-[0.9] tracking-tight mb-4 text-dark dark:text-white">{listing.title}</h2>
-                        <div className="flex items-center gap-3">
-                            <div className="inline-flex items-center justify-center bg-primary px-5 py-3 rounded-full border-4 border-dark shadow-[3px_3px_0px_0px_#000]">
-                                <span className="font-black text-lg text-dark">{formatPrice(listing.price)}</span>
-                            </div>
-                            {!isOwner && (
-                                <button
-                                    onClick={() => setShowTradeModal(true)}
-                                    className="flex-1 bg-accent-yellow text-dark font-black uppercase text-sm py-3 px-4 rounded-full border-4 border-dark shadow-[3px_3px_0px_0px_#000] hover:bg-yellow-300 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all flex items-center justify-center gap-2 whitespace-nowrap"
-                                >
-                                    <span className="material-symbols-outlined font-black" style={{ fontSize: '20px' }}>swap_horiz</span>
-                                    Request for Trade
-                                </button>
-                            )}
-                            {isOwner && (
-                                <span className="px-4 py-3 bg-accent-yellow text-dark rounded-full text-sm font-bold border-4 border-dark shadow-[3px_3px_0px_0px_#000]">
-                                    Your Listing
-                                </span>
-                            )}
-                        </div>
-                    </motion.div>
-
-                    {/* Impact Stats Grid */}
-                    <motion.div variants={itemVariants} className="grid grid-cols-3 gap-2">
-                        {[
-                            { icon: 'water_drop', label: 'Water', bg: 'bg-blue-100' },
-                            { icon: 'delete', label: 'Waste', bg: 'bg-orange-100' },
-                            { icon: 'forest', label: 'Points', bg: 'bg-green-100' },
-                        ].map((stat, i) => (
-                            <motion.div
-                                key={stat.icon}
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                transition={{ delay: 0.4 + i * 0.1, type: 'spring' }}
-                                className="flex flex-col items-center gap-1"
-                            >
-                                <div className={`w-12 h-12 ${stat.bg} rounded-xl border-2 border-dark flex items-center justify-center`}>
-                                    <span className="material-symbols-outlined material-symbols-filled text-xl text-dark">{stat.icon}</span>
-                                </div>
-                                <span className="text-[10px] font-bold text-dark/60 dark:text-white/60 uppercase">{stat.label}</span>
-                            </motion.div>
-                        ))}
-                    </motion.div>
-
-                    {/* Details */}
-                    <motion.div variants={itemVariants} className="grid grid-cols-2 gap-4">
-                        <div className="p-3 rounded-xl bg-white dark:bg-dark-surface border-4 border-dark shadow-[3px_3px_0px_0px_#000]">
-                            <span className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Condition</span>
-                            <p className="text-lg font-bold text-dark dark:text-white">{listing.condition}</p>
-                        </div>
-                        <div className="p-3 rounded-xl bg-white dark:bg-dark-surface border-4 border-dark shadow-[3px_3px_0px_0px_#000]">
-                            <span className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Category</span>
-                            <p className="text-lg font-bold text-dark dark:text-white">{listing.category}</p>
-                        </div>
-                    </motion.div>
-
-                    {/* Description */}
-                    <motion.div variants={itemVariants}>
-                        <p className="text-sm font-medium text-gray-600 dark:text-gray-400 leading-relaxed">{listing.description}</p>
-                    </motion.div>
-
-                    {/* Seller Card - Hide for owner, show for buyers */}
-                    {!isOwner && (
-                        <motion.div
-                            variants={itemVariants}
-                            className="bg-gray-50 dark:bg-dark-bg rounded-2xl border-4 border-dark p-4 flex items-center justify-between shadow-sm"
-                        >
-                            <div className="flex items-center gap-3">
-                                <div className="relative">
-                                    <div className="w-12 h-12 rounded-full border-2 border-dark overflow-hidden bg-gray-300">
-                                        <img src={listing.seller.avatar} alt={listing.seller.name} className="w-full h-full object-cover" />
-                                    </div>
-                                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-primary rounded-full border-2 border-white dark:border-dark-surface" />
-                                </div>
-                                <div>
-                                    <p className="font-bold text-dark dark:text-white">{listing.seller.name}</p>
-                                    <p className="text-xs text-dark/50 dark:text-white/50 flex items-center gap-1">
-                                        <span className="material-symbols-outlined text-primary text-xs">bolt</span>
-                                        Responds in {listing.seller.responseTime || '2h'}
-                                    </p>
-                                </div>
-                            </div>
-                            <button
-                                onClick={() => router.push(`/messages/new?sellerId=${listing.seller.id}&listingId=${listing.id}&listingTitle=${encodeURIComponent(listing.title)}`)}
-                                className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-dark-surface border-2 border-dark shadow-brutal-sm active:scale-95 transition-transform"
-                            >
-                                <span className="material-symbols-outlined text-dark dark:text-white">chat</span>
-                            </button>
-                        </motion.div>
-                    )}
-
-                    {/* Owner Actions */}
-                    {isOwner && (
-                        <motion.div variants={itemVariants} className="flex gap-3">
-                            <button
+                            <span className="material-symbols-outlined">swap_horiz</span>
+                            REQUEST FOR TRADE
+                        </button>
+                    ) : (
+                        <div className="flex-1 flex gap-2">
+                            <button 
                                 onClick={() => router.push(`/marketplace/${listing.id}/edit`)}
-                                className="flex-1 h-12 bg-white dark:bg-dark-surface border-2 border-dark rounded-xl font-bold text-dark dark:text-white shadow-brutal-sm flex items-center justify-center gap-2 active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all"
+                                className="flex-1 bg-surface-container-high text-on-surface h-14 rounded-full flex items-center justify-center gap-2 font-bold shadow-sm hover:shadow-md active:scale-95 transition-all"
                             >
                                 <span className="material-symbols-outlined">edit</span>
-                                Edit Listing
+                                EDIT
                             </button>
-                            <button
-                                onClick={async () => {
-                                    if (confirm('Delete this listing?')) {
-                                        if (!isDemo && currentUserId) {
-                                            try {
-                                                const success = await DBService.deleteListing(listing.id, currentUserId);
-                                                if (!success) {
-                                                    alert('Failed to delete listing.');
-                                                    return;
-                                                }
-                                            } catch (err) {
-                                                console.error('Delete failed:', err);
-                                                alert('Failed to delete listing.');
-                                                return;
-                                            }
-                                        }
-                                        router.push('/marketplace');
-                                    }
-                                }}
-                                className="h-12 px-4 bg-red-100 dark:bg-red-900/30 border-2 border-dark rounded-xl font-bold text-red-600 shadow-brutal-sm flex items-center justify-center active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all"
-                            >
-                                <span className="material-symbols-outlined">delete</span>
-                            </button>
-                        </motion.div>
+                        </div>
                     )}
-                </div>
-            </motion.div>
+                </section>
 
+                {/* Stats Grid */}
+                <section className="grid grid-cols-3 gap-4">
+                    <div className="bg-surface-container-low p-4 rounded-xl flex flex-col items-center justify-center text-center space-y-2 relative overflow-hidden group">
+                        <div className="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container z-10">
+                            <span className="material-symbols-outlined text-[20px]">water_drop</span>
+                        </div>
+                        <span className="text-[10px] font-bold uppercase tracking-widest z-10 text-on-surface">Water</span>
+                        <div className="absolute inset-0 bg-secondary-container/0 group-hover:bg-secondary-container/10 transition-colors"></div>
+                    </div>
+                    <div className="bg-surface-container-low p-4 rounded-xl flex flex-col items-center justify-center text-center space-y-2 relative overflow-hidden group">
+                        <div className="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container z-10">
+                            <span className="material-symbols-outlined text-[20px]">delete_outline</span>
+                        </div>
+                        <span className="text-[10px] font-bold uppercase tracking-widest z-10 text-on-surface">Waste</span>
+                        <div className="absolute inset-0 bg-secondary-container/0 group-hover:bg-secondary-container/10 transition-colors"></div>
+                    </div>
+                    <div className="bg-surface-container-low p-4 rounded-xl flex flex-col items-center justify-center text-center space-y-2 relative overflow-hidden group">
+                        <div className="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container z-10">
+                            <span className="material-symbols-outlined text-[20px]">forest</span>
+                        </div>
+                        <span className="text-[10px] font-bold uppercase tracking-widest z-10 text-on-surface">Points</span>
+                        <div className="absolute inset-0 bg-secondary-container/0 group-hover:bg-secondary-container/10 transition-colors"></div>
+                    </div>
+                </section>
+
+                {/* Condition/Category */}
+                <section className="flex gap-4">
+                    <div className="flex-1 bg-surface-container-highest/30 p-4 rounded-lg">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Condition</p>
+                        <p className="font-bold text-on-surface">{listing.condition || 'N/A'}</p>
+                    </div>
+                    <div className="flex-1 bg-surface-container-highest/30 p-4 rounded-lg">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Category</p>
+                        <p className="font-bold text-on-surface">{listing.category || 'N/A'}</p>
+                    </div>
+                </section>
+
+                {/* Description */}
+                <section className="space-y-2 bg-surface-container-lowest p-4 rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                    <h3 className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[14px]">description</span>
+                        Description
+                    </h3>
+                    <p className="text-on-surface leading-relaxed text-sm font-medium">{listing.description}</p>
+                </section>
+
+                {/* Owner Info */}
+                {!isOwner && listing.seller && (
+                    <section className="bg-surface-container-low rounded-xl p-4 flex items-center justify-between shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-shadow">
+                        <div className="flex items-center gap-3">
+                            <div className="relative">
+                                <img 
+                                    className="w-12 h-12 rounded-full object-cover border-2 border-surface" 
+                                    alt={listing.seller.name} 
+                                    src={listing.seller.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(listing.seller.name)}&background=29664c&color=fff`}
+                                />
+                                <div className="absolute bottom-0 right-0 w-3 h-3 bg-secondary rounded-full border-2 border-white"></div>
+                            </div>
+                            <div>
+                                <h4 className="font-extrabold text-on-surface text-sm">{listing.seller.name}</h4>
+                                <p className="text-[10px] text-on-surface-variant font-medium flex items-center gap-1 mt-0.5">
+                                    <span className="material-symbols-outlined text-[12px] text-primary">schedule</span>
+                                    Responds in {listing.seller.responseTime || '2h'}
+                                </p>
+                            </div>
+                        </div>
+                        <button 
+                            onClick={() => router.push(`/messages/new?sellerId=${listing.seller.id}&listingId=${listing.id}&listingTitle=${encodeURIComponent(listing.title)}`)}
+                            className="w-12 h-12 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center active:scale-90 transition-transform shadow-sm"
+                        >
+                            <span className="material-symbols-outlined">chat_bubble</span>
+                        </button>
+                    </section>
+                )}
+            </main>
+
+            {/* Modals and Toasts overlay */}
             <AnimatePresence>
                 {showTradeModal && (
                     <TradeOfferModal
@@ -358,67 +291,13 @@ export default function ItemDetailPage() {
                         initial={{ opacity: 0, y: 50 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 50 }}
-                        className="fixed bottom-28 left-1/2 -translate-x-1/2 bg-dark text-white px-6 py-3 rounded-full font-bold text-sm shadow-xl z-50 flex items-center gap-2 w-max"
+                        className="fixed bottom-28 left-1/2 -translate-x-1/2 bg-[#29302f] text-white px-6 py-3 rounded-full font-bold text-sm shadow-xl z-50 flex items-center gap-2 w-max"
                     >
                         <span className="material-symbols-outlined text-green-400">check_circle</span>
                         Trade offer sent!
                     </motion.div>
                 )}
             </AnimatePresence>
-
-            {/* Bottom Action Navigation */}
-            <motion.nav
-                initial={{ y: 50, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 w-[90%] max-w-sm"
-            >
-                <div className="bg-white dark:bg-dark-surface rounded-full border-4 border-dark shadow-[6px_6px_0px_0px_#000] py-3 px-6 flex items-center justify-between">
-                    <button
-                        onClick={() => router.back()}
-                        className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-dark-bg rounded-full transition-colors"
-                        aria-label="Go back"
-                    >
-                        <span className="material-symbols-outlined text-2xl text-dark dark:text-white">arrow_back</span>
-                    </button>
-                    <div className="w-px h-6 bg-gray-200 dark:bg-gray-700"></div>
-                    <button
-                        onClick={() => setIsFavorited(!isFavorited)}
-                        className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-dark-bg rounded-full transition-colors"
-                        aria-label="Bookmark"
-                    >
-                        <span
-                            className={`material-symbols-outlined text-2xl ${isFavorited ? 'text-red-500' : 'text-dark dark:text-white'}`}
-                            style={{ fontVariationSettings: isFavorited ? "'FILL' 1" : "'FILL' 0" }}
-                        >
-                            bookmark
-                        </span>
-                    </button>
-                    <div className="w-px h-6 bg-gray-200 dark:bg-gray-700"></div>
-                    <button
-                        onClick={() => {
-                            if (navigator.share) {
-                                navigator.share({
-                                    title: listing.title,
-                                    text: `Check out ${listing.title} on ReLoop!`,
-                                    url: window.location.href,
-                                });
-                            }
-                        }}
-                        className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-dark-bg rounded-full transition-colors"
-                        aria-label="Share"
-                    >
-                        <span className="material-symbols-outlined text-2xl text-dark dark:text-white">share</span>
-                    </button>
-                    <div className="w-px h-6 bg-gray-200 dark:bg-gray-700"></div>
-                    <button
-                        className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-dark-bg rounded-full transition-colors"
-                        aria-label="More options"
-                    >
-                        <span className="material-symbols-outlined text-2xl text-dark dark:text-white">more_horiz</span>
-                    </button>
-                </div>
-            </motion.nav>
         </div>
     );
 }

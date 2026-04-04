@@ -96,12 +96,10 @@ export default function ScannerPage() {
 
     // Auto-request camera on page load for better UX
     useEffect(() => {
-        // Only auto-request if we're in idle state and haven't requested before in this session
         const hasAutoRequested = sessionStorage.getItem('cameraAutoRequested');
 
         if (cameraState === 'idle' && !hasAutoRequested) {
             sessionStorage.setItem('cameraAutoRequested', 'true');
-            // Small delay to let the page render smoothly
             const timer = setTimeout(() => {
                 requestCamera();
             }, 300);
@@ -154,226 +152,154 @@ export default function ScannerPage() {
     };
 
     return (
-        <div className="min-h-screen bg-sky flex flex-col p-4 gap-4">
-            {/* Floating Pill Header */}
-            <header className="z-20 w-full pt-2">
-                <div className="flex justify-between items-center bg-white neo-border rounded-full px-5 py-3 shadow-brutal-sm">
-                    <Link
-                        href="/"
-                        className="flex items-center justify-center text-dark hover:bg-gray-100 rounded-full p-1 transition-colors"
-                    >
-                        <span className="material-symbols-outlined" style={{ fontSize: 28 }}>arrow_back</span>
-                    </Link>
-                    <div className="text-sm font-black uppercase tracking-widest text-dark">Scan Item</div>
-                    <button
-                        onClick={() => {
-                            setErrorMessage('Flashlight control coming soon! Use your device\'s flashlight for now.');
-                            setTimeout(() => setErrorMessage(null), 3000);
-                        }}
-                        className="flex items-center justify-center text-dark hover:bg-gray-100 rounded-full p-1 transition-colors"
-                        aria-label="Toggle flashlight"
-                    >
-                        <span className="material-symbols-outlined" style={{ fontSize: 28 }}>flash_on</span>
-                    </button>
-                </div>
+        <div className="bg-[#f1f8f6] font-body text-[#29302f] antialiased min-h-screen overflow-x-hidden">
+            <style jsx>{`
+                .scan-line {
+                    animation: scan 3s linear infinite;
+                }
+                @keyframes scan {
+                    0% { top: 0%; opacity: 0; }
+                    10% { opacity: 1; }
+                    90% { opacity: 1; }
+                    100% { top: 100%; opacity: 0; }
+                }
+                .grid-overlay {
+                    background-size: 40px 40px;
+                    background-image: 
+                        linear-gradient(to right, rgba(185, 249, 214, 0.1) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(185, 249, 214, 0.1) 1px, transparent 1px);
+                }
+            `}</style>
+            
+            {/* TopAppBar */}
+            <header className="fixed top-0 w-full z-50 bg-[#f1f8f6]/80 backdrop-blur-xl shadow-[0px_40px_64px_-10px_rgba(41,48,47,0.06)] flex items-center justify-between px-6 h-16 max-w-md left-1/2 -translate-x-1/2">
+                <button onClick={() => router.push('/')} className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-[#eaf2f0] transition-colors active:scale-95 duration-200 text-[#29664c]">
+                    <span className="material-symbols-outlined whitespace-nowrap align-middle">arrow_back</span>
+                </button>
+                <h1 className="text-[#29664c] font-['Plus_Jakarta_Sans'] font-extrabold tracking-tight uppercase">SCAN ITEM</h1>
+                <div className="w-10"></div> {/* Spacer for centering */}
             </header>
 
-            {/* Camera Viewport */}
-            <main className="relative z-10 flex-grow w-full">
-                <div className="absolute inset-0 w-full h-full">
-                    <div className="relative w-full h-full rounded-[2.5rem] border-4 border-dark overflow-hidden bg-dark shadow-brutal">
+            <main className="min-h-screen pt-20 pb-32 px-6 flex flex-col items-center">
+                {/* Main Camera Viewport */}
+                <div className="relative w-full aspect-[3/4] max-w-md rounded-xl overflow-hidden bg-[#d4dfdd] shadow-[0px_40px_64px_-10px_rgba(41,48,47,0.12)]">
+                    
+                    {cameraState === 'ready' ? (
+                        <WebcamCapture
+                            ref={webcamRef}
+                            onUserMediaError={() => {
+                                setCameraState('error');
+                                setErrorMessage('Camera stopped unexpectedly.');
+                            }}
+                            className="absolute inset-0 w-full h-full object-cover [&>video]:object-cover"
+                        />
+                    ) : (
+                        <img 
+                            className="w-full h-full object-cover grayscale-[20%] contrast-125" 
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2ZtgHxOaBSioWxz7Iy3yhIeCiCpdGu_XXpA5X-yuBVLzfLagVuXPDNVeBBEQkmtGreZm2_JXMkgKgPdM0I82FNhCAIOY9t6mQGu-y7fi_JALFsJgf-3_nQMFnFj738z9H-q1JrgXJV_jwdpBaXbO5iYm7gGz4xhcQEQoXMYneREg5NeW8juiP3u-PvPsYkOpZZd96LeXg0uep_osBiVnBKlH5SgCbDgxEtH6hrj44j3tidjdNv4JGIYSpAl5xwCpvb-BsHx_UlhQ" 
+                            alt="Camera disabled placeholder"
+                        />
+                    )}
 
-                        {/* Idle State */}
-                        {cameraState === 'idle' && (
-                            <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-dark-surface">
-                                <div className="w-24 h-24 bg-primary/20 rounded-full flex items-center justify-center mb-6 neo-border">
-                                    <span className="material-symbols-outlined text-5xl text-primary">photo_camera</span>
-                                </div>
-                                <h2 className="text-white font-black text-2xl mb-2 uppercase tracking-tight">Ready to Scan</h2>
-                                <p className="text-white/60 text-sm mb-8 max-w-xs">Tap below to start the camera and identify recyclable items</p>
-                                <button
-                                    onClick={requestCamera}
-                                    className="px-10 py-4 bg-primary text-dark font-black rounded-full neo-border shadow-brutal active:shadow-none active:translate-x-1 active:translate-y-1 transition-all uppercase tracking-wider"
-                                >
-                                    Start Camera
-                                </button>
-                            </div>
-                        )}
+                    {/* Grid Overlay */}
+                    <div className="absolute inset-0 grid-overlay pointer-events-none"></div>
 
-                        {/* Requesting State */}
-                        {cameraState === 'requesting' && (
-                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-dark-surface">
-                                <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4" />
-                                <p className="text-white/60 font-bold uppercase tracking-wider">Requesting camera access...</p>
-                            </div>
-                        )}
+                    {/* Scanning Line */}
+                    {!isAnalyzing && <div className="absolute left-0 right-0 h-[2px] bg-[#29664c] shadow-[0_0_15px_rgba(41,102,76,0.8)] scan-line z-10 pointer-events-none"></div>}
 
-                        {/* Camera Ready - Show Webcam */}
-                        {cameraState === 'ready' && (
-                            <>
-                                <WebcamCapture
-                                    ref={webcamRef}
-                                    onUserMediaError={() => {
-                                        setCameraState('error');
-                                        setErrorMessage('Camera stopped unexpectedly.');
-                                    }}
-                                    className="absolute inset-0 w-full h-full object-cover"
-                                />
-
-                                {/* Dark Overlay */}
-                                <div className="absolute inset-0 bg-black/20 pointer-events-none" />
-
-                                {/* Scan Frame Corners - Animated */}
-                                {!isAnalyzing && (
-                                    <div className="absolute inset-8 pointer-events-none animate-pulse">
-                                        <div className="absolute top-0 left-0 w-12 h-12 border-l-4 border-t-4 border-primary rounded-tl-xl" style={{ boxShadow: '2px 2px 0px 0px rgba(0,0,0,0.5)' }} />
-                                        <div className="absolute top-0 right-0 w-12 h-12 border-r-4 border-t-4 border-primary rounded-tr-xl" style={{ boxShadow: '-2px 2px 0px 0px rgba(0,0,0,0.5)' }} />
-                                        <div className="absolute bottom-0 left-0 w-12 h-12 border-l-4 border-b-4 border-primary rounded-bl-xl" style={{ boxShadow: '2px -2px 0px 0px rgba(0,0,0,0.5)' }} />
-                                        <div className="absolute bottom-0 right-0 w-12 h-12 border-r-4 border-b-4 border-primary rounded-br-xl" style={{ boxShadow: '-2px -2px 0px 0px rgba(0,0,0,0.5)' }} />
-                                    </div>
-                                )}
-
-                                {/* Scanning Laser Line */}
-                                {!isAnalyzing && (
-                                    <div
-                                        className="absolute left-4 right-4 h-1 bg-primary rounded-full z-20"
-                                        style={{
-                                            boxShadow: '0 0 15px rgba(37, 244, 120, 0.8)',
-                                            animation: 'scan 3s ease-in-out infinite'
-                                        }}
-                                    />
-                                )}
-
-                                {/* Grid Overlay */}
-                                <div
-                                    className="absolute inset-0 opacity-10 pointer-events-none"
-                                    style={{
-                                        backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
-                                        backgroundSize: '40px 40px'
-                                    }}
-                                />
-                            </>
-                        )}
-
-                        {/* Error/Denied State */}
-                        {(cameraState === 'denied' || cameraState === 'error') && (
-                            <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-dark-surface">
-                                <div className="w-24 h-24 bg-card-coral/30 rounded-full flex items-center justify-center mb-6 neo-border border-card-coral">
-                                    <span className="material-symbols-outlined text-5xl text-card-coral">videocam_off</span>
-                                </div>
-                                <h2 className="text-white font-black text-2xl mb-2 uppercase">Camera Unavailable</h2>
-                                <p className="text-white/60 text-sm mb-6 max-w-xs">{errorMessage}</p>
-                                <div className="flex gap-3">
-                                    <button
-                                        onClick={requestCamera}
-                                        className="px-6 py-3 bg-white/10 text-white font-bold rounded-full border-2 border-white/20 active:scale-95 transition-transform"
-                                    >
-                                        Try Again
-                                    </button>
-                                    <button
-                                        onClick={() => fileInputRef.current?.click()}
-                                        className="px-6 py-3 bg-primary text-dark font-bold rounded-full neo-border shadow-brutal-sm active:shadow-none active:translate-x-1 active:translate-y-1 transition-all"
-                                    >
-                                        Use Gallery
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Error Message Toast */}
-                        {errorMessage && cameraState === 'ready' && (
-                            <div className="absolute bottom-4 left-4 right-4 bg-card-coral text-dark p-4 rounded-2xl text-center font-bold neo-border z-30">
-                                {errorMessage}
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </main>
-
-            {/* Bottom Controls */}
-            <footer className="relative z-20 w-full flex flex-col items-center gap-4 pb-4">
-                {/* Tip Pill */}
-                <div className="bg-white neo-border rounded-full px-6 py-2 shadow-brutal-sm transform transition-transform hover:-translate-y-1">
-                    <div className="flex items-center gap-2">
-                        <span className="material-symbols-outlined text-dark" style={{ fontSize: 20 }}>info</span>
-                        <p className="text-dark text-sm font-bold">
-                            {cameraState === 'ready' ? 'Tip: Hold steady' : 'Tip: Start camera or use gallery'}
-                        </p>
-                    </div>
+                    {/* Corner Brackets */}
+                    <div className="absolute top-8 left-8 w-8 h-8 border-t-4 border-l-4 border-[#29664c]/60 rounded-tl-sm pointer-events-none"></div>
+                    <div className="absolute top-8 right-8 w-8 h-8 border-t-4 border-r-4 border-[#29664c]/60 rounded-tr-sm pointer-events-none"></div>
+                    <div className="absolute bottom-8 left-8 w-8 h-8 border-b-4 border-l-4 border-[#29664c]/60 rounded-bl-sm pointer-events-none"></div>
+                    <div className="absolute bottom-8 right-8 w-8 h-8 border-b-4 border-r-4 border-[#29664c]/60 rounded-br-sm pointer-events-none"></div>
+                    
+                    {errorStateOverlay()}
                 </div>
 
-                {/* Capture Button */}
-                <div className="w-full px-2">
+                {/* Feedback Pill */}
+                <div className="mt-8 bg-[#ffffff] py-4 px-8 rounded-full shadow-[0px_40px_64px_-10px_rgba(41,48,47,0.06)] flex items-center gap-3 animate-pulse">
+                    <span className="material-symbols-outlined text-[#29664c]" style={{ fontVariationSettings: "'FILL' 1" }}>lightbulb</span>
+                    <span className="text-[#29302f] font-semibold text-sm tracking-wide">Tip: Hold steady</span>
+                </div>
+
+                {/* Capture Section */}
+                <div className="mt-12 w-full max-w-md">
+                    <button 
+                        onClick={cameraState === 'ready' ? capture : requestCamera}
+                        disabled={isAnalyzing}
+                        className="group w-full bg-[#29664c] py-6 rounded-xl flex items-center justify-center gap-4 transition-all duration-300 hover:bg-[#1b5a40] hover:-translate-y-1 active:scale-95 shadow-[0px_20px_40px_-12px_rgba(41,102,76,0.3)] disabled:opacity-50"
+                    >
+                        <span className="material-symbols-outlined text-[#c8ffe0] text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>photo_camera</span>
+                        <span className="text-[#c8ffe0] font-headline font-extrabold text-xl tracking-tight uppercase">
+                            {cameraState === 'ready' ? (isAnalyzing ? 'ANALYZING...' : 'TAP TO CAPTURE') : 'START CAMERA'}
+                        </span>
+                    </button>
+
+                    {/* Secondary Controls */}
+                    <div className="mt-8 flex justify-center items-center gap-8 text-[#29302f]/40">
+                        <div className="flex flex-col items-center gap-2">
+                            <button className="w-12 h-12 rounded-full bg-[#e1eae8] flex items-center justify-center hover:bg-[#dbe5e2] transition-colors text-inherit">
+                                <span className="material-symbols-outlined">flash_off</span>
+                            </button>
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-[#29302f]/60">Flash</span>
+                        </div>
+                        <div className="flex flex-col items-center gap-2">
+                            <button className="w-12 h-12 rounded-full bg-[#e1eae8] flex items-center justify-center hover:bg-[#dbe5e2] transition-colors text-[#29664c]">
+                                <span className="material-symbols-outlined">filter_center_focus</span>
+                            </button>
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-[#29664c]">Auto</span>
+                        </div>
+                        <div className="flex flex-col items-center gap-2">
+                            <button onClick={() => fileInputRef.current?.click()} className="w-12 h-12 rounded-full bg-[#e1eae8] flex items-center justify-center hover:bg-[#dbe5e2] transition-colors text-inherit">
+                                <span className="material-symbols-outlined">image</span>
+                            </button>
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-[#29302f]/60">Gallery</span>
+                        </div>
+                    </div>
+                    
                     <input
                         type="file"
                         ref={fileInputRef}
                         onChange={handleFileUpload}
                         accept="image/*"
-                        capture="environment"
                         className="hidden"
                     />
-
-                    {cameraState === 'ready' ? (
-                        <button
-                            onClick={capture}
-                            disabled={isAnalyzing}
-                            className="group relative w-full flex items-center justify-center h-16 bg-primary border-4 border-dark rounded-full shadow-brutal active:shadow-none active:translate-x-1 active:translate-y-1 transition-all duration-150 overflow-hidden disabled:opacity-50"
-                        >
-                            <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                            <span className="relative z-10 text-dark text-lg font-black tracking-widest uppercase flex items-center gap-2">
-                                <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>photo_camera</span>
-                                {isAnalyzing ? 'Analyzing...' : 'Tap to Capture'}
-                            </span>
-                        </button>
-                    ) : (
-                        <button
-                            onClick={() => fileInputRef.current?.click()}
-                            className="group relative w-full flex items-center justify-center h-16 bg-primary border-4 border-dark rounded-full shadow-brutal active:shadow-none active:translate-x-1 active:translate-y-1 transition-all duration-150 overflow-hidden"
-                        >
-                            <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                            <span className="relative z-10 text-dark text-lg font-black tracking-widest uppercase flex items-center gap-2">
-                                <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>photo_library</span>
-                                Upload from Gallery
-                            </span>
-                        </button>
-                    )}
                 </div>
-
-                {/* Secondary Links */}
-                <div className="flex gap-6 mt-1">
-                    <button
-                        onClick={() => fileInputRef.current?.click()}
-                        className="text-dark/60 font-bold text-xs uppercase hover:text-dark transition-colors"
-                    >
-                        Gallery
-                    </button>
-                    <div className="w-1 h-4 bg-dark/20" />
-                    <button
-                        onClick={() => router.push('/scanner/history')}
-                        className="text-dark/60 font-bold text-xs uppercase hover:text-dark transition-colors"
-                    >
-                        History
-                    </button>
-                </div>
-            </footer>
+            </main>
 
             {/* Scanning Overlay */}
             {isAnalyzing && <ScanningOverlay />}
-
-            {/* Mission Toast */}
+            
             <MissionCompleteToast
                 mission={completedMission}
                 onClose={() => setCompletedMission(null)}
             />
-
-            {/* Scan Animation Keyframes */}
-            <style jsx>{`
-                @keyframes scan {
-                    0% { top: 10%; opacity: 0.5; }
-                    50% { top: 90%; opacity: 1; }
-                    100% { top: 10%; opacity: 0.5; }
-                }
-            `}</style>
         </div>
     );
+
+    function errorStateOverlay() {
+        if (cameraState === 'ready' && !errorMessage) return null;
+        if (cameraState === 'idle') return null;
+        if (cameraState === 'requesting') {
+            return (
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 z-20">
+                    <div className="w-12 h-12 border-4 border-[#29664c] border-t-transparent rounded-full animate-spin mb-4" />
+                    <p className="text-white font-bold uppercase tracking-wider">Requesting access...</p>
+                </div>
+            );
+        }
+
+        return (
+            <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-black/70 z-20">
+                <span className="material-symbols-outlined text-5xl text-[#fb5151] mb-2">videocam_off</span>
+                <p className="text-white text-sm mb-4 font-bold">{errorMessage || 'Camera Unavailable'}</p>
+                <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="px-6 py-3 bg-[#29664c] text-white font-bold rounded-full active:scale-95 transition-all"
+                >
+                    Use Gallery
+                </button>
+            </div>
+        );
+    }
 }

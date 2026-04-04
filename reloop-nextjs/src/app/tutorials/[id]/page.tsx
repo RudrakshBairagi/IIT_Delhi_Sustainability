@@ -77,17 +77,17 @@ export default function TutorialStepPage() {
             <header className="px-5 pt-6 pb-4 flex items-center gap-4">
                 <Link
                     href="/tutorials"
-                    className="w-10 h-10 flex items-center justify-center bg-white dark:bg-dark-surface rounded-xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm shrink-0"
+                    className="w-10 h-10 flex items-center justify-center bg-white dark:bg-dark-surface rounded-xl border border-outline-variant/10 dark:border-gray-600 shadow-sm shrink-0"
                 >
                     <span className="material-symbols-outlined text-dark dark:text-white">arrow_back</span>
                 </Link>
                 <div className="flex-1 min-w-0">
-                    <p className="font-black text-dark dark:text-white text-sm truncate">{tutorial.title}</p>
+                    <p className="font-extrabold text-dark dark:text-white text-sm truncate">{tutorial.title}</p>
                     <p className="text-xs text-dark/60 dark:text-white/60">Step {currentStep + 1} of {tutorial.steps.length}</p>
                 </div>
                 <button
                     onClick={handleSave}
-                    className="w-10 h-10 flex items-center justify-center bg-white dark:bg-dark-surface rounded-xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm shrink-0 active:scale-95 transition-transform"
+                    className="w-10 h-10 flex items-center justify-center bg-white dark:bg-dark-surface rounded-xl border border-outline-variant/10 dark:border-gray-600 shadow-sm shrink-0 active:scale-95 transition-transform"
                 >
                     <span className={`material-symbols-outlined ${isSaved ? 'text-primary' : 'text-dark dark:text-white'}`}>
                         {isSaved ? 'bookmark' : 'bookmark_border'}
@@ -124,8 +124,8 @@ export default function TutorialStepPage() {
                                 <button
                                     onClick={handleFollow}
                                     className={`px-3 py-1 rounded-full text-xs font-bold border-2 transition-all ${isFollowing
-                                        ? 'bg-card-green border-dark text-dark'
-                                        : 'bg-white border-dark text-dark'}`}
+                                        ? 'bg-surface-container-low border-outline-variant/20 text-dark'
+                                        : 'bg-white border-outline-variant/20 text-dark'}`}
                                 >
                                     {isFollowing ? 'Following' : '+ Follow Artist'}
                                 </button>
@@ -134,7 +134,7 @@ export default function TutorialStepPage() {
 
                         {/* Image */}
                         {step.image && (
-                            <div className="rounded-2xl border-2 border-dark dark:border-gray-600 overflow-hidden shadow-brutal-sm">
+                            <div className="rounded-2xl border border-outline-variant/10 dark:border-gray-600 overflow-hidden shadow-sm">
                                 <img
                                     src={step.image}
                                     alt={step.title}
@@ -144,13 +144,13 @@ export default function TutorialStepPage() {
                         )}
 
                         {/* Content */}
-                        <div className="bg-white dark:bg-dark-surface rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm p-5">
+                        <div className="bg-white dark:bg-dark-surface rounded-2xl border border-outline-variant/10 dark:border-gray-600 shadow-sm p-5">
                             <p className="text-dark/80 dark:text-white/80 text-sm leading-relaxed">{step.content}</p>
                         </div>
 
                         {/* Tip */}
                         {step.tip && (
-                            <div className="bg-card-yellow rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm p-4 flex items-start gap-3">
+                            <div className="bg-surface-container-low rounded-2xl border border-outline-variant/10 dark:border-gray-600 shadow-sm p-4 flex items-start gap-3">
                                 <span className="material-symbols-outlined text-xl text-dark dark:text-white shrink-0 mt-0.5">lightbulb</span>
                                 <div>
                                     <p className="font-bold text-dark dark:text-white text-sm">Pro Tip</p>
@@ -183,7 +183,7 @@ export default function TutorialStepPage() {
                     <button
                         onClick={() => setCurrentStep(currentStep - 1)}
                         disabled={isFirst}
-                        className="flex-1 py-4 rounded-2xl font-bold border-2 border-dark dark:border-gray-600 text-dark dark:text-white disabled:opacity-30 active:scale-95 transition-all"
+                        className="flex-1 py-4 rounded-2xl font-bold border border-outline-variant/10 dark:border-gray-600 text-dark dark:text-white disabled:opacity-30 active:scale-95 transition-all"
                     >
                         Previous
                     </button>
@@ -195,7 +195,7 @@ export default function TutorialStepPage() {
                                 setCurrentStep(currentStep + 1);
                             }
                         }}
-                        className="flex-[1.5] py-4 rounded-2xl font-[900] uppercase bg-dark text-white shadow-brutal-sm active:translate-y-1 active:shadow-none transition-all"
+                        className="flex-[1.5] py-4 rounded-2xl font-[900] uppercase bg-dark text-white shadow-sm active:translate-y-1 active:shadow-none transition-all"
                     >
                         {isLast ? 'Complete' : 'Next'}
                     </button>

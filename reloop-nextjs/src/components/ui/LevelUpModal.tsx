@@ -45,7 +45,7 @@ export function LevelUpModal({ isOpen, onClose, newLevel, levelTitle }: LevelUpM
     const perks = LEVEL_PERKS[newLevel] || ['New Rewards Unlocked!'];
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-dark/90 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-dark/90 backdrop-blur-sm w-full max-w-md left-1/2 -translate-x-1/2">
             {/* Confetti */}
             {showConfetti && (
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -64,7 +64,7 @@ export function LevelUpModal({ isOpen, onClose, newLevel, levelTitle }: LevelUpM
             )}
 
             {/* Modal Content */}
-            <div className="relative bg-white dark:bg-dark-surface rounded-[2rem] border-[3px] border-dark dark:border-gray-600 shadow-brutal p-8 mx-4 max-w-sm w-full text-center animate-bounce-in">
+            <div className="relative bg-white dark:bg-dark-surface rounded-[2rem] border border-outline-variant/10 dark:border-gray-600 shadow-[0_2px_10px_rgba(0,0,0,0.02)] p-8 mx-4 max-w-sm w-full text-center animate-bounce-in">
                 {/* Glow Effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-card-yellow/20 to-primary/20 rounded-[2rem] blur-xl -z-10" />
 
@@ -73,14 +73,14 @@ export function LevelUpModal({ isOpen, onClose, newLevel, levelTitle }: LevelUpM
 
                 {/* Level Badge */}
                 <div className="relative inline-block mb-4">
-                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-primary/70 border-4 border-dark dark:border-gray-600 flex items-center justify-center shadow-brutal animate-pulse-glow">
-                        <span className="text-4xl font-black text-dark dark:text-white">{newLevel}</span>
+                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-primary/70 border border-outline-variant/10 dark:border-gray-600 flex items-center justify-center shadow-[0_2px_10px_rgba(0,0,0,0.02)] animate-pulse-glow">
+                        <span className="text-4xl font-extrabold text-dark dark:text-white">{newLevel}</span>
                     </div>
                     <div className="absolute -top-2 -right-2 text-3xl animate-spin-slow">⭐</div>
                 </div>
 
                 {/* Text */}
-                <h2 className="text-3xl font-black text-dark dark:text-white uppercase mb-1">Level Up!</h2>
+                <h2 className="text-3xl font-extrabold text-dark dark:text-white uppercase mb-1">Level Up!</h2>
                 <p className="text-lg font-bold text-primary mb-4">{levelTitle}</p>
 
                 {/* Unlocked Perks */}

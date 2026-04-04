@@ -57,7 +57,7 @@ export default function PrivacyPage() {
             >
                 <motion.div
                     variants={itemVariants}
-                    className="bg-card-green rounded-2xl border-2 border-dark shadow-brutal-sm p-4 flex items-center gap-3"
+                    className="bg-surface-container-low rounded-2xl border border-outline-variant/10 shadow-sm p-4 flex items-center gap-3"
                 >
                     <span className="material-symbols-outlined text-2xl text-dark">verified_user</span>
                     <div>
@@ -70,7 +70,7 @@ export default function PrivacyPage() {
                     <motion.div
                         key={i}
                         variants={itemVariants}
-                        className="bg-white dark:bg-dark-surface rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm p-4"
+                        className="bg-white dark:bg-dark-surface rounded-2xl border border-outline-variant/10 dark:border-gray-600 shadow-sm p-4"
                     >
                         <h3 className="font-bold text-dark dark:text-white text-sm mb-2">{section.title}</h3>
                         <p className="text-xs text-dark/70 dark:text-white/70 leading-relaxed">{section.content}</p>
