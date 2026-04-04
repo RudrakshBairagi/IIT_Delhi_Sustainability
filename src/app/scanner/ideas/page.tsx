@@ -6,10 +6,31 @@ import { motion } from 'framer-motion';
 import ScannerService from '@/lib/scanner-service';
 import { ScanResult } from '@/types';
 
+interface Video {
+    id: string;
+    title: string;
+    channel: string;
+    views: string;
+    thumbnail?: string;
+}
+
+interface Pin {
+    id: string;
+    title: string;
+    image: string;
+    saves: string;
+    link?: string;
+}
+
 export default function ReuseIdeasPage() {
     const router = useRouter();
     const [result, setResult] = useState<ScanResult | null>(null);
     const [activeTab, setActiveTab] = useState<'videos' | 'pins'>('videos');
+    const [playingVideo, setPlayingVideo] = useState<string | null>(null);
+    const [videos, setVideos] = useState<Video[]>([]);
+    const [pins, setPins] = useState<Pin[]>([]);
+    const [isLoadingVideos, setIsLoadingVideos] = useState(false);
+    const [isLoadingPins, setIsLoadingPins] = useState(false);
 
     useEffect(() => {
         const storedResult = ScannerService.getStoredResult();
@@ -18,6 +39,43 @@ export default function ReuseIdeasPage() {
             return;
         }
         setResult(storedResult);
+
+        const query = storedResult.item.objectName + ' upcycle diy';
+
+        // Fetch videos
+        const fetchVideos = async () => {
+            setIsLoadingVideos(true);
+            try {
+                const response = await fetch(`/api/youtube?query=${encodeURIComponent(query)}`);
+                const data = await response.json();
+                if (data.videos) {
+                    setVideos(data.videos);
+                }
+            } catch (error) {
+                console.error('Failed to fetch videos', error);
+            } finally {
+                setIsLoadingVideos(false);
+            }
+        };
+
+        // Fetch pins
+        const fetchPins = async () => {
+            setIsLoadingPins(true);
+            try {
+                const response = await fetch(`/api/pins?query=${encodeURIComponent(storedResult.item.objectName)}`);
+                const data = await response.json();
+                if (data.pins) {
+                    setPins(data.pins);
+                }
+            } catch (error) {
+                console.error('Failed to fetch pins', error);
+            } finally {
+                setIsLoadingPins(false);
+            }
+        };
+
+        fetchVideos();
+        fetchPins();
     }, [router]);
 
     if (!result) {
@@ -29,33 +87,6 @@ export default function ReuseIdeasPage() {
     }
 
     const { item } = result;
-
-    const dummyVideos = [
-        {
-            title: 'How To Make A Shower Pouf From An Old Towel',
-            author: 'EcoCrafter',
-            duration: '12:45',
-            img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDCMepOhj-7gO614m0ovfW9ye2SwEXOPNcl3t4cj30MXSaoTsJ0pTQed0QHbxFgNoPyjYipmuKdwU2MN0E4NQrK1wQ82AdHdooPukUHnvUGIRXcPcocpSZ7ZA92QDLX9nt6EY_k67A7e-FYYYN7kJSpxiQAWIMtKMSQkiNgDqTZFtT-LyPUX6uzLQi071yO3nUrUf33EoxQ5t69iRmgrCaBbfesA5vawVtYDw3SPlvTcFXNgAA13nlmxkuPsM37PRQunQrIKwR0O9A'
-        },
-        {
-            title: 'DIY Recycled Towel Bathmat',
-            author: 'SustainableLiving',
-            duration: '08:20',
-            img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAZlkee_rOqPhevKo_auP8Y7OwWG0MznsI5HFvKAeVg7Eu6VMTodOpAIrG18Gh7GZT05Br18AOVWGFdrx6WpDPYBtKHSsuxd5L_QdwkVvp0LWWeqIIvWPscWSyE-xSjUhyHys5CIZa8mMJc48EGueHkfimbvsMBZd_UlxtvpsV9MymAu3fG2V1w23HiFWMAvnUV9vFX4s3kjMASFf4dhIruQD_0kNhPYrJqowcLYA4MxcthztdqxeCOPXC8-FPID4BBPO_C42Oxe4U'
-        },
-        {
-            title: 'Mini Towel Tote Bag Tutorial',
-            author: 'UpcycleStudio',
-            duration: '05:15',
-            img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCEYu6F-CRpPYlyQXJbGImJjwurygjox46LorKjs0ap_sUKQahOxEUQQK8sHRvjmu_DLk_4EsvJLizKcenKcogM6xApIC5ivPCVF_RsMf6uxkrxRfkeKPO_PtdzvBZLXO3H347Dx7o_kLNe1K-o8fmso-qwIzNbQhviobZRdx80Q0Pf99GvvxKA0PTKPzQx2gwuDkX7wpYmbDojnpiBn6n4W_2LH2YY3kWhtBYvHPNTtqEdupk7DaFPeGRD3Fx-S4eoqpZx_29CyHc'
-        },
-        {
-            title: '#upcycle of my old towel to #mat',
-            author: 'ReUseIt',
-            duration: '15:30',
-            img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuANSBoeZoUfJcOP9vLYFPCIq91qrdrRT8JDKI2rHE4Lsod_0jB59LRNpCxc9PhrRB567zEopvovNhCxquyz5oxQeTcCu-lOb_Y6XA0FVzIGa69YhYZASeG-xDtM0PoyXy66aVnNC5gfzdRYd0sNAZZhwT2sCJdL56mV4IXLKUhTG3jURoDRQKdxrv0RfiqSTIFCOfPuqh87a0tf1ckGPdSKVC_PEX1Wy1cDIccbiRUgKVkjLuP3Babjc5v5WfJfj5y-BkcoiuWwEA4'
-        }
-    ];
 
     return (
         <div className="bg-[#f1f8f6] font-body text-[#29302f] antialiased min-h-screen pb-32">
@@ -72,7 +103,7 @@ export default function ReuseIdeasPage() {
                         </p>
                     </div>
                 </div>
-                <div className="text-2xl font-extrabold text-[#29664c] tracking-tighter uppercase line-clamp-1 truncate max-w-[100px]">RELOOP</div>
+                <div className="text-2xl font-extrabold text-[#29664c] tracking-tighter uppercase">RELOOP</div>
             </header>
 
             <main className="pt-24 px-6 space-y-8 max-w-2xl mx-auto">
@@ -105,9 +136,9 @@ export default function ReuseIdeasPage() {
                             <span className="material-symbols-outlined text-2xl">help_outline</span>
                         </div>
                         <div>
-                            <h2 className="text-xl font-extrabold tracking-tight text-[#29302f]">Can't do DIY?</h2>
+                            <h2 className="text-xl font-extrabold tracking-tight text-[#29302f]">Can&apos;t do DIY?</h2>
                             <p className="text-[#565d5c] text-sm mt-1 leading-relaxed">
-                                Don't let your old {item.objectName.toLowerCase()}s go to waste. Trade them for credits or learn from our community experts.
+                                Don&apos;t let your old {item.objectName.toLowerCase()}s go to waste. Trade them for credits or learn from our community experts.
                             </p>
                         </div>
                     </div>
@@ -130,44 +161,122 @@ export default function ReuseIdeasPage() {
                     </div>
                 </motion.section>
 
-                {/* Project Grid */}
-                <motion.section 
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
-                    className="space-y-6"
-                >
-                    <h3 className="text-sm font-label font-extrabold tracking-widest uppercase text-[#565d5c] px-1">Top Community Tutorials</h3>
-                    
-                    <div className="grid grid-cols-2 gap-4">
-                        {dummyVideos.map((video, idx) => (
-                            <div key={idx} className="bg-[#ffffff] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group flex flex-col cursor-pointer" onClick={() => window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(item.objectName + ' upcycle')}`, '_blank')}>
-                                <div className="relative aspect-[4/3] overflow-hidden">
-                                    <img 
-                                        src={video.img} 
-                                        alt={video.title} 
-                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                                    />
-                                    <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <div className="bg-white/20 backdrop-blur-md p-2 rounded-full">
-                                            <span className="material-symbols-outlined text-white text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>play_arrow</span>
+                {/* Content based on active tab */}
+                {activeTab === 'videos' ? (
+                    <motion.section 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 }}
+                        key="videos"
+                        className="space-y-6"
+                    >
+                        <h3 className="text-sm font-label font-extrabold tracking-widest uppercase text-[#565d5c] px-1">Top Community Tutorials</h3>
+                        
+                        {isLoadingVideos ? (
+                            <div className="grid grid-cols-2 gap-4">
+                                {[1, 2, 3, 4, 5, 6].map((i) => (
+                                    <div key={i} className="bg-white/50 rounded-xl h-48 animate-pulse" />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-2 gap-4">
+                                {videos.map((video) => (
+                                    <div 
+                                        key={video.id} 
+                                        className="bg-[#ffffff] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group flex flex-col cursor-pointer"
+                                    >
+                                        <div 
+                                            className="relative aspect-[4/3] overflow-hidden"
+                                            onClick={() => setPlayingVideo(playingVideo === video.id ? null : video.id)}
+                                        >
+                                            {playingVideo === video.id ? (
+                                                <iframe
+                                                    src={`https://www.youtube.com/embed/${video.id}?autoplay=1`}
+                                                    title={video.title}
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                    allowFullScreen
+                                                    className="absolute inset-0 w-full h-full"
+                                                />
+                                            ) : (
+                                                <>
+                                                    <img 
+                                                        src={video.thumbnail || `https://img.youtube.com/vi/${video.id}/mqdefault.jpg`}
+                                                        alt={video.title}
+                                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                                                    />
+                                                    <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <div className="bg-white/20 backdrop-blur-md p-2 rounded-full">
+                                                            <span className="material-symbols-outlined text-white text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>play_arrow</span>
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            )}
+                                        </div>
+                                        <div className="p-3 space-y-1 flex-1 flex flex-col justify-between">
+                                            <h4 className="font-extrabold text-[#29302f] leading-tight text-xs line-clamp-2">{video.title}</h4>
+                                            <div className="flex items-center justify-between mt-1">
+                                                <span className="text-[9px] text-[#565d5c] font-medium truncate">{video.channel} • {video.views}</span>
+                                                <span className="material-symbols-outlined text-[#29664c] text-base cursor-pointer hover:scale-110 transition-transform">favorite</span>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-tighter">
-                                        {video.duration}
-                                    </div>
-                                </div>
-                                <div className="p-3 space-y-1 flex-1 flex flex-col justify-between">
-                                    <h4 className="font-extrabold text-[#29302f] leading-tight text-xs line-clamp-2">{video.title}</h4>
-                                    <div className="flex items-center justify-between mt-1">
-                                        <span className="text-[9px] text-[#565d5c] font-medium truncate">{video.author}</span>
-                                        <span className="material-symbols-outlined text-[#29664c] text-base cursor-pointer hover:scale-110 transition-transform">favorite</span>
-                                    </div>
-                                </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
-                </motion.section>
+                        )}
+
+                        {/* Search More on YouTube */}
+                        <button
+                            onClick={() => window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(item.objectName + ' upcycle DIY')}`, '_blank')}
+                            className="w-full py-4 bg-[#29664c] text-[#c8ffe0] rounded-xl font-extrabold uppercase tracking-widest text-xs transition-all active:scale-[0.98] shadow-sm hover:bg-[#1b5a40]"
+                        >
+                            ▶ More on YouTube
+                        </button>
+                    </motion.section>
+                ) : (
+                    <motion.section 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 }}
+                        key="pins"
+                        className="space-y-6"
+                    >
+                        <h3 className="text-sm font-label font-extrabold tracking-widest uppercase text-[#565d5c] px-1">Pinterest Inspiration</h3>
+
+                        {isLoadingPins ? (
+                            <div className="columns-2 gap-4 space-y-4">
+                                {[1, 2, 3, 4, 5, 6].map((i) => (
+                                    <div key={i} className="break-inside-avoid bg-white/50 rounded-xl h-48 animate-pulse mb-4" />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="columns-2 gap-4 space-y-4">
+                                {pins.map((pin) => (
+                                    <div
+                                        key={pin.id}
+                                        className="break-inside-avoid bg-[#ffffff] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer group mb-4"
+                                        onClick={() => window.open(pin.link || `https://www.pinterest.com/search/pins/?q=${encodeURIComponent(pin.title)}`, '_blank')}
+                                    >
+                                        <div className="overflow-hidden">
+                                            <img src={pin.image} alt={pin.title} className="w-full object-cover group-hover:scale-105 transition-transform duration-500" style={{ minHeight: '100px' }} />
+                                        </div>
+                                        <div className="p-3">
+                                            <h4 className="font-extrabold text-[#29302f] text-xs leading-tight line-clamp-2">{pin.title}</h4>
+                                            <p className="text-[10px] text-[#29664c] mt-1 font-bold">📌 {pin.saves} saves</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Search More on Pinterest */}
+                        <button
+                            onClick={() => window.open(`https://www.pinterest.com/search/pins/?q=${encodeURIComponent(item.objectName + ' upcycle DIY')}`, '_blank')}
+                            className="w-full py-4 bg-[#29664c] text-[#c8ffe0] rounded-xl font-extrabold uppercase tracking-widest text-xs transition-all active:scale-[0.98] shadow-sm hover:bg-[#1b5a40]"
+                        >
+                            📌 More on Pinterest
+                        </button>
+                    </motion.section>
+                )}
             </main>
         </div>
     );
