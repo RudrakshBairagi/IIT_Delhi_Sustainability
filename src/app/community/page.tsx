@@ -5,89 +5,51 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import VideoModal from '@/components/ui/VideoModal';
 
-// Trending creators data with real users
 const trendingCreators = [
-    {
-        id: '4',
-        username: '@Ankush',
-        image: '/images/ankush.png',
-        featured: true,
-    },
-    {
-        id: '1',
-        username: '@Unnati',
-        image: '/images/unnati.png',
-        featured: false,
-    },
-    {
-        id: '2',
-        username: '@Uransh',
-        image: '/images/uransh.png',
-        featured: false,
-    },
-    {
-        id: '3',
-        username: '@Rudraksh',
-        image: '/images/rudraksh.png',
-        featured: false,
-    },
+    { id: '1', username: '@ANKUSH', image: '/images/ankush.png', border: 'border-[#29664c]' },
+    { id: '2', username: '@UNNATI', image: '/images/unnati.png', border: 'border-[#006946]' },
+    { id: '3', username: '@URANSH', image: '/images/uransh.png', border: 'border-[#29664c]' },
+    { id: '4', username: '@RUDRAKSH', image: '/images/rudraksh.png', border: 'border-[#006946]' },
 ];
 
 const projects = [
     {
         id: 'new-pista',
-        tutorialId: 'tutorial-pista',
-        title: 'Diy bottle painting - Pista shell tulip 🧿🌷',
-        author: '@Ankush_Makes',
+        title: 'DIY BOTTLE PAINTING',
+        author: '@ANKUSH',
         authorImage: '/images/ankush.png',
         image: '/videos/thumb-pista.png',
         time: 'Just now',
-        tags: [{ name: '#Tulip', color: 'bg-pink-100' }, { name: '#Upcycle', color: 'bg-green-100' }],
-        description: 'Pista shell tulip bottle painting craft tutorial.',
-        link: '#',
         videoId: 'pista-tulip',
         videoSrc: '/videos/pista-shell-tulip.mp4'
     },
     {
         id: '4',
-        tutorialId: 'tutorial-4',
-        title: 'Cardboard Bangle Box',
-        author: '@Ankush_Makes',
+        title: 'CARDBOARD BANGLE BOX',
+        author: '@ANKUSH',
         authorImage: '/images/ankush.png',
         image: '/videos/thumb-2.png',
-        time: '2h ago',
-        tags: [{ name: '#Storage', color: 'bg-indigo-100' }, { name: '#Cardboard', color: 'bg-red-100' }],
-        description: 'Create a segmented jewelry organizer using waste cardboard boxes. 📦💍',
-        link: 'https://www.instagram.com/reel/DTc9Um6EUJO/',
+        time: '#Tulip',
         videoId: 'DTc9Um6EUJO',
         videoSrc: '/videos/tutorial-2.mp4'
     },
-
     {
         id: '2',
-        tutorialId: 'tutorial-2',
-        title: 'Aesthetic Minimalist Crafts',
-        author: '@Uransh_Designs',
+        title: 'PAPER STRIP LAMP',
+        author: '@URANSH',
         authorImage: '/images/uransh.png',
         image: '/videos/thumb-2.png',
-        time: '1d ago',
-        tags: [{ name: '#Decor', color: 'bg-pink-100' }, { name: '#Paper', color: 'bg-blue-100' }],
-        description: 'Simple and clean DIY paper craft ideas for modern desk decor. ✂️�',
-        link: 'https://www.instagram.com/p/DLwADuaRPq4/',
+        time: '2h ago',
         videoId: 'DLwADuaRPq4',
         videoSrc: '/videos/tutorial-2.mp4'
     },
     {
         id: '3',
-        tutorialId: 'tutorial-3',
-        title: 'Family DIY Studio Day',
-        author: '@Rudraksh_Art',
+        title: 'PLASTIC CAP MOSAIC',
+        author: '@RUDRAKSH',
         authorImage: '/images/rudraksh.png',
         image: '/videos/thumb-1.png',
-        time: '2d ago',
-        tags: [{ name: '#Family', color: 'bg-orange-100' }, { name: '#Kids', color: 'bg-yellow-100' }],
-        description: 'Fun crafting activities for kids and family at a creative 2D studio! 🎨👨‍�‍�',
-        link: 'https://www.instagram.com/reel/DSxN0sOgRNd/',
+        time: '#Plastic',
         videoId: 'DSxN0sOgRNd',
         videoSrc: '/videos/tutorial-1.mp4'
     },
@@ -95,198 +57,135 @@ const projects = [
 
 const containerVariants = {
     hidden: { opacity: 0 },
-    visible: {
-        opacity: 1,
-        transition: { staggerChildren: 0.1 }
-    }
+    visible: { opacity: 1, transition: { staggerChildren: 0.08 } }
 };
 
 const itemVariants = {
     hidden: { y: 20, opacity: 0 },
-    visible: {
-        y: 0,
-        opacity: 1,
-        transition: { type: 'spring' as const, stiffness: 300, damping: 24 }
-    }
+    visible: { y: 0, opacity: 1, transition: { type: 'spring' as const, stiffness: 300, damping: 24 } }
 };
 
 export default function CommunityPage() {
-    const [selectedVideo, setSelectedVideo] = useState<{ videoId?: string, videoSrc?: string } | null>(null);
+    const [selectedVideo, setSelectedVideo] = useState<{ videoId?: string; videoSrc?: string } | null>(null);
 
     return (
-        <div className="min-h-screen bg-white dark:bg-dark-bg pb-32 relative">
+        <div className="min-h-screen bg-[#f1f8f6] text-[#29302f] pb-32">
             <VideoModal
                 isOpen={!!selectedVideo}
                 onClose={() => setSelectedVideo(null)}
                 videoId={selectedVideo?.videoId}
                 videoSrc={selectedVideo?.videoSrc}
             />
-            {/* ... (rest of the component) */}
 
-            {/* Dot Grid Background */}
-            <div
-                className="fixed inset-0 pointer-events-none z-0 opacity-40 dark:opacity-20"
-                style={{
-                    backgroundImage: 'radial-gradient(#d1d5db 1px, transparent 1px)',
-                    backgroundSize: '24px 24px'
-                }}
-            />
+            {/* Header */}
+            <header className="w-full sticky top-0 z-50 bg-[#f9f6f1]/80 backdrop-blur-xl shadow-[0_40px_64px_-10px_rgba(41,48,47,0.06)]">
+                <div className="flex justify-between items-center px-6 py-4 w-full">
+                    <div className="flex items-center gap-2">
+                        <span className="material-symbols-outlined text-[#29664c]">eco</span>
+                        <h1 className="text-2xl font-black text-[#29664c] uppercase tracking-widest font-['Plus_Jakarta_Sans']">RELOOP</h1>
+                    </div>
+                    <div className="flex items-center gap-2 bg-[#b9f9d6]/40 px-4 py-2 rounded-full cursor-pointer active:scale-95 duration-200">
+                        <span className="material-symbols-outlined text-[#29664c] text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>payments</span>
+                        <span className="text-[#29664c] font-bold text-sm">1,250 Coins</span>
+                    </div>
+                </div>
+                <div className="bg-[#e5e1da] h-px" />
+            </header>
 
-            <div className="relative z-10">
-                {/* Header */}
-                <header className="sticky top-0 z-50 bg-white/90 dark:bg-dark-bg/90 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
-                    <div className="flex items-center justify-between px-4 py-3">
-                        <div className="flex items-center gap-3">
-                            <Link
-                                href="/"
-                                className="flex items-center justify-center w-10 h-10 bg-[#fde047] border-2 border-dark rounded-lg shadow-brutal-sm active:translate-y-[2px] active:translate-x-[2px] active:shadow-none transition-all"
-                            >
-                                <span className="material-symbols-outlined text-dark">arrow_back</span>
-                            </Link>
-                            <h1 className="text-2xl font-extrabold tracking-tight text-dark dark:text-white italic">DIY HUB</h1>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <button className="flex items-center justify-center w-10 h-10 bg-white dark:bg-dark-surface border-2 border-dark dark:border-gray-600 rounded-full shadow-brutal-sm active:translate-y-[2px] active:translate-x-[2px] active:shadow-none transition-all relative">
-                                <span className="material-symbols-outlined text-dark dark:text-white" style={{ fontVariationSettings: "'FILL' 1" }}>notifications</span>
-                                <span className="absolute top-0 right-0 w-3 h-3 bg-primary border border-dark rounded-full" />
+            <main className="px-6 pt-6 space-y-10">
+                {/* Hero: Scan to DIY */}
+                <Link href="/scanner">
+                    <section className="relative overflow-hidden rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between shadow-[0_40px_64px_-10px_rgba(41,48,47,0.12)] bg-[#29664c] cursor-pointer active:scale-[0.98] transition-transform">
+                        <div className="z-10 space-y-4 text-center md:text-left">
+                            <div>
+                                <h2 className="text-4xl font-extrabold tracking-tighter uppercase text-white">SCAN TO DIY!</h2>
+                                <p className="font-medium text-lg text-white/90">Get instant upcycling ideas for your waste.</p>
+                            </div>
+                            <button className="bg-[#b9f9d6] text-[#246147] px-8 py-3 rounded-xl font-bold flex items-center gap-2 mx-auto md:mx-0 active:scale-95 transition-transform">
+                                <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>photo_camera</span>
+                                SCAN NOW
                             </button>
                         </div>
-                    </div>
-                </header>
-
-                {/* Scan & Earn - Moved from Home */}
-                <div className="px-4 pt-4">
-                    <Link href="/scanner" className="block">
-                        <div className="relative group">
-                            <div className="absolute inset-0 bg-dark rounded-2xl translate-x-1 translate-y-1"></div>
-                            <div className="relative bg-gradient-to-br from-primary via-green-400 to-emerald-500 rounded-2xl border-4 border-dark overflow-hidden transition-all group-hover:translate-x-0.5 group-hover:translate-y-0.5">
-                                <div className="p-4 flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-12 h-12 bg-dark rounded-xl flex items-center justify-center">
-                                            <span className="material-symbols-outlined text-white text-2xl">photo_camera</span>
-                                        </div>
-                                        <div>
-                                            <p className="font-black text-dark uppercase tracking-tight text-base leading-tight">Scan to<br />DIY!</p>
-                                            <p className="text-[10px] font-bold text-dark/60 mt-0.5">Get upcycling ideas</p>
-                                        </div>
-                                    </div>
-                                    <div className="bg-dark text-white rounded-xl px-4 py-2.5 flex items-center gap-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]">
-                                        <span className="material-symbols-outlined text-lg">photo_camera</span>
-                                        <span className="font-black text-xs uppercase tracking-wide">Scan</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </Link>
-                </div>
+                    </section>
+                </Link>
 
                 {/* Trending Creators */}
-                <section className="mt-6 pl-4">
-                    <div className="flex items-center gap-2 mb-4">
-                        <span className="material-symbols-outlined text-dark dark:text-white">local_fire_department</span>
-                        <h2 className="text-lg font-extrabold uppercase tracking-wide text-dark dark:text-white">Trending Creators</h2>
+                <section className="space-y-4">
+                    <div className="flex items-center justify-between">
+                        <h3 className="text-xs font-bold uppercase tracking-widest text-[#29302f]/60">Trending Creators</h3>
+                        <span className="text-[#29664c] font-bold text-sm cursor-pointer hover:underline">View All</span>
                     </div>
-                    <div className="flex overflow-x-auto gap-4 pb-4 pr-4 no-scrollbar">
+                    <div className="flex gap-6 overflow-x-auto pb-2" style={{ scrollbarWidth: 'none' }}>
                         {trendingCreators.map((creator) => (
-                            <div key={creator.id} className="flex flex-col items-center gap-2 min-w-[80px] cursor-pointer group">
-                                <div className="w-16 h-16 rounded-full border-2 border-dark overflow-hidden bg-white shadow-brutal-sm group-active:shadow-none group-active:translate-y-[2px] group-active:translate-x-[2px] transition-all">
+                            <div key={creator.id} className="flex flex-col items-center gap-3 shrink-0 group cursor-pointer">
+                                <div className={`w-20 h-20 rounded-full p-1 border-2 ${creator.border} group-hover:scale-105 transition-transform`}>
                                     <img
                                         src={creator.image}
                                         alt={creator.username}
-                                        className="w-full h-full object-cover"
+                                        className="w-full h-full object-cover rounded-full"
                                     />
                                 </div>
-                                <span className={`text-[10px] font-bold uppercase text-center px-2 py-0.5 rounded-md ${creator.featured
-                                    ? 'bg-dark text-white'
-                                    : 'border border-dark bg-white text-dark dark:bg-dark-surface dark:text-white dark:border-gray-600'
-                                    }`}>
-                                    {creator.username}
-                                </span>
+                                <span className="text-[10px] font-bold uppercase tracking-wider">{creator.username}</span>
                             </div>
                         ))}
                     </div>
                 </section>
 
-                {/* Main Feed */}
-                <motion.main
-                    className="flex flex-col gap-8 px-4 mt-4"
-                    initial="hidden"
-                    animate="visible"
-                    variants={containerVariants}
-                >
+                {/* Fresh Projects Grid */}
+                <section className="space-y-4">
                     <div className="flex items-center justify-between">
-                        <h1 className="text-3xl font-black italic tracking-tighter uppercase text-dark dark:text-white">Fresh Projects</h1>
-                        <Link href="/tutorials" className="text-sm font-bold underline decoration-2 decoration-primary underline-offset-4 text-dark dark:text-white">View All</Link>
+                        <h3 className="text-xs font-bold uppercase tracking-widest text-[#29302f]/60">Fresh Projects</h3>
+                        <Link href="/tutorials" className="text-[#29664c] font-bold text-sm hover:underline">View All</Link>
                     </div>
-
-                    {/* Project Cards - 2 Column Grid */}
-                    <div className="grid grid-cols-2 gap-3">
+                    <motion.div
+                        className="grid grid-cols-2 gap-4"
+                        initial="hidden"
+                        animate="visible"
+                        variants={containerVariants}
+                    >
                         {projects.map((project) => (
-                            <div
+                            <motion.article
                                 key={project.id}
-                                onClick={(e) => {
+                                variants={itemVariants}
+                                className="bg-white rounded-2xl overflow-hidden flex flex-col shadow-sm group cursor-pointer"
+                                onClick={() => {
                                     if (project.videoSrc || project.videoId) {
-                                        e.preventDefault();
                                         setSelectedVideo({ videoId: project.videoId, videoSrc: project.videoSrc });
                                     }
                                 }}
                             >
-                                <motion.article
-                                    variants={itemVariants}
-                                    className="bg-white dark:bg-dark-surface border-2 border-dark dark:border-gray-600 rounded-2xl shadow-brutal overflow-hidden flex flex-col group cursor-pointer hover:shadow-brutal-lg transition-shadow"
-                                >
-                                    {/* Image */}
-                                    <div className="relative aspect-square w-full border-b-2 border-dark dark:border-gray-600 overflow-hidden">
-                                        <img
-                                            src={project.image}
-                                            alt={project.title}
-                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                        />
-                                        <div className="absolute top-2 right-2 bg-white border border-dark px-2 py-0.5 rounded-full text-[10px] font-bold">
-                                            {project.time}
-                                        </div>
-                                        {/* Tags overlay */}
-                                        <div className="absolute bottom-2 left-2 flex flex-wrap gap-1">
-                                            {project.tags.slice(0, 1).map((tag) => (
-                                                <span key={tag.name} className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${tag.color} text-dark border border-dark`}>
-                                                    {tag.name}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    {/* Content */}
-                                    <div className="p-3 flex flex-col gap-2">
-                                        <h3 className="text-sm font-extrabold uppercase leading-tight tracking-tight text-dark dark:text-white line-clamp-2">
-                                            {project.title}
-                                        </h3>
-
-                                        {/* User */}
+                                <div className="relative h-48 overflow-hidden">
+                                    <img
+                                        src={project.image}
+                                        alt={project.title}
+                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                    />
+                                    <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter text-[#29664c]">
+                                        {project.time}
+                                    </span>
+                                </div>
+                                <div className="p-4 flex-1 flex flex-col justify-between">
+                                    <div className="space-y-3">
+                                        <h4 className="font-bold text-sm leading-tight">{project.title}</h4>
                                         <div className="flex items-center gap-2">
-                                            <div className="w-6 h-6 rounded-full border border-dark overflow-hidden bg-gray-200">
-                                                <img src={project.authorImage} alt={project.author} className="w-full h-full object-cover" />
-                                            </div>
-                                            <span className="text-xs font-medium text-gray-600 dark:text-gray-400 truncate">{project.author}</span>
-                                        </div>
-
-                                        {/* View Tutorial CTA */}
-                                        <div className="flex items-center justify-center gap-1 h-8 bg-primary text-dark font-bold text-xs border-2 border-dark rounded-lg mt-1">
-                                            <span className="material-symbols-outlined text-[16px]">play_circle</span>
-                                            View Tutorial
+                                            <img
+                                                src={project.authorImage}
+                                                alt={project.author}
+                                                className="w-5 h-5 rounded-full object-cover"
+                                            />
+                                            <span className="text-[10px] font-bold text-[#29302f]/70">{project.author}</span>
                                         </div>
                                     </div>
-                                </motion.article>
-                            </div>
+                                    <button className="mt-4 w-full bg-[#e1eae8] py-2 rounded-xl flex items-center justify-center gap-2 text-xs font-bold text-[#29664c] active:bg-[#b9f9d6] transition-colors">
+                                        <span className="material-symbols-outlined text-sm">play_circle</span>
+                                        View Tutorial
+                                    </button>
+                                </div>
+                            </motion.article>
                         ))}
-                    </div>
-
-                </motion.main>
-            </div>
-
-            {/* Floating Add Button */}
-            <button className="fixed bottom-24 right-4 w-16 h-16 bg-[#fde047] neo-border rounded-full shadow-brutal flex items-center justify-center z-40 active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all">
-                <span className="material-symbols-outlined text-dark text-4xl">add</span>
-            </button>
+                    </motion.div>
+                </section>
+            </main>
         </div>
     );
 }
