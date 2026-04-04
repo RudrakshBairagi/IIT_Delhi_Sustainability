@@ -42,7 +42,10 @@ export default function MarketplacePage() {
                     if (mounted) setListings(mockData);
                 } else {
                     const data = await DBService.getListings();
-                    if (mounted) setListings(data);
+                    const mockData = DemoManager.getMockListings();
+                    const realIds = new Set(data.map(d => d.id));
+                    const uniqueMockData = mockData.filter(m => !realIds.has(m.id));
+                    if (mounted) setListings([...data, ...uniqueMockData]);
                 }
             } catch (error) {
                 console.error("Failed to load listings", error);
@@ -66,7 +69,10 @@ export default function MarketplacePage() {
             pollInterval = setInterval(() => {
                 if (mounted) {
                     DBService.getListings().then(data => {
-                        if (mounted) setListings(data);
+                        const mockData = DemoManager.getMockListings();
+                        const realIds = new Set(data.map(d => d.id));
+                        const uniqueMockData = mockData.filter(m => !realIds.has(m.id));
+                        if (mounted) setListings([...data, ...uniqueMockData]);
                     });
                 }
             }, 5000);
