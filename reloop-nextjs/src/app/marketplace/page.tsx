@@ -93,9 +93,9 @@ export default function MarketplacePage() {
             {/* TopAppBar */}
             <PageHeader title="MARKET HUB" />
 
-            <main className="pt-16 px-6 max-w-5xl mx-auto">
+            <main className="pt-[60px] px-6 max-w-5xl mx-auto">
                 {/* Search Section */}
-                <section className="mb-4">
+                <section className="mb-3">
                     <div className="relative group">
                         <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
                             <span className="material-symbols-outlined text-outline">search</span>
