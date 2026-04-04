@@ -5,24 +5,15 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { ReloopBuzz } from '@/components/home/ReloopBuzz';
 
 import { useAuth } from '@/lib/contexts/AuthContext';
-import { StreakBadge } from '@/components/ui/StreakBadge';
-import { StoriesBar } from '@/components/ui/StoriesBar';
-import { User } from '@/types';
-import DemoManager from '@/lib/demo-manager';
 import { DBService } from '@/lib/firebase/db';
-import { formatRupeeValue } from '@/lib/eco-coins';
 
-// Animation variants
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
+    transition: { staggerChildren: 0.1 }
   }
 };
 
@@ -38,15 +29,8 @@ const itemVariants = {
 export default function HomePage() {
   const { user, isLoading, isDemo } = useAuth();
   const router = useRouter();
-  const [streak, setStreak] = useState(1);
   const [userRank, setUserRank] = useState(12); // Default fallback
-  const [totalUsers, setTotalUsers] = useState(50);
-  const [percentile, setPercentile] = useState(75);
-  const [rankChange, setRankChange] = useState(0);
-
-  useEffect(() => {
-    setStreak(user?.badges?.length || 1);
-  }, [user]);
+  const [percentile, setPercentile] = useState(5); // Default top 5%
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -54,32 +38,19 @@ export default function HomePage() {
     }
   }, [user, isLoading, router]);
 
-  // Fetch user rank from Firebase
   useEffect(() => {
     const fetchRank = async () => {
       if (isDemo || !user?.uid) {
-        // Demo mode fallback
         setUserRank(12);
-        setTotalUsers(50);
-        setPercentile(75);
+        setPercentile(5);
         return;
       }
 
       try {
         const rankData = await DBService.getUserRank(user.uid);
         if (rankData) {
-          const prevRank = typeof window !== 'undefined'
-            ? parseInt(localStorage.getItem('reloop_prev_rank') || String(rankData.rank))
-            : rankData.rank;
-
           setUserRank(rankData.rank);
-          setTotalUsers(rankData.total);
-          setPercentile(rankData.percentile);
-          setRankChange(prevRank - rankData.rank);
-
-          if (typeof window !== 'undefined') {
-            localStorage.setItem('reloop_prev_rank', rankData.rank.toString());
-          }
+          setPercentile(100 - rankData.percentile); // Top X%
         }
       } catch (error) {
         console.error('Error fetching user rank:', error);
@@ -91,7 +62,7 @@ export default function HomePage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-warm-sand flex items-center justify-center">
         <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     );
@@ -100,167 +71,186 @@ export default function HomePage() {
   if (!user) return null;
 
   return (
-    <motion.div
-      className="min-h-screen bg-gradient-to-b from-sky-200 to-white dark:from-dark-bg dark:to-dark-surface pb-28"
+    <motion.div 
+      className="bg-warm-sand text-on-surface min-h-screen pb-32 font-['Plus_Jakarta_Sans']"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
     >
-      {/* Header - Compact */}
-      <motion.header className="sticky top-0 z-40 bg-sky-200/95 dark:bg-dark-bg/95 backdrop-blur-md px-5 py-3 border-b-2 border-transparent" variants={itemVariants}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-black uppercase italic tracking-tighter text-dark dark:text-white">ReLoop</h1>
-            <div className="flex items-center gap-2 bg-white dark:bg-dark-surface neo-border rounded-full px-3 py-1 shadow-brutal-sm">
-              <StreakBadge streak={streak} />
-              <div className="w-px h-3 bg-gray-300 dark:bg-gray-600" />
-              <span className="text-xs font-black text-primary">⚡ {user.xp}</span>
-              <div className="w-px h-3 bg-gray-300 dark:bg-gray-600" />
-              <span className="text-xs font-black text-amber-500">🪙 {user.coins} ({formatRupeeValue(user.coins)})</span>
-            </div>
-          </div>
-          <Link href="/profile" className="relative group">
-            <div className="w-11 h-11 rounded-full neo-border overflow-hidden shadow-brutal-sm bg-gray-200 dark:bg-gray-700 group-hover:scale-105 transition-transform relative">
-              <Image
-                src={user.avatar || 'https://ui-avatars.com/api/?name=User'}
-                alt="Profile"
-                fill
-                className="object-cover"
-              />
-            </div>
-            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-primary rounded-full border-2 border-dark flex items-center justify-center z-10">
-              <span className="text-[8px] font-black text-dark">{user.level}</span>
-            </div>
-          </Link>
+      {/* TopAppBar */}
+      <motion.header variants={itemVariants} className="w-full sticky top-0 z-50 bg-[#f1f8f6]/80 backdrop-blur-xl flex justify-between items-center px-6 py-4 shadow-[0_40px_64px_-10px_rgba(41,48,47,0.06)]">
+        <div className="flex items-center gap-3">
+          <span className="material-symbols-outlined text-[#29664c]" style={{ fontVariationSettings: "'FILL' 1" }}>eco</span>
+          <h1 className="text-2xl font-extrabold tracking-tight text-[#29664c]">RELOOP</h1>
+        </div>
+        <div className="bg-primary-container px-4 py-1.5 rounded-full flex items-center gap-2 hover:bg-surface-container-low transition-colors duration-300 cursor-pointer">
+          <span className="text-[#29664c] font-bold text-sm">{user.coins} Coins</span>
+          <span className="material-symbols-outlined text-xs">monetization_on</span>
         </div>
       </motion.header>
 
-      <div className="px-5 pb-20 space-y-4">
-        {/* Success Stories Bar - Compact */}
-        <motion.div variants={itemVariants}>
-          <p className="font-extrabold text-dark dark:text-white text-xs mb-1 ml-1">Community Stories</p>
-          <StoriesBar />
-        </motion.div>
+      <main className="px-6 py-8 space-y-10">
+        {/* Stories Section */}
+        <motion.section variants={itemVariants} className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-extrabold tracking-tight uppercase text-primary">COMMUNITY STORIES</h2>
+            <span className="text-xs font-bold text-outline uppercase tracking-widest">View All</span>
+          </div>
+          <div className="flex gap-4 overflow-x-auto no-scrollbar py-2">
+            <div className="flex flex-col items-center gap-2 flex-shrink-0 cursor-pointer">
+              <div className="p-1 rounded-full border-2 border-terracotta">
+                <img alt="Your profile" className="w-16 h-16 rounded-full object-cover" src={user.avatar || ("https://ui-avatars.com/api/?name=" + (user.name || 'User'))} />
+              </div>
+              <span className="text-[10px] font-bold uppercase tracking-tighter">Your Story</span>
+            </div>
+            {/* Mock Stories */}
+            {[
+              { name: 'Marcus', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC9OHkGtOCLS2lRmMUoiTD1oMerBkIPtgXTL-n5dogfoCYeafF8pF8_v5bSFYTbtNOE8RH9g3ahdG2VC8PXjnorr62U6E60A5Tko7p5Sl82aPANJS6lQ0b0Eysz5rOZo3Fl_vwTDx7LQbi763F0li176zl4aF48bW9NMVKYP2Rw9dTdOJO8Rq358P9_4Q8zFIvckQA-pGBNYzjMszRo3IIdBTzUZC0kodOAIwOJSjbFZU54TLEbiHxeMuUYaE0-WiWAhEppc8PO814' },
+              { name: 'Elena', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAUimW4oGSvGjJ3TJwdBbTtgNi2VTvfEU6ZhqQAaLglT6Os_0SEdsatve9ze4391RXMYiNKHHgmevMp1hPoP428VwARW2RKUfm-ky4TFNGzIpcBW4TIRie8t9zn6ujz7YzorjH0mTGtrOwlyGtg069PyblscrrITegYVgt_BgI6ggXIT616B8N_-pvfThpFcVi_-XOFsxJh5aynlLksqqos_ScuXN_z1tUcWff0IXefgoajBdyab4EufN_p3U8SEVEDf7ddrjPr8p4' },
+              { name: 'Julian', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCXd8r9bEu9_iz_CLI5qYB_7uF3kgKHuozs9dV3y5tKvC2mk5ML547DTVIJCOZfQ4QqRXC174b0weFeL5DbOMbK7Myk9X6OeCANigbMmTiiKl4oiLwK8cth6lNQTacl7XI5UWAmwfteEwptdMtrpQu8AYF9tT1D-mBK_l-glg9CnGJUOmtOWlt9H-ujJmc4JO3ZXlxsRyKG29OIoRoIt5o10_vE-5VWvO_p_v15SJ5ylNMEx5urmbFbu1OMNgBAhH0w5hcVHFi5OIM' }
+            ].map((story, i) => (
+              <div key={i} className="flex flex-col items-center gap-2 flex-shrink-0 opacity-80 cursor-pointer">
+                <div className="p-1 rounded-full border-2 border-primary/30">
+                  <img alt={`${story.name} profile`} className="w-16 h-16 rounded-full object-cover" src={story.img} />
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-tighter">{story.name}</span>
+              </div>
+            ))}
+          </div>
+        </motion.section>
 
-        {/* Recycling Bag Deposit - MAIN HERO */}
-        <motion.div variants={itemVariants} className="relative group">
-          <div className="absolute inset-0 bg-dark rounded-[2rem] translate-x-1 translate-y-1"></div>
+        {/* Featured Tile: Recycle Bags */}
+        <motion.section variants={itemVariants}>
           <Link href="/smart-bags" className="block">
-            <div className="relative bg-[#FDE047] rounded-[2rem] border-4 border-dark overflow-hidden min-h-[160px]">
-              {/* Background Decoration */}
-              <div className="absolute -right-4 -bottom-4 opacity-10 pointer-events-none rotate-12">
-                <span className="material-symbols-outlined text-[120px]">inventory_2</span>
-              </div>
-
-              <div className="p-6 flex items-center justify-between relative z-10">
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-dark rounded-2xl flex items-center justify-center shadow-brutal-sm">
-                    <span className="material-symbols-outlined text-white text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>inventory_2</span>
+            <div className="bg-terracotta rounded-xl p-8 text-on-terracotta relative overflow-hidden group transition-transform duration-300 active:scale-[0.98]">
+              <div className="absolute -right-12 -top-12 w-48 h-48 bg-white/10 rounded-full blur-3xl group-hover:bg-white/20 transition-all"></div>
+              <div className="relative z-10 flex flex-col gap-6">
+                <div className="flex justify-between items-start">
+                  <div className="bg-white/20 p-3 rounded-full">
+                    <span className="material-symbols-outlined text-3xl">qr_code_scanner</span>
                   </div>
-                  <div>
-                    <h2 className="text-2xl font-[900] text-dark uppercase tracking-tight leading-none">Recycling<br />Bag Deposit</h2>
-                    <p className="text-dark/70 font-bold text-sm mt-1">Submit full bags here</p>
-                  </div>
-                </div>
-                <div className="bg-dark text-white rounded-2xl px-5 py-4 flex flex-col items-center justify-center gap-1 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)] hover:translate-y-1 transition-all">
-                  <span className="material-symbols-outlined text-2xl">qr_code_scanner</span>
-                  <span className="font-black text-xs uppercase tracking-wide">Manage</span>
-                </div>
-              </div>
-            </div>
-          </Link>
-        </motion.div>
-
-
-
-        {/* Stats Cards - Beautified */}
-        <motion.div variants={itemVariants} className="grid grid-cols-2 gap-3">
-          {/* Rank Card */}
-          <Link href="/impact?tab=leaderboard" className="relative group">
-            <div className="absolute inset-0 bg-dark rounded-2xl translate-x-0.5 translate-y-0.5"></div>
-            <div className="relative bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/40 dark:to-cyan-900/40 rounded-2xl border-2 border-dark dark:border-gray-600 p-4 transition-all group-hover:translate-x-0.5 group-hover:translate-y-0.5">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-xl border-2 border-dark dark:border-gray-600 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-xl text-white">leaderboard</span>
+                  <span className="bg-on-terracotta text-terracotta px-4 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase">New Batch</span>
                 </div>
                 <div>
-                  <p className="text-2xl font-[900] text-dark dark:text-white leading-none">#{userRank}</p>
-                  <p className="text-[10px] text-dark/50 dark:text-gray-400 font-bold">Campus Rank</p>
+                  <h2 className="text-4xl font-black leading-none mb-2">RECYCLE BAGS</h2>
+                  <p className="text-on-terracotta/80 text-sm font-medium max-w-[200px]">Scan your smart bags to log your impact and earn coins.</p>
                 </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-black text-blue-600 dark:text-blue-400">Top {100 - percentile}%</span>
-                <span className="material-symbols-outlined text-sm text-dark/40 dark:text-gray-500">arrow_forward</span>
+                <button className="bg-on-terracotta text-terracotta py-4 rounded-xl font-bold uppercase tracking-widest text-xs transition-transform active:scale-95 w-full text-center">
+                  Start Scanning
+                </button>
               </div>
             </div>
           </Link>
+        </motion.section>
 
-          {/* CO2 Card */}
-          <Link href="/impact?tab=personal" className="relative group">
-            <div className="absolute inset-0 bg-dark rounded-2xl translate-x-0.5 translate-y-0.5"></div>
-            <div className="relative bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/40 dark:to-emerald-900/40 rounded-2xl border-2 border-dark dark:border-gray-600 p-4 transition-all group-hover:translate-x-0.5 group-hover:translate-y-0.5">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl border-2 border-dark dark:border-gray-600 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-xl text-white">eco</span>
-                </div>
-                <div>
-                  <p className="text-2xl font-[900] text-dark dark:text-white leading-none">{user.co2Saved}</p>
-                  <p className="text-[10px] text-dark/50 dark:text-gray-400 font-bold">kg CO₂ Saved</p>
-                </div>
+        {/* Quick Actions (Replacing Daily Actions, moved up) */}
+        <motion.section variants={itemVariants}>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-sm font-extrabold uppercase tracking-widest text-on-surface">Quick Actions</h2>
+            <Link href="/actions" className="text-[10px] font-bold text-primary tracking-widest uppercase">View All</Link>
+          </div>
+          <div className="grid grid-cols-4 gap-4">
+            <Link href="/pickups" className="flex flex-col items-center gap-3">
+              <div className="w-full aspect-square bg-surface-container-low rounded-xl flex items-center justify-center hover:bg-surface-container transition-colors cursor-pointer">
+                <span className="material-symbols-outlined text-primary">local_shipping</span>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-black text-green-600 dark:text-green-400">Your Impact</span>
-                <span className="material-symbols-outlined text-sm text-dark/40 dark:text-gray-500">arrow_forward</span>
-              </div>
-            </div>
-          </Link>
-        </motion.div>
-
-        {/* Quick Actions - Compact Grid */}
-        <motion.div variants={itemVariants}>
-          <p className="font-black text-dark dark:text-white text-sm uppercase tracking-tight mb-2 ml-1">Quick Actions</p>
-          <div className="grid grid-cols-2 gap-2">
-            <Link href="/rewards" className="relative h-20 rounded-xl bg-[#2A9D8F] neo-border shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all cursor-pointer overflow-hidden group">
-              <div className="relative h-full flex items-center gap-2 px-2 z-10">
-                <div className="w-9 h-9 rounded-full bg-dark flex items-center justify-center text-white border-2 border-white shrink-0">
-                  <span className="material-symbols-outlined text-base">redeem</span>
-                </div>
-                <p className="text-white text-xs font-black uppercase leading-tight tracking-tight">Rewards</p>
-              </div>
+              <span className="text-[10px] font-bold text-center leading-tight uppercase">Pickups</span>
             </Link>
-            <Link href="/missions" className="relative h-20 rounded-xl bg-[#FFB703] neo-border shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all cursor-pointer overflow-hidden group">
-              <div className="relative h-full flex items-center gap-2 px-2 z-10">
-                <div className="w-9 h-9 rounded-full bg-dark flex items-center justify-center text-white border-2 border-white shrink-0">
-                  <span className="material-symbols-outlined text-base">flag</span>
-                </div>
-                <p className="text-dark text-xs font-black uppercase leading-tight tracking-tight">Missions</p>
+            <Link href="/history" className="flex flex-col items-center gap-3">
+              <div className="w-full aspect-square bg-surface-container-low rounded-xl flex items-center justify-center hover:bg-surface-container transition-colors cursor-pointer">
+                <span className="material-symbols-outlined text-primary">inventory_2</span>
               </div>
+              <span className="text-[10px] font-bold text-center leading-tight uppercase">History</span>
             </Link>
-            <Link href="/community" className="relative h-20 rounded-xl bg-[#9B5DE5] neo-border shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all cursor-pointer overflow-hidden group">
-              <div className="relative h-full flex items-center gap-2 px-2 z-10">
-                <div className="w-9 h-9 rounded-full bg-dark flex items-center justify-center text-white border-2 border-white shrink-0">
-                  <span className="material-symbols-outlined text-base">palette</span>
-                </div>
-                <p className="text-white text-xs font-black uppercase leading-tight tracking-tight">DIY</p>
+            <Link href="/charity" className="flex flex-col items-center gap-3">
+              <div className="w-full aspect-square bg-surface-container-low rounded-xl flex items-center justify-center hover:bg-surface-container transition-colors cursor-pointer">
+                <span className="material-symbols-outlined text-primary">volunteer_activism</span>
               </div>
+              <span className="text-[10px] font-bold text-center leading-tight uppercase">Donate</span>
             </Link>
-            <Link href="/charity" className="relative h-20 rounded-xl bg-[#E76F51] neo-border shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all cursor-pointer overflow-hidden group">
-              <div className="relative h-full flex items-center gap-2 px-2 z-10">
-                <div className="w-9 h-9 rounded-full bg-dark flex items-center justify-center text-white border-2 border-white shrink-0">
-                  <span className="material-symbols-outlined text-base">volunteer_activism</span>
-                </div>
-                <p className="text-white text-xs font-black uppercase leading-tight tracking-tight">Donate</p>
+            <Link href="/drop-off" className="flex flex-col items-center gap-3">
+              <div className="w-full aspect-square bg-surface-container-low rounded-xl flex items-center justify-center hover:bg-surface-container transition-colors cursor-pointer">
+                <span className="material-symbols-outlined text-primary">map</span>
               </div>
+              <span className="text-[10px] font-bold text-center leading-tight uppercase">Drop-off</span>
             </Link>
           </div>
-        </motion.div>
+        </motion.section>
 
-        {/* ReloopBuzz Carousel */}
-        <motion.div variants={itemVariants}>
-          <ReloopBuzz />
-        </motion.div>
+        {/* Stats Bento Grid */}
+        <motion.section variants={itemVariants} className="grid grid-cols-2 gap-4">
+          <Link href="/impact?tab=leaderboard" className="block">
+            <div className="bg-surface-container-low p-6 rounded-xl space-y-4 h-full">
+              <div className="flex items-center gap-2 text-primary">
+                <span className="material-symbols-outlined text-lg">leaderboard</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest">Campus Ranking</span>
+              </div>
+              <div className="space-y-1">
+                <p className="text-3xl font-black text-on-surface tracking-tighter">#{userRank}</p>
+                <p className="text-[10px] font-bold text-outline uppercase tracking-tight">Top {percentile}% Student</p>
+              </div>
+            </div>
+          </Link>
+          <Link href="/impact?tab=personal" className="block">
+            <div className="bg-primary-container p-6 rounded-xl space-y-4 h-full">
+              <div className="flex items-center gap-2 text-primary">
+                <span className="material-symbols-outlined text-lg">eco</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest">CO2 Impact</span>
+              </div>
+              <div className="space-y-1">
+                <p className="text-3xl font-black text-primary tracking-tighter">{user.co2Saved}<span className="text-sm">kg</span></p>
+                <p className="text-[10px] font-bold text-primary-dim uppercase tracking-tight">Offset this month</p>
+              </div>
+            </div>
+          </Link>
+        </motion.section>
 
-      </div>
+        {/* Action Grid */}
+        <motion.section variants={itemVariants} className="space-y-6">
+          <h2 className="text-xl font-extrabold tracking-tight uppercase text-primary">DAILY ACTIONS</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-outline-variant/10 space-y-4 group cursor-pointer transition-shadow hover:shadow-md">
+              <div className="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center group-hover:bg-primary-container transition-colors">
+                <span className="material-symbols-outlined text-primary">recycling</span>
+              </div>
+              <p className="font-black text-lg leading-tight uppercase tracking-tighter">Sorted<br/>Waste</p>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-outline-variant/10 space-y-4 group cursor-pointer transition-shadow hover:shadow-md">
+              <div className="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center group-hover:bg-primary-container transition-colors">
+                <span className="material-symbols-outlined text-primary">local_drink</span>
+              </div>
+              <p className="font-black text-lg leading-tight uppercase tracking-tighter">Zero<br/>Plastic</p>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-outline-variant/10 space-y-4 group cursor-pointer transition-shadow hover:shadow-md">
+              <div className="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center group-hover:bg-primary-container transition-colors">
+                <span className="material-symbols-outlined text-primary">electric_bike</span>
+              </div>
+              <p className="font-black text-lg leading-tight uppercase tracking-tighter">Green<br/>Travel</p>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-outline-variant/10 space-y-4 group cursor-pointer transition-shadow hover:shadow-md">
+              <div className="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center group-hover:bg-primary-container transition-colors">
+                <span className="material-symbols-outlined text-primary">volunteer_activism</span>
+              </div>
+              <p className="font-black text-lg leading-tight uppercase tracking-tighter">Donated<br/>Items</p>
+            </div>
+          </div>
+        </motion.section>
+
+        {/* Editorial Banner */}
+        <motion.section variants={itemVariants} className="bg-surface-container-highest rounded-xl p-8 flex items-center justify-between overflow-hidden relative">
+          <div className="relative z-10 space-y-2">
+            <h3 className="text-3xl font-black tracking-tighter leading-none text-on-surface">GREEN<br/>GUIDE 2024</h3>
+            <p className="text-sm font-medium text-outline">The ultimate circular living guide.</p>
+            <Link href="/guide" className="inline-block mt-4 text-xs font-bold border-b-2 border-primary text-primary py-1 uppercase tracking-widest">
+              Read More
+            </Link>
+          </div>
+          <div className="w-32 h-32 opacity-20 absolute -right-4 -bottom-4">
+            <span className="material-symbols-outlined text-9xl text-primary">menu_book</span>
+          </div>
+        </motion.section>
+      </main>
+
     </motion.div>
   );
 }
