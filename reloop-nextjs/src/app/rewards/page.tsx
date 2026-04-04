@@ -266,6 +266,19 @@ function CommunityStoryModal({ reward, onClose }: { reward: Reward; onClose: () 
                             Done
                         </button>
                         <button
+                            onClick={() => {
+                                const text = `I just unlocked the ${reward.title} reward on ReLoop! 🌍✨`;
+                                if (navigator.share) {
+                                    navigator.share({
+                                        title: 'ReLoop Impact',
+                                        text: text,
+                                        url: window.location.origin
+                                    }).catch(console.error);
+                                } else {
+                                    navigator.clipboard.writeText(text);
+                                    alert('Copied to clipboard!');
+                                }
+                            }}
                             className={`flex-1 py-4 ${isTree ? 'bg-green-500' : 'bg-blue-500'} text-white font-black rounded-2xl active:scale-[0.98] transition-transform flex items-center justify-center gap-2 shadow-brutal-sm border-3 border-dark`}
                         >
                             <span className="material-symbols-outlined">share</span>
@@ -367,7 +380,7 @@ export default function RewardsPage() {
                             <p className="text-dark/50 font-black text-xs uppercase tracking-widest">Your Balance</p>
                             <div className="flex items-baseline gap-2 mt-1">
                                 <p className="text-5xl font-black text-dark">{user.coins}</p>
-                                <span className="text-lg font-black text-dark/60">ReCoins</span>
+                                <span className="text-lg font-black text-dark/60">Eco Coins</span>
                             </div>
                             <p className="text-xs font-bold text-dark/40 mt-2">≈ ₹{(user.coins * 0.5).toFixed(0)} value</p>
                         </div>
@@ -405,8 +418,8 @@ export default function RewardsPage() {
                             onClick={() => setActiveTab(tab)}
                             whileTap={{ scale: 0.95 }}
                             className={`px-5 py-2.5 rounded-full font-black text-sm transition-all border-2 whitespace-nowrap ${activeTab === tab
-                                    ? 'bg-dark text-white border-dark shadow-brutal-sm'
-                                    : 'bg-white text-dark border-dark/20 hover:border-dark/40'
+                                ? 'bg-dark text-white border-dark shadow-brutal-sm'
+                                : 'bg-white text-dark border-dark/20 hover:border-dark/40'
                                 }`}
                         >
                             {tab}
@@ -475,10 +488,10 @@ export default function RewardsPage() {
                                                         disabled={!canAfford || !reward.available}
                                                         whileTap={{ scale: 0.95 }}
                                                         className={`px-5 py-2.5 rounded-xl border-2 border-dark font-black text-sm transition-all ${canAfford && reward.available
-                                                                ? isDonation
-                                                                    ? 'bg-gradient-to-r from-green-400 to-emerald-500 text-dark shadow-brutal-sm hover:shadow-brutal'
-                                                                    : 'bg-primary text-dark shadow-brutal-sm hover:shadow-brutal'
-                                                                : 'bg-gray-100 dark:bg-dark-bg text-dark/30 dark:text-white/30 cursor-not-allowed border-dark/20'
+                                                            ? isDonation
+                                                                ? 'bg-gradient-to-r from-green-400 to-emerald-500 text-dark shadow-brutal-sm hover:shadow-brutal'
+                                                                : 'bg-primary text-dark shadow-brutal-sm hover:shadow-brutal'
+                                                            : 'bg-gray-100 dark:bg-dark-bg text-dark/30 dark:text-white/30 cursor-not-allowed border-dark/20'
                                                             }`}
                                                     >
                                                         {!canAfford ? `Need ${reward.cost - user.coins} more` : isDonation ? '💚 Contribute' : 'Claim →'}

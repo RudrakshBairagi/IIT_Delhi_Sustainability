@@ -37,7 +37,7 @@ export const ScanningOverlay = ({ onCancel, imageUrl }: ScanningOverlayProps) =>
     };
 
     return (
-        <div className="fixed inset-0 z-50 bg-background flex flex-col font-sans overflow-hidden">
+        <div className="fixed inset-0 z-50 bg-background flex flex-col overflow-hidden">
             {/* Background Pattern - subtle gradient to match app theme */}
             <div className="absolute inset-0 pointer-events-none opacity-30 bg-gradient-to-b from-blue-50 to-white dark:from-dark-bg dark:to-dark-surface" />
 

@@ -67,7 +67,7 @@ export default function ScanResultPage() {
     const recycleLink = `/scanner/recycling-centers`; // Link to recycling centers
 
     return (
-        <div className="min-h-screen bg-[#d0f0fd] dark:bg-[#112118] text-[#111714] dark:text-white font-sans overflow-x-hidden selection:bg-[#4ce68a] selection:text-[#111714]">
+        <div className="min-h-screen bg-[#d0f0fd] dark:bg-[#112118] text-[#111714] dark:text-white overflow-x-hidden selection:bg-[#4ce68a] selection:text-[#111714]">
             <div className="relative flex min-h-screen flex-col w-full max-w-md mx-auto bg-[#d0f0fd] dark:bg-[#112118] border-x-2 border-[#111714]/5 dark:border-white/5 shadow-2xl pb-28">
 
                 {/* Header */}

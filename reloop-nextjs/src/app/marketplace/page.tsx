@@ -133,84 +133,88 @@ export default function MarketplacePage() {
     const filteredListings = getFilteredListings();
 
     return (
-        <div className="min-h-screen bg-background-light dark:bg-dark-bg font-sans text-[#111714] dark:text-white">
+        <div className="min-h-screen bg-[#D0E8FF] dark:bg-dark-bg flex flex-col selection:bg-primary selection:text-black overflow-x-hidden text-black dark:text-white pb-32">
             {/* Header */}
-            <motion.header
-                className="pt-4 pb-4 px-6 w-full z-10"
-                initial={{ y: -20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-            >
-                <div className="flex items-center justify-between mb-4">
-                    <Link href="/" className="p-2 -ml-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors group">
-                        <span className="material-symbols-outlined text-3xl font-bold group-hover:-translate-x-1 transition-transform">arrow_back</span>
-                    </Link>
-                    <div className="flex items-center gap-3">
-                        <div className="bg-white dark:bg-dark-surface border-2 border-black dark:border-gray-600 rounded-full px-3 py-1 flex items-center gap-1 shadow-brutal-sm">
-                            <span className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse"></span>
-                            <button
-                                onClick={() => setActiveTab(activeTab === 'all' ? 'my-listings' : 'all')}
-                                className="text-xs font-bold uppercase tracking-wide"
-                            >
-                                {activeTab === 'all' ? 'Live' : 'My Items'}
-                            </button>
-                        </div>
-                        <button className="w-10 h-10 flex items-center justify-center rounded-full border-2 border-black dark:border-gray-600 bg-white dark:bg-dark-surface hover:bg-gray-50 dark:hover:bg-dark-elevated transition-colors shadow-brutal-sm active:translate-y-0.5 active:shadow-none">
-                            <span className="material-symbols-outlined text-xl font-bold">notifications</span>
-                        </button>
-                        <Link
-                            href="/sell"
-                            className="w-10 h-10 flex items-center justify-center rounded-full border-2 border-black dark:border-gray-600 bg-accent-yellow hover:bg-yellow-400 transition-colors shadow-brutal-sm active:translate-y-0.5 active:shadow-none"
-                        >
-                            <span className="material-symbols-outlined text-xl font-bold">add</span>
-                        </Link>
+            <header className="px-6 pt-12 pb-4 flex flex-col gap-6 z-20 relative">
+                {/* Title Row */}
+                <div className="flex justify-between items-center">
+                    <div>
+                        <h1 className="text-4xl font-black uppercase tracking-tight text-black dark:text-white leading-none whitespace-nowrap">Market Hub</h1>
                     </div>
-                </div>
-
-                <div className="mb-6">
-                    <h1 className="text-4xl font-black uppercase tracking-tight leading-none mb-4">Market<br />Hub</h1>
-                    <div className="relative group">
-                        <input
-                            className="w-full bg-white dark:bg-dark-surface border-[3px] border-[#111714] dark:border-gray-600 rounded-full py-3 pl-12 pr-12 font-bold dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-0 shadow-brutal transition-all group-hover:shadow-brutal-hover"
-                            placeholder="Search for books, tech..."
-                            type="text"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                        <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-2xl text-[#111714] dark:text-gray-400">search</span>
-                        <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-accent-yellow border-2 border-black dark:border-gray-600 p-1.5 rounded-full hover:bg-yellow-400 transition-colors">
-                            <span className="material-symbols-outlined text-lg font-bold">tune</span>
-                        </button>
-                    </div>
-                </div>
-
-                {/* Categories */}
-                <div className="flex gap-4 overflow-x-auto pb-6 -mx-6 px-6 no-scrollbar snap-x">
-                    <div
-                        onClick={() => setSelectedCategory('All')}
-                        className={`flex flex-col items-center gap-2 snap-start shrink-0 cursor-pointer group ${selectedCategory === 'All' ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}
+                    <button
+                        onClick={() => alert('You have no new notifications!')}
+                        aria-label="Notifications"
+                        className="bg-[#FAFAFA] dark:bg-dark-surface w-12 h-12 rounded-full border-4 border-black dark:border-gray-600 shadow-[4px_4px_0px_0px_#000] flex items-center justify-center active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-150"
                     >
-                        <div className={`w-16 h-16 rounded-full bg-white dark:bg-dark-surface border-[3px] border-[#111714] dark:border-gray-600 flex items-center justify-center shadow-brutal group-hover:scale-110 group-active:scale-95 transition-all`}>
-                            <span className="material-symbols-outlined text-3xl font-bold text-[#111714] dark:text-white">grid_view</span>
-                        </div>
-                        <span className="text-xs font-extrabold uppercase tracking-wide">All</span>
-                    </div>
-
-                    {CATEGORIES.map((cat) => (
-                        <div
-                            key={cat.id}
-                            onClick={() => setSelectedCategory(cat.id)}
-                            className={`flex flex-col items-center gap-2 snap-start shrink-0 cursor-pointer group ${selectedCategory === cat.id ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}
-                        >
-                            <div className={`w-16 h-16 rounded-full ${cat.color} border-[3px] border-[#111714] dark:border-gray-600 flex items-center justify-center shadow-brutal group-hover:scale-110 group-active:scale-95 transition-all`}>
-                                <span className="material-symbols-outlined text-3xl font-bold text-[#111714] dark:text-white" style={{ fontVariationSettings: "'FILL' 1" }}>{cat.icon}</span>
-                            </div>
-                            <span className="text-xs font-extrabold uppercase tracking-wide">{cat.id}</span>
-                        </div>
-                    ))}
+                        <span className="material-symbols-outlined text-black dark:text-white" style={{ fontSize: '28px' }}>notifications</span>
+                    </button>
                 </div>
-            </motion.header>
 
-            <div className="px-5 pb-28">
+                {/* Search Bar */}
+                <div className="relative w-full">
+                    <input
+                        className="w-full h-14 bg-white dark:bg-dark-surface rounded-full border-4 border-black dark:border-gray-600 px-6 pr-14 text-lg font-bold placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-0 shadow-[4px_4px_0px_0px_#000] uppercase"
+                        placeholder="Search eco items..."
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                    <button className="absolute right-2 top-2 h-10 w-10 bg-primary rounded-full border-4 border-black flex items-center justify-center hover:bg-green-400 active:translate-y-0.5 active:shadow-none transition-all">
+                        <span className="material-symbols-outlined font-bold text-black">search</span>
+                    </button>
+                </div>
+            </header>
+
+            {/* Category Pills - Horizontal Scroll */}
+            <div className="pl-6 pb-8 overflow-x-auto no-scrollbar">
+                <div className="flex gap-3 w-max pr-6">
+                    {/* All Items Pill */}
+                    <button
+                        onClick={() => { setSelectedCategory('All'); setActiveTab('all'); }}
+                        className={`px-6 py-3 rounded-full border-4 border-black shadow-[4px_4px_0px_0px_#000] font-black uppercase whitespace-nowrap active:translate-y-[2px] active:shadow-none transition-all text-sm ${selectedCategory === 'All' && activeTab === 'all'
+                            ? 'bg-[#9747FF] text-white'
+                            : 'bg-white hover:bg-yellow-100 text-black'
+                            }`}
+                    >
+                        All Items
+                    </button>
+                    {/* Category Pills */}
+                    {['Furniture', 'Clothing', 'Electronics', 'Books'].map((cat) => (
+                        <button
+                            key={cat}
+                            onClick={() => { setSelectedCategory(cat); setActiveTab('all'); }}
+                            className={`px-6 py-3 rounded-full border-4 border-black shadow-[4px_4px_0px_0px_#000] font-black uppercase whitespace-nowrap active:translate-y-[2px] active:shadow-none transition-all text-sm ${selectedCategory === cat
+                                ? 'bg-[#9747FF] text-white'
+                                : 'bg-white hover:bg-yellow-100 text-black'
+                                }`}
+                        >
+                            {cat}
+                        </button>
+                    ))}
+                    {/* My Listings Pill */}
+                    <button
+                        onClick={() => { setActiveTab('my-listings'); setSelectedCategory('All'); }}
+                        className={`px-6 py-3 rounded-full border-4 border-black shadow-[4px_4px_0px_0px_#000] font-black uppercase whitespace-nowrap active:translate-y-[2px] active:shadow-none transition-all text-sm ${activeTab === 'my-listings'
+                            ? 'bg-[#9747FF] text-white'
+                            : 'bg-white hover:bg-yellow-100 text-black'
+                            }`}
+                    >
+                        My Listings
+                    </button>
+                </div>
+            </div>
+
+            {/* Main Content */}
+            <main className="px-6 flex-grow">
+                {/* Section Header */}
+                <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-black uppercase tracking-wide">
+                        {activeTab === 'my-listings' ? 'My Listings' : 'Fresh Picks'}
+                    </h2>
+                    <Link href="/my-listings" className="text-xs font-bold underline uppercase">
+                        View All
+                    </Link>
+                </div>
                 {isLoading ? (
                     <div className="flex items-center justify-center py-20">
                         <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
@@ -264,7 +268,7 @@ export default function MarketplacePage() {
                         ))}
                     </motion.div>
                 )}
-            </div>
+            </main>
         </div>
     );
 }

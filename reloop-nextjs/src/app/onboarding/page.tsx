@@ -21,7 +21,7 @@ const SLIDES = [
     },
     {
         title: 'Earn & Impact',
-        description: 'Earn ReCoins, climb leaderboards, and track your environmental impact.',
+        description: 'Earn Eco Coins, climb leaderboards, and track your environmental impact.',
         icon: 'eco',
         color: 'bg-card-blue',
         bgGradient: 'from-blue-100 to-blue-50',

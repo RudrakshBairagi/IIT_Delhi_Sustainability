@@ -8,6 +8,7 @@ import { ApiClient } from '@/lib/api-client';
 import { Listing } from '@/types';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { useNavStore } from '@/lib/store/nav-store';
+import { EquityProtocolModal } from '@/components/modals/EquityProtocolModal';
 
 const CATEGORIES = ['Electronics', 'Books', 'Clothing', 'Home & Garden', 'Sports', 'Other'];
 const CONDITIONS = ['Like New', 'Good', 'Used', 'Fair'];
@@ -38,6 +39,7 @@ function CreateListingContent() {
     const [photos, setPhotos] = useState<string[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [autoFilled, setAutoFilled] = useState(!!searchParams.get('title'));
+    const [showEquityModal, setShowEquityModal] = useState(false);
 
     const [error, setError] = useState('');
 
@@ -236,7 +238,7 @@ function CreateListingContent() {
                 {/* Price & Location */}
                 <motion.div variants={itemVariants} className="grid grid-cols-2 gap-3">
                     <div>
-                        <p className="text-sm font-bold text-dark/60 dark:text-white/60 mb-2">Price (ReCoins) *</p>
+                        <p className="text-sm font-bold text-dark/60 dark:text-white/60 mb-2">Price (Eco Coins) *</p>
                         <div className="relative">
                             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-lg">🪙</span>
                             <input
@@ -260,6 +262,25 @@ function CreateListingContent() {
                     </div>
                 </motion.div>
 
+                {/* 14-Day Equity Protocol Warning */}
+                <motion.div variants={itemVariants} className="bg-card-yellow rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm p-4">
+                    <div className="flex items-start gap-3">
+                        <span className="material-symbols-outlined text-2xl text-dark">schedule</span>
+                        <div className="flex-1">
+                            <p className="font-bold text-dark text-sm mb-1">14-Day Equity Protocol</p>
+                            <p className="text-xs text-dark/70 leading-relaxed">
+                                Items unsold after 14 days will give you the option to recycle or donate for Eco Coins.
+                                <button
+                                    onClick={() => setShowEquityModal(true)}
+                                    className="text-dark font-bold underline ml-1 hover:text-dark/70 transition-colors"
+                                >
+                                    Learn more →
+                                </button>
+                            </p>
+                        </div>
+                    </div>
+                </motion.div>
+
                 {/* Eco Impact Info */}
                 <motion.div variants={itemVariants} className="bg-card-green rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm p-4 flex items-center gap-3">
                     <span className="material-symbols-outlined text-2xl text-dark dark:text-white">eco</span>
@@ -275,6 +296,9 @@ function CreateListingContent() {
                 )}
 
             </motion.div>
+
+            {/* Equity Protocol Modal */}
+            <EquityProtocolModal isOpen={showEquityModal} onClose={() => setShowEquityModal(false)} />
         </>
     );
 }

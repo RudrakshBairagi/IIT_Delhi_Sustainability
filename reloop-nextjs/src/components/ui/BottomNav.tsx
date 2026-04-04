@@ -46,9 +46,17 @@ export function BottomNav() {
         return unsubscribe;
     }, []);
 
-    // Hide nav on auth pages and scanner (scanner has its own controls)
+    // Hide nav on auth pages, scanner, and item detail pages (they have custom nav)
     const hiddenRoutes = ['/login', '/register', '/onboarding', '/scanner'];
-    if (hiddenRoutes.some(route => pathname.startsWith(route))) {
+    const hiddenPatterns = [
+        /^\/marketplace\/[^/]+$/, // /marketplace/[id] - item detail
+        /^\/marketplace\/[^/]+\/trade$/, // /marketplace/[id]/trade
+    ];
+
+    const shouldHideNav = hiddenRoutes.some(route => pathname.startsWith(route)) ||
+        hiddenPatterns.some(pattern => pattern.test(pathname));
+
+    if (shouldHideNav) {
         return null;
     }
 
@@ -109,6 +117,7 @@ export function BottomNav() {
                                                     router.push(action.href);
                                                 }
                                             }}
+                                            aria-label={action.label}
                                             className="flex flex-col items-center gap-2 p-3 rounded-2xl bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-all active:scale-95 group"
                                         >
                                             <div className={`w-12 h-12 ${action.color} rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
@@ -201,6 +210,7 @@ export function BottomNav() {
                                         key={item.href}
                                         href={item.href}
                                         className="relative -mt-6 mx-1"
+                                        aria-label={item.label}
                                     >
                                         <motion.div
                                             whileTap={{ scale: 0.9 }}
@@ -231,6 +241,7 @@ export function BottomNav() {
                                     key={item.href}
                                     href={item.href}
                                     className="relative"
+                                    aria-label={item.label}
                                 >
                                     <motion.div
                                         whileTap={{ scale: 0.9 }}
@@ -276,6 +287,7 @@ export function BottomNav() {
                             whileTap={{ scale: 0.9 }}
                             onClick={primaryAction.onClick}
                             disabled={primaryAction.disabled || primaryAction.loading}
+                            aria-label={primaryAction.label}
                             className="ml-2 h-10 px-4 bg-[#4ce68a] text-black rounded-full font-bold text-sm flex items-center gap-2 shadow-md"
                         >
                             {primaryAction.loading ? (

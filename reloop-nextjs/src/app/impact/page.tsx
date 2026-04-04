@@ -44,7 +44,7 @@ function ImpactContent() {
     if (!user) return null;
 
     return (
-        <div className="relative flex min-h-screen w-full flex-col overflow-hidden bg-gradient-to-b from-sky-100 to-white dark:from-dark-bg dark:to-dark-surface text-[#111714] dark:text-white font-sans">
+        <div className="relative flex min-h-screen w-full flex-col overflow-hidden bg-gradient-to-b from-sky-100 to-white dark:from-dark-bg dark:to-dark-surface text-[#111714] dark:text-white">
             {/* Header */}
             <header className="flex flex-col gap-1 p-4 pt-8 pb-2 shrink-0 z-10">
                 <div className="flex items-center justify-between mb-4">
@@ -128,7 +128,8 @@ function ImpactContent() {
                                         </div>
                                         <div className="text-center mb-1">
                                             <p className="font-bold text-sm leading-tight text-dark dark:text-white">Unnati</p>
-                                            <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">42k Saved</p>
+                                            <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">42 kg Saved</p>
+                                            <p className="text-[9px] font-medium text-dark/50 dark:text-white/50">≈ 8 trees planted</p>
                                         </div>
                                         <div className="w-full h-[80px] bg-[#C0C0C0] border-2 border-black rounded-t-xl shadow-brutal flex items-end justify-center pb-2 relative overflow-hidden">
                                             <div className="opacity-20 absolute inset-0 bg-white"></div>
@@ -147,7 +148,8 @@ function ImpactContent() {
                                         </div>
                                         <div className="text-center mb-1">
                                             <p className="font-bold text-base leading-tight text-dark dark:text-white">Ankush</p>
-                                            <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">50k Saved</p>
+                                            <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">50 kg Saved</p>
+                                            <p className="text-[9px] font-medium text-dark/50 dark:text-white/50">≈ 10 trees planted</p>
                                         </div>
                                         <div className="w-full h-[110px] bg-[#FFD700] border-2 border-black rounded-t-xl shadow-brutal-lg flex items-end justify-center pb-2 relative overflow-hidden">
                                             <div className="opacity-20 absolute inset-0 bg-white"></div>
@@ -165,7 +167,8 @@ function ImpactContent() {
                                         </div>
                                         <div className="text-center mb-1">
                                             <p className="font-bold text-sm leading-tight text-dark dark:text-white">Uransh</p>
-                                            <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">38k Saved</p>
+                                            <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">38 kg Saved</p>
+                                            <p className="text-[9px] font-medium text-dark/50 dark:text-white/50">≈ 7 trees planted</p>
                                         </div>
                                         <div className="w-full h-[60px] bg-[#CD7F32] border-2 border-black rounded-t-xl shadow-brutal flex items-end justify-center pb-2 relative overflow-hidden">
                                             <div className="opacity-20 absolute inset-0 bg-white"></div>
@@ -185,7 +188,7 @@ function ImpactContent() {
                                         <div className="flex flex-col flex-1 min-w-0">
                                             <div className="flex items-center justify-between mb-1">
                                                 <p className="text-base font-bold text-black dark:text-white truncate pr-2">Rudraksh</p>
-                                                <p className="text-xs font-bold text-black dark:text-white shrink-0">35k kg</p>
+                                                <p className="text-xs font-bold text-black dark:text-white shrink-0">35 kg</p>
                                             </div>
                                             <div className="w-full h-3 bg-gray-100 dark:bg-dark-bg rounded-full border border-black dark:border-gray-600 overflow-hidden relative">
                                                 <div className="absolute top-0 left-0 h-full bg-[#4ce68a]" style={{ width: '85%' }}></div>
@@ -201,7 +204,7 @@ function ImpactContent() {
                                         <div className="flex flex-col flex-1 min-w-0">
                                             <div className="flex items-center justify-between mb-1">
                                                 <p className="text-base font-bold text-black dark:text-white truncate pr-2">Jamie Doe</p>
-                                                <p className="text-xs font-bold text-black dark:text-white shrink-0">31k kg</p>
+                                                <p className="text-xs font-bold text-black dark:text-white shrink-0">31 kg</p>
                                             </div>
                                             <div className="w-full h-3 bg-gray-100 dark:bg-dark-bg rounded-full border border-black dark:border-gray-600 overflow-hidden relative">
                                                 <div className="absolute top-0 left-0 h-full bg-[#4ce68a]" style={{ width: '78%' }}></div>
@@ -221,50 +224,126 @@ function ImpactContent() {
                             className="flex flex-col gap-4 px-4 pt-4"
                         >
                             {/* Main Stats Card */}
-                            <motion.div variants={itemVariants} className="bg-[#4ce68a] rounded-[32px] border-3 border-dark p-6 shadow-brutal relative overflow-hidden">
-                                <div className="absolute top-0 right-0 p-8 opacity-10">
-                                    <span className="material-symbols-outlined text-9xl text-black">eco</span>
-                                </div>
-                                <div className="relative z-10">
-                                    <p className="text-sm font-black uppercase tracking-wider text-dark/70 mb-2">Total CO₂ Saved</p>
-                                    <div className="flex items-baseline gap-2">
-                                        <span className="text-6xl font-black text-dark tracking-tighter">{user.co2Saved}</span>
-                                        <span className="text-xl font-bold text-dark/70">kg</span>
+                            <motion.div variants={itemVariants} className="bg-[#4ce68a] rounded-[32px] border-4 border-dark p-6 shadow-brutal relative overflow-hidden h-64">
+                                {/* Grid Pattern Background */}
+                                <div className="absolute inset-0 opacity-20 pointer-events-none" style={{
+                                    backgroundImage: 'linear-gradient(rgba(0,0,0,0.1) 2px, transparent 2px), linear-gradient(90deg, rgba(0,0,0,0.1) 2px, transparent 2px)',
+                                    backgroundSize: '24px 24px'
+                                }}></div>
+
+                                {/* Wave SVG at bottom */}
+                                <svg className="absolute bottom-0 left-0 w-full h-32 text-black opacity-10 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 1440 320">
+                                    <path d="M0,288L48,272C96,256,192,224,288,213.3C384,203,480,213,576,234.7C672,256,768,288,864,272C960,256,1056,192,1152,176C1248,160,1344,192,1392,208L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z" fill="currentColor" fillOpacity="1"></path>
+                                </svg>
+
+                                <div className="relative z-10 h-full flex flex-col justify-between">
+                                    <div className="flex justify-between items-start">
+                                        <h3 className="font-black text-sm uppercase tracking-wider bg-white border-2 border-black px-3 py-1.5 rounded-lg shadow-[2px_2px_0px_0px_#000]">Total CO₂ Saved</h3>
+                                        <span className="material-symbols-outlined text-black text-3xl">cloud_done</span>
                                     </div>
-                                    <div className="mt-4 inline-flex items-center gap-2 bg-white/40 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-dark/10">
-                                        <span className="material-symbols-outlined text-dark text-sm">trending_up</span>
-                                        <span className="text-xs font-bold text-dark">Top 5% of campus!</span>
+                                    <div>
+                                        <div className="flex items-baseline gap-2 mb-3">
+                                            <span className="text-7xl font-black text-dark tracking-tighter drop-shadow-sm">{user.co2Saved}</span>
+                                            <span className="text-2xl font-bold text-dark">kg</span>
+                                        </div>
+                                        <div className="inline-flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                                            <span className="material-symbols-outlined text-lg text-dark">trending_up</span>
+                                            <span className="text-xs font-bold text-dark uppercase tracking-wide">Top 5% of campus</span>
+                                        </div>
                                     </div>
                                 </div>
                             </motion.div>
 
-                            {/* Detailed Grid */}
-                            <div className="grid grid-cols-2 gap-3">
-                                <motion.div variants={itemVariants} className="bg-white dark:bg-dark-surface rounded-2xl border-2 border-dark dark:border-gray-600 p-4 shadow-brutal-sm">
-                                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mb-3 text-2xl border-2 border-dark">🚯</div>
-                                    <p className="text-3xl font-black text-dark dark:text-white">{user.itemsTraded}</p>
-                                    <p className="text-xs font-bold text-dark/50 dark:text-gray-400 uppercase">Items Rescued</p>
+                            {/* Activity Chart */}
+                            <motion.div variants={itemVariants} className="bg-white dark:bg-dark-surface rounded-2xl border-4 border-dark dark:border-gray-600 shadow-brutal p-6">
+                                <div className="flex justify-between items-center mb-6">
+                                    <h3 className="font-black text-xl uppercase tracking-wider text-dark dark:text-white">Activity</h3>
+                                    <div className="bg-accent-yellow border-2 border-dark rounded-lg px-3 py-1.5 text-[10px] font-bold shadow-[2px_2px_0px_0px_#000] uppercase">Last 5 Months</div>
+                                </div>
+                                <div className="flex items-end justify-between h-40 gap-3 w-full">
+                                    {[
+                                        { month: 'Jan', height: '40%' },
+                                        { month: 'Feb', height: '65%' },
+                                        { month: 'Mar', height: '35%' },
+                                        { month: 'Apr', height: '85%' },
+                                        { month: 'May', height: '60%', highlight: true }
+                                    ].map((bar, idx) => (
+                                        <div key={idx} className="flex flex-col items-center justify-end w-full h-full gap-2">
+                                            <div
+                                                className={`w-full ${bar.highlight ? 'bg-accent-yellow' : 'bg-primary'} border-2 border-dark shadow-[2px_2px_0px_0px_#000] rounded-t-sm transition-all hover:opacity-90`}
+                                                style={{ height: bar.height }}
+                                            ></div>
+                                            <span className="text-xs font-bold uppercase text-dark dark:text-white">{bar.month}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </motion.div>
+
+                            {/* Detailed Grid - Enhanced Stat Cards */}
+                            <div className="grid grid-cols-2 gap-4">
+                                <motion.div variants={itemVariants} className="bg-white dark:bg-dark-surface rounded-2xl border-4 border-dark dark:border-gray-600 p-4 shadow-brutal flex flex-col h-44 relative overflow-hidden group hover:-translate-y-1 transition-transform">
+                                    <div className="flex justify-between items-start mb-auto">
+                                        <div className="w-12 h-12 rounded-xl bg-green-100 border-2 border-dark flex items-center justify-center shadow-[2px_2px_0px_0px_#000]">
+                                            <span className="material-symbols-outlined text-dark text-2xl">recycling</span>
+                                        </div>
+                                        <div className="bg-dark text-white text-[10px] font-bold px-1.5 py-0.5 rounded border border-dark">+3</div>
+                                    </div>
+                                    <div>
+                                        <span className="block text-4xl font-black text-dark dark:text-white mb-1">{user.itemsTraded}</span>
+                                        <span className="text-xs font-bold text-dark/60 dark:text-gray-400 uppercase leading-tight block">Items<br />Rescued</span>
+                                    </div>
                                 </motion.div>
-                                <motion.div variants={itemVariants} className="bg-white dark:bg-dark-surface rounded-2xl border-2 border-dark dark:border-gray-600 p-4 shadow-brutal-sm">
-                                    <div className="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center mb-3 text-2xl border-2 border-dark">🪙</div>
-                                    <p className="text-3xl font-black text-dark dark:text-white">{user.coins}</p>
-                                    <p className="text-xs font-bold text-dark/50 dark:text-gray-400 uppercase">Coins Earned</p>
+
+                                <motion.div variants={itemVariants} className="bg-white dark:bg-dark-surface rounded-2xl border-4 border-dark dark:border-gray-600 p-4 shadow-brutal flex flex-col h-44 relative overflow-hidden group hover:-translate-y-1 transition-transform">
+                                    <div className="flex justify-between items-start mb-auto">
+                                        <div className="w-12 h-12 rounded-full bg-yellow-100 border-2 border-dark flex items-center justify-center shadow-[2px_2px_0px_0px_#000]">
+                                            <span className="material-symbols-outlined text-dark text-2xl" style={{ fontVariationSettings: "'FILL' 1, 'wght' 600" }}>eco</span>
+                                        </div>
+                                        <div className="bg-dark text-white text-[10px] font-bold px-1.5 py-0.5 rounded border border-dark">+50</div>
+                                    </div>
+                                    <div>
+                                        <span className="block text-4xl font-black text-dark dark:text-white mb-1">{user.coins}</span>
+                                        <span className="text-xs font-bold text-dark/60 dark:text-gray-400 uppercase leading-tight block">Eco Coins<br />Earned</span>
+                                    </div>
                                 </motion.div>
-                                <motion.div variants={itemVariants} className="bg-white dark:bg-dark-surface rounded-2xl border-2 border-dark dark:border-gray-600 p-4 shadow-brutal-sm">
-                                    <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center mb-3 text-2xl border-2 border-dark">🤝</div>
-                                    <p className="text-3xl font-black text-dark dark:text-white">12</p>
-                                    <p className="text-xs font-bold text-dark/50 dark:text-gray-400 uppercase">Community Trades</p>
+
+                                <motion.div variants={itemVariants} className="bg-white dark:bg-dark-surface rounded-2xl border-4 border-dark dark:border-gray-600 p-4 shadow-brutal flex flex-col h-44 relative overflow-hidden group hover:-translate-y-1 transition-transform">
+                                    <div className="flex justify-between items-start mb-auto">
+                                        <div className="w-12 h-12 rounded-xl bg-blue-100 border-2 border-dark flex items-center justify-center shadow-[2px_2px_0px_0px_#000]">
+                                            <span className="material-symbols-outlined text-dark text-2xl">handshake</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <span className="block text-4xl font-black text-dark dark:text-white mb-1">5</span>
+                                        <span className="text-xs font-bold text-dark/60 dark:text-gray-400 uppercase leading-tight block">Community<br />Trades</span>
+                                    </div>
                                 </motion.div>
-                                <motion.div variants={itemVariants} className="bg-white dark:bg-dark-surface rounded-2xl border-2 border-dark dark:border-gray-600 p-4 shadow-brutal-sm">
-                                    <div className="w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center mb-3 text-2xl border-2 border-dark">💖</div>
-                                    <p className="text-3xl font-black text-dark dark:text-white">5</p>
-                                    <p className="text-xs font-bold text-dark/50 dark:text-gray-400 uppercase">Donations Made</p>
+
+                                <motion.div variants={itemVariants} className="bg-white dark:bg-dark-surface rounded-2xl border-4 border-dark dark:border-gray-600 p-4 shadow-brutal flex flex-col h-44 relative overflow-hidden group hover:-translate-y-1 transition-transform">
+                                    <div className="flex justify-between items-start mb-auto">
+                                        <div className="w-12 h-12 rounded-xl bg-pink-100 border-2 border-dark flex items-center justify-center shadow-[2px_2px_0px_0px_#000]">
+                                            <span className="material-symbols-outlined text-dark text-2xl">redeem</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <span className="block text-4xl font-black text-dark dark:text-white mb-1">2</span>
+                                        <span className="text-xs font-bold text-dark/60 dark:text-gray-400 uppercase leading-tight block">Donations<br />Made</span>
+                                    </div>
                                 </motion.div>
                             </div>
 
-                            {/* Impact Quote */}
-                            <motion.div variants={itemVariants} className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl border-2 border-dark p-6 text-center shadow-brutal text-white">
-                                <p className="font-serif italic text-lg opacity-90">"Small actions, multiplied by millions of people, can transform the world."</p>
+                            {/* Impact Quote - Enhanced with Pattern */}
+                            <motion.div variants={itemVariants} className="bg-gradient-to-r from-indigo-500 to-purple-600 relative rounded-2xl border-4 border-dark p-6 text-center shadow-brutal overflow-hidden">
+                                {/* Dot Pattern Background */}
+                                <div className="absolute inset-0 opacity-30" style={{
+                                    backgroundImage: 'radial-gradient(rgba(255,255,255,0.4) 2px, transparent 2px)',
+                                    backgroundSize: '20px 20px'
+                                }}></div>
+                                {/* Decorative Elements */}
+                                <div className="absolute top-2 right-2 w-4 h-4 bg-accent-yellow border-2 border-dark rounded-full"></div>
+                                <div className="absolute bottom-2 left-2 w-4 h-4 bg-primary border-2 border-dark transform rotate-45"></div>
+
+                                <p className="text-white font-bold italic text-lg leading-relaxed relative z-10 drop-shadow-md">"Small actions, multiplied by millions of people, can transform the world."</p>
                             </motion.div>
                         </motion.div>
                     )}

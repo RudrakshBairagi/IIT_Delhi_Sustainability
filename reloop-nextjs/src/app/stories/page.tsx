@@ -26,7 +26,7 @@ const stories = [
         impactIcon: 'favorite',
         impactText: '20 Meals Funded',
         author: 'Sneha M.',
-        quote: '"Used my ReCoins to donate! Every bit helps. Feels good to give back to the community. 💚"',
+        quote: '"Used my Eco Coins to donate! Every bit helps. Feels good to give back to the community. 💚"',
         image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop',
         bgColor: 'from-pink-400 to-rose-600',
     },

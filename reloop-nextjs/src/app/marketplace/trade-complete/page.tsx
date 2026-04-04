@@ -79,7 +79,7 @@ export default function TradeCompletePage() {
                             {tradeData?.item ? tradeData.item : `${coinsOffered}`}
                         </p>
                         <p className="text-xs font-bold text-dark/60 dark:text-white/60">
-                            {tradeData?.item ? 'Item Swapped' : 'ReCoins Offered'}
+                            {tradeData?.item ? 'Item Swapped' : 'Eco Coins Offered'}
                         </p>
                     </div>
                     <div className="bg-card-blue rounded-2xl p-4 text-center">
@@ -88,7 +88,7 @@ export default function TradeCompletePage() {
                     </div>
                 </div>
                 <div className="mt-3 bg-card-yellow rounded-2xl p-3 text-center">
-                    <p className="text-sm font-bold text-dark dark:text-white">Balance: 🪙 {userCoins} ReCoins</p>
+                    <p className="text-sm font-bold text-dark dark:text-white">Balance: 🪙 {userCoins} Eco Coins</p>
                 </div>
             </motion.div>
 

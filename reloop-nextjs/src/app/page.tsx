@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import { ReloopBuzz } from '@/components/home/ReloopBuzz';
 
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { StreakBadge } from '@/components/ui/StreakBadge';
@@ -139,28 +140,59 @@ export default function HomePage() {
           <StoriesBar />
         </motion.div>
 
-        {/* Scan Hero - Bigger Banner */}
+        {/* Recycling Bag Deposit - MAIN HERO */}
         <motion.div variants={itemVariants} className="relative group">
           <div className="absolute inset-0 bg-dark rounded-[2rem] translate-x-1 translate-y-1"></div>
-          <div className="relative bg-gradient-to-br from-primary via-green-400 to-emerald-500 rounded-[2rem] border-3 border-dark dark:border-gray-600 p-6 overflow-hidden flex items-center justify-between min-h-[150px]">
-            {/* Background Decoration */}
-            <div className="absolute -right-6 -bottom-6 opacity-15 pointer-events-none rotate-12">
-              <span className="material-symbols-outlined text-[120px]">photo_camera</span>
-            </div>
+          <Link href="/smart-bags" className="block">
+            <div className="relative bg-[#FDE047] rounded-[2rem] border-4 border-dark overflow-hidden min-h-[160px]">
+              {/* Background Decoration */}
+              <div className="absolute -right-4 -bottom-4 opacity-10 pointer-events-none rotate-12">
+                <span className="material-symbols-outlined text-[120px]">inventory_2</span>
+              </div>
 
-            <div className="relative z-10 flex-1">
-              <h2 className="text-3xl font-[900] text-dark uppercase tracking-tight mb-2 leading-none">Scan &<br />Earn!</h2>
-              <p className="text-dark/70 font-bold text-sm max-w-[160px] leading-tight">
-                Reveal upcycling ideas & earn coins.
-              </p>
+              <div className="p-6 flex items-center justify-between relative z-10">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 bg-dark rounded-2xl flex items-center justify-center shadow-brutal-sm">
+                    <span className="material-symbols-outlined text-white text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>inventory_2</span>
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-[900] text-dark uppercase tracking-tight leading-none">Recycling<br />Bag Deposit</h2>
+                    <p className="text-dark/70 font-bold text-sm mt-1">Submit full bags here</p>
+                  </div>
+                </div>
+                <div className="bg-dark text-white rounded-2xl px-5 py-4 flex flex-col items-center justify-center gap-1 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)] hover:translate-y-1 transition-all">
+                  <span className="material-symbols-outlined text-2xl">qr_code_scanner</span>
+                  <span className="font-black text-xs uppercase tracking-wide">Manage</span>
+                </div>
+              </div>
             </div>
-            <Link href="/scanner"
-              className="relative z-10 flex flex-col items-center justify-center gap-1.5 bg-dark text-white w-24 h-24 rounded-2xl shadow-brutal hover:translate-y-1 active:scale-95 transition-all group-hover:shadow-brutal-sm"
-            >
-              <span className="material-symbols-outlined text-3xl">photo_camera</span>
-              <span className="text-xs font-black uppercase tracking-wide">Scan</span>
-            </Link>
-          </div>
+          </Link>
+        </motion.div>
+
+        {/* Scan & Earn - Smaller Card */}
+        <motion.div variants={itemVariants}>
+          <Link href="/scanner" className="block">
+            <div className="relative group">
+              <div className="absolute inset-0 bg-dark rounded-2xl translate-x-1 translate-y-1"></div>
+              <div className="relative bg-gradient-to-br from-primary via-green-400 to-emerald-500 rounded-2xl border-4 border-dark overflow-hidden transition-all group-hover:translate-x-0.5 group-hover:translate-y-0.5">
+                <div className="p-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-dark rounded-xl flex items-center justify-center">
+                      <span className="material-symbols-outlined text-white text-2xl">photo_camera</span>
+                    </div>
+                    <div>
+                      <p className="font-black text-dark uppercase tracking-tight text-base leading-tight">Scan &<br />Earn!</p>
+                      <p className="text-[10px] font-bold text-dark/60 mt-0.5">Reveal upcycling ideas</p>
+                    </div>
+                  </div>
+                  <div className="bg-dark text-white rounded-xl px-4 py-2.5 flex items-center gap-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]">
+                    <span className="material-symbols-outlined text-lg">photo_camera</span>
+                    <span className="font-black text-xs uppercase tracking-wide">Scan</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Link>
         </motion.div>
 
         {/* Stats Cards - Beautified */}
@@ -245,6 +277,10 @@ export default function HomePage() {
           </div>
         </motion.div>
 
+        {/* ReloopBuzz Carousel */}
+        <motion.div variants={itemVariants}>
+          <ReloopBuzz />
+        </motion.div>
 
       </div>
     </motion.div>

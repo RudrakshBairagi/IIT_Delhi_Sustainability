@@ -94,6 +94,22 @@ export default function ScannerPage() {
         }
     }, [router]);
 
+    // Auto-request camera on page load for better UX
+    useEffect(() => {
+        // Only auto-request if we're in idle state and haven't requested before in this session
+        const hasAutoRequested = sessionStorage.getItem('cameraAutoRequested');
+
+        if (cameraState === 'idle' && !hasAutoRequested) {
+            sessionStorage.setItem('cameraAutoRequested', 'true');
+            // Small delay to let the page render smoothly
+            const timer = setTimeout(() => {
+                requestCamera();
+            }, 300);
+
+            return () => clearTimeout(timer);
+        }
+    }, [requestCamera, cameraState]);
+
     useEffect(() => {
         setActions({
             label: 'Capture',
@@ -149,7 +165,14 @@ export default function ScannerPage() {
                         <span className="material-symbols-outlined" style={{ fontSize: 28 }}>arrow_back</span>
                     </Link>
                     <div className="text-sm font-black uppercase tracking-widest text-dark">Scan Item</div>
-                    <button className="flex items-center justify-center text-dark hover:bg-gray-100 rounded-full p-1 transition-colors">
+                    <button
+                        onClick={() => {
+                            setErrorMessage('Flashlight control coming soon! Use your device\'s flashlight for now.');
+                            setTimeout(() => setErrorMessage(null), 3000);
+                        }}
+                        className="flex items-center justify-center text-dark hover:bg-gray-100 rounded-full p-1 transition-colors"
+                        aria-label="Toggle flashlight"
+                    >
                         <span className="material-symbols-outlined" style={{ fontSize: 28 }}>flash_on</span>
                     </button>
                 </div>

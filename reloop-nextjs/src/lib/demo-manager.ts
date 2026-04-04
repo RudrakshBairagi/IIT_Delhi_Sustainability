@@ -294,6 +294,12 @@ class DemoManagerService {
 
     // ===== REWARDS (Mock) =====
     private _mockRewards = [
+        // Campus Services
+        { id: 'reward-laundry', title: 'Laundry Credit', description: '1 wash cycle at hostel laundry', icon: '🧺', cost: 50, category: 'voucher' as const, available: true },
+        { id: 'reward-canteen', title: 'Canteen Voucher', description: '₹25 credit at campus canteen', icon: '🍽️', cost: 25, category: 'voucher' as const, available: true },
+        { id: 'reward-coffee', title: 'Coffee Voucher', description: '1 free coffee at cafe', icon: '☕', cost: 15, category: 'voucher' as const, available: true },
+
+        // Original Rewards
         { id: 'reward-1', title: '10% Campus Cafe', description: 'Coffee discount for eco-warriors', icon: '☕', cost: 100, category: 'voucher' as const, available: true },
         { id: 'reward-2', title: 'ReLoop Sticker Pack', description: 'Show off your sustainability', icon: '🎨', cost: 50, category: 'merch' as const, available: true },
         { id: 'reward-3', title: 'Plant a Tree', description: 'We plant a tree in your name', icon: '🌳', cost: 200, category: 'donation' as const, available: true },
@@ -779,6 +785,239 @@ class DemoManagerService {
 
     // Add other methods that might be called by legacy pages
     // to prevent runtime errors
+
+    // ===== RELOOP POINTS (14-Day Liquidity Protocol) =====
+    private _mockReloopPoints = [
+        {
+            id: 'point-1',
+            name: 'Main Campus Hub',
+            location: 'Student Union, Ground Floor',
+            type: 'both' as const,
+            hours: '7am - 10pm',
+            itemsCollected: 342,
+            bagsProcessed: 156,
+            icon: '🏛️'
+        },
+        {
+            id: 'point-2',
+            name: 'Library Collection Point',
+            location: 'Central Library, Entrance',
+            type: 'both' as const,
+            hours: '24/7 (Drop Box)',
+            itemsCollected: 218,
+            bagsProcessed: 89,
+            icon: '📚'
+        },
+        {
+            id: 'point-3',
+            name: 'Hostel Block A',
+            location: 'Building A, Common Room',
+            type: 'collection' as const,
+            hours: '6am - 11pm',
+            itemsCollected: 124,
+            bagsProcessed: 234,
+            icon: '🏠'
+        },
+        {
+            id: 'point-4',
+            name: 'Sports Complex',
+            location: 'Main Entrance',
+            type: 'dropoff' as const,
+            hours: '6am - 9pm',
+            itemsCollected: 98,
+            bagsProcessed: 45,
+            icon: '⚽'
+        }
+    ];
+
+    getReloopPoints() {
+        return this._mockReloopPoints;
+    }
+
+    dropItemAtPoint(listingId: string, pointId: string) {
+        const listing = this._mockListings.find(l => l.id === listingId);
+        if (listing) {
+            const now = new Date();
+            const expiresAt = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000); // 14 days
+
+            // Update listing with drop info
+            (listing as any).droppedAt = now;
+            (listing as any).expiresAt = expiresAt;
+            (listing as any).reloopPointId = pointId;
+            (listing as any).equityStatus = 'active';
+
+            console.log('[DemoManager] Item dropped at', pointId, 'expires:', expiresAt);
+            return { success: true, expiresAt };
+        }
+        return { success: false };
+    }
+
+    getExpiredListings() {
+        const now = new Date();
+        return this._mockListings.filter(l => {
+            const expiresAt = (l as any).expiresAt;
+            return expiresAt && new Date(expiresAt) < now && (l as any).equityStatus === 'active';
+        });
+    }
+
+    handleEquityChoice(listingId: string, choice: 'recycle' | 'donate'): { coinsAwarded: number } {
+        const listing = this._mockListings.find(l => l.id === listingId);
+        if (listing) {
+            // Base coins from estimated value
+            const baseCoins = Math.floor(listing.price * 0.1); // 10% of listing price
+
+            // Bonus for donation
+            const coinsAwarded = choice === 'donate' ? baseCoins + 10 : baseCoins;
+
+            // Update listing status
+            (listing as any).equityStatus = choice === 'recycle' ? 'recycled' : 'donated';
+            (listing as any).equityChoice = choice;
+
+            // Award coins to user
+            this._mockUser.coins += coinsAwarded;
+            this._mockUser.xp += 20;
+            this._mockUser.co2Saved += listing.co2Saved || 5;
+
+            console.log('[DemoManager] Equity choice:', choice, 'awarded:', coinsAwarded);
+            this.notifyListeners();
+
+            return { coinsAwarded };
+        }
+        return { coinsAwarded: 0 };
+    }
+
+    // Fast-forward time for demo (simulate 14-day expiry)
+    simulateExpiry(listingId: string) {
+        const listing = this._mockListings.find(l => l.id === listingId);
+        if (listing && (listing as any).droppedAt) {
+            const now = new Date();
+            (listing as any).expiresAt = new Date(now.getTime() - 1000); // Set to past
+            console.log('[DemoManager] Simulated expiry for', listingId);
+            return { success: true };
+        }
+        return { success: false };
+    }
+
+    // ===== SMART BAGS =====
+    private _mockSmartBags: any[] = [
+        {
+            id: 'bag-1',
+            qrCode: 'QR-2024-RELOOP-001',
+            ownerId: 'demo-user-123',
+            ownerName: 'Demo User',
+            status: 'processed' as const,
+            registeredAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+            filledAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+            collectedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+            estimatedWeight: 2.5,
+            coinsAwarded: 25,
+            wasteType: 'recyclable' as const
+        },
+        {
+            id: 'bag-2',
+            qrCode: 'QR-2024-RELOOP-002',
+            ownerId: 'demo-user-123',
+            ownerName: 'Demo User',
+            status: 'filled' as const,
+            registeredAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+            filledAt: new Date(Date.now() - 6 * 60 * 60 * 1000),
+            estimatedWeight: 3.2,
+            wasteType: 'recyclable' as const
+        }
+    ];
+
+    // Unregistered bags (available to scan)
+    private _unregisteredBags = [
+        'QR-2024-RELOOP-100',
+        'QR-2024-RELOOP-101',
+        'QR-2024-RELOOP-102',
+        'QR-2024-RELOOP-103',
+        'QR-2024-RELOOP-104'
+    ];
+
+    getSmartBags() {
+        return this._mockSmartBags.filter(b => b.ownerId === this._mockUser.uid);
+    }
+
+    getAllSmartBags() {
+        return this._mockSmartBags;
+    }
+
+    registerSmartBag(qrCode: string) {
+        // Check if already registered
+        const existing = this._mockSmartBags.find(b => b.qrCode === qrCode);
+        if (existing) {
+            return { success: false, error: 'Bag already registered', bag: existing };
+        }
+
+        // Create new bag
+        const newBag = {
+            id: `bag-${Date.now()}`,
+            qrCode,
+            ownerId: this._mockUser.uid,
+            ownerName: this._mockUser.name,
+            status: 'registered' as const,
+            registeredAt: new Date(),
+            wasteType: 'recyclable' as const
+        };
+
+        this._mockSmartBags.push(newBag);
+        console.log('[DemoManager] Smart bag registered:', qrCode);
+        return { success: true, bag: newBag };
+    }
+
+    markBagAsFilled(bagId: string, wasteType: 'recyclable' | 'organic' | 'mixed' = 'recyclable') {
+        const bag = this._mockSmartBags.find(b => b.id === bagId);
+        if (bag && bag.ownerId === this._mockUser.uid) {
+            (bag as any).status = 'filled';
+            (bag as any).filledAt = new Date();
+            (bag as any).wasteType = wasteType;
+            console.log('[DemoManager] Bag marked as filled:', bagId);
+            return { success: true };
+        }
+        return { success: false };
+    }
+
+    // Worker method - collect bag and award coins
+    collectSmartBag(qrCode: string, weight: number) {
+        const bag = this._mockSmartBags.find(b => b.qrCode === qrCode);
+        if (bag && bag.status === 'filled') {
+            // Calculate coins based on weight (10 coins per kg)
+            const coinsAwarded = Math.floor(weight * 10);
+
+            (bag as any).status = 'collected';
+            (bag as any).collectedAt = new Date();
+            (bag as any).estimatedWeight = weight;
+            (bag as any).coinsAwarded = coinsAwarded;
+
+            // Award coins to bag owner
+            if (bag.ownerId === this._mockUser.uid) {
+                this._mockUser.coins += coinsAwarded;
+                this._mockUser.xp += 15;
+                this._mockUser.co2Saved += (weight * 0.8); // Rough CO2 calculation
+                this.notifyListeners();
+            }
+
+            console.log('[DemoManager] Bag collected:', qrCode, 'weight:', weight, 'coins:', coinsAwarded);
+            return { success: true, coinsAwarded, bag };
+        }
+        return { success: false };
+    }
+
+    processBag(bagId: string) {
+        const bag = this._mockSmartBags.find(b => b.id === bagId);
+        if (bag && (bag.status === 'collected' || bag.status === 'filled')) {
+            (bag as any).status = 'processed';
+            return { success: true };
+        }
+        return { success: false };
+    }
+
+    getUnregisteredBagQR() {
+        // Return a random unregistered bag QR
+        const random = this._unregisteredBags[Math.floor(Math.random() * this._unregisteredBags.length)];
+        return random;
+    }
 }
 
 const DemoManager = new DemoManagerService();

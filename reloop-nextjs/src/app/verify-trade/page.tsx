@@ -84,7 +84,7 @@ export default function VerifyTradePage() {
                     className="text-center"
                 >
                     <h1 className="text-3xl font-[900] text-dark dark:text-white uppercase">Trade Verified!</h1>
-                    <p className="text-dark/60 dark:text-white/60 mt-2">ReCoins have been transferred successfully</p>
+                    <p className="text-dark/60 dark:text-white/60 mt-2">Eco Coins have been transferred successfully</p>
                 </motion.div>
             </div>
         );

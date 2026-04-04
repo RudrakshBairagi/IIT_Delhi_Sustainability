@@ -50,7 +50,7 @@ export default function TradeRequestPage() {
 
         if (tradeType === 'coins') {
             if (!coins || coins <= 0) { setError('Offer must be greater than 0'); return; }
-            if (coins > user.coins) { setError('Not enough ReCoins'); return; }
+            if (coins > user.coins) { setError('Not enough Eco Coins'); return; }
         } else {
             if (!offerItem.trim()) { setError('Enter the item you want to swap'); return; }
         }
@@ -148,7 +148,7 @@ export default function TradeRequestPage() {
                         <p className="font-black text-dark dark:text-white truncate">{listing.title}</p>
                         <p className="text-sm text-dark/60 dark:text-white/60">{listing.condition}</p>
                         <p className="text-sm font-bold text-primary flex items-center gap-1 mt-1">
-                            🪙 {listing.price} ReCoins
+                            🪙 {listing.price} Eco Coins
                         </p>
                     </div>
                 </motion.div>
@@ -176,7 +176,7 @@ export default function TradeRequestPage() {
                                 }`}
                         >
                             <span className="text-2xl mb-1 block">🪙</span>
-                            <p className="font-bold text-dark dark:text-white text-sm">ReCoins</p>
+                            <p className="font-bold text-dark dark:text-white text-sm">Eco Coins</p>
                         </button>
                         <button
                             onClick={() => setTradeType('item')}
@@ -206,7 +206,7 @@ export default function TradeRequestPage() {
                                 />
                             </div>
                             <p className="text-xs text-dark/40 dark:text-white/40 mt-2 ml-1">
-                                Your balance: <span className="font-bold text-primary">{user.coins} ReCoins</span>
+                                Your balance: <span className="font-bold text-primary">{user.coins} Eco Coins</span>
                             </p>
                         </div>
                     ) : (

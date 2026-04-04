@@ -14,7 +14,8 @@ export function ListingCard({ listing, isOwner, onEdit, onDelete }: ListingCardP
     // Format price as Indian Rupees
     const formatPrice = (price: number) => {
         return new Intl.NumberFormat('en-IN', {
-            style: 'decimal',
+            style: 'currency',
+            currency: 'INR',
             minimumFractionDigits: 0,
             maximumFractionDigits: 0,
         }).format(price);
@@ -22,57 +23,54 @@ export function ListingCard({ listing, isOwner, onEdit, onDelete }: ListingCardP
 
     return (
         <Link href={`/marketplace/${listing.id}`} className="block h-full">
-            <div className="bg-white rounded-[2rem] border-[3px] border-[#111714] p-4 flex flex-col items-center relative shadow-brutal hover:-translate-y-1 hover:shadow-brutal-hover transition-all duration-300 h-full group">
-                {/* Heart/Action Button */}
-                <div className="absolute top-3 right-3 z-10 transition-opacity">
-                    {isOwner ? (
-                        <div className="flex gap-1" onClick={(e) => e.preventDefault()}>
-                            <button
-                                onClick={() => onEdit?.(listing.id)}
-                                className="bg-white/80 backdrop-blur-sm border-2 border-black rounded-full p-1.5 hover:bg-gray-100 transition-colors"
-                            >
-                                <span className="material-symbols-outlined text-lg text-black">edit</span>
-                            </button>
-                            <button
-                                onClick={() => onDelete?.(listing.id)}
-                                className="bg-white/80 backdrop-blur-sm border-2 border-black rounded-full p-1.5 hover:bg-rose-100 transition-colors"
-                            >
-                                <span className="material-symbols-outlined text-lg text-rose-500">delete</span>
-                            </button>
-                        </div>
-                    ) : (
-                        <button className="bg-white/80 backdrop-blur-sm border-2 border-black rounded-full p-1.5 hover:bg-rose-100 transition-colors" onClick={(e) => e.preventDefault()}>
-                            <span className="material-symbols-outlined text-lg text-gray-400 group-hover:text-rose-400 transition-colors">favorite</span>
-                        </button>
-                    )}
-                </div>
-
-                {/* New Badge */}
-                {Date.now() - new Date(listing.createdAt).getTime() < 7 * 24 * 60 * 60 * 1000 && (
-                    <div className="absolute top-0 left-0 bg-[#a7f3d0] text-[10px] font-black uppercase px-2 py-1 border-b-2 border-r-2 border-[#111714] rounded-br-xl z-20">New</div>
-                )}
-
+            <div className="bg-[#FAFAFA] rounded-2xl border-4 border-black shadow-[4px_4px_0px_0px_#000] overflow-hidden flex flex-col group active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all h-full">
                 {/* Image Container */}
-                <div className="w-24 h-24 rounded-full border-[3px] border-[#111714] overflow-hidden mb-3 bg-gray-100 shrink-0">
+                <div className="aspect-square bg-white border-b-4 border-black relative flex items-center justify-center overflow-hidden">
                     <img
                         src={listing.images[0]}
                         alt={listing.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
+                    {/* Green Eco Dot */}
+                    <div className="absolute top-3 right-3 w-4 h-4 bg-primary rounded-full border-2 border-black z-10 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"></div>
+
+                    {/* Owner Actions Overlay */}
+                    {isOwner && (
+                        <div className="absolute top-3 left-3 flex gap-1" onClick={(e) => e.preventDefault()}>
+                            <button
+                                onClick={() => onEdit?.(listing.id)}
+                                className="bg-white border-2 border-black rounded-full p-1.5 hover:bg-gray-100 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                            >
+                                <span className="material-symbols-outlined text-sm text-black">edit</span>
+                            </button>
+                            <button
+                                onClick={() => onDelete?.(listing.id)}
+                                className="bg-white border-2 border-black rounded-full p-1.5 hover:bg-rose-100 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                            >
+                                <span className="material-symbols-outlined text-sm text-rose-500">delete</span>
+                            </button>
+                        </div>
+                    )}
                 </div>
 
-                {/* Title */}
-                <h3 className="font-extrabold text-sm text-center text-[#111714] leading-tight mb-2 line-clamp-2" title={listing.title}>
-                    {listing.title}
-                </h3>
-
-                {/* Price Pill */}
-                <div className="mt-auto bg-primary border-2 border-[#111714] rounded-full px-3 py-1 flex items-center gap-1 shadow-sm">
-                    <span className="font-black text-sm text-[#111714]">{formatPrice(listing.price)}</span>
-                    <span className="text-xs">🪙</span>
+                {/* Content */}
+                <div className="p-3 flex flex-col flex-grow justify-between gap-2">
+                    <div>
+                        {/* Title */}
+                        <h3 className="font-bold text-sm leading-tight uppercase line-clamp-2 text-black">
+                            {listing.title}
+                        </h3>
+                        {/* Category & Condition */}
+                        <p className="text-[10px] font-bold text-gray-500 uppercase mt-1">
+                            {listing.category} • {listing.condition}
+                        </p>
+                    </div>
+                    {/* Price */}
+                    <div className="flex justify-between items-end">
+                        <span className="font-black text-lg text-black">{formatPrice(listing.price)}</span>
+                    </div>
                 </div>
             </div>
         </Link>
     );
 }
-

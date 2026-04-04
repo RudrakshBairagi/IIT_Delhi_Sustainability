@@ -16,8 +16,8 @@ const itemVariants = {
 
 const FAQ = [
     { q: 'How do I scan items?', a: 'Tap the Scan button on the home screen or navigate to the Scanner tab. Point your camera at any item and tap the capture button. Our AI will identify the item and suggest upcycling ideas.' },
-    { q: 'What are ReCoins?', a: 'ReCoins are the virtual currency in ReLoop. You earn them by scanning items, completing trades, and finishing missions. Use them to trade for items or redeem rewards.' },
-    { q: 'How does trading work?', a: 'Browse the marketplace, find an item you like, and send a trade request. You can offer ReCoins or propose an item swap. Once both parties agree, meet on campus to complete the trade.' },
+    { q: 'What are Eco Coins?', a: 'Eco Coins are the virtual currency in ReLoop. You earn them by scanning items, completing trades, and finishing missions. Use them to trade for items or redeem rewards.' },
+    { q: 'How does trading work?', a: 'Browse the marketplace, find an item you like, and send a trade request. You can offer Eco Coins or propose an item swap. Once both parties agree, meet on campus to complete the trade.' },
     { q: 'How is CO₂ savings calculated?', a: 'We calculate CO₂ savings based on the environmental impact of keeping items in use versus manufacturing new ones. Each item category has a research-backed carbon footprint estimate.' },
     { q: 'Is my data safe?', a: 'Yes! We use Firebase Authentication and Firestore with strict security rules. Your personal data is never shared with third parties. See our Privacy Policy for details.' },
     { q: 'How do I earn badges?', a: 'Badges are unlocked by completing specific milestones — scanning your first item, completing trades, maintaining login streaks, and saving CO₂. Check the Achievements page to see all available badges.' },

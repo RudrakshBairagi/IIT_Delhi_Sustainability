@@ -160,9 +160,9 @@ export default function ItemDetailPage() {
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-                    className="relative"
+                    className="relative w-full max-w-sm mx-auto"
                 >
-                    <div className="w-56 h-56 rounded-3xl border-3 border-dark shadow-brutal overflow-hidden bg-white dark:bg-dark-surface">
+                    <div className="aspect-square w-full rounded-3xl border-4 border-dark shadow-brutal overflow-hidden bg-white dark:bg-dark-surface">
                         <img
                             src={listing.images[0]}
                             alt={listing.title}
@@ -172,12 +172,12 @@ export default function ItemDetailPage() {
                     {listing.isTopImpact && (
                         <motion.div
                             initial={{ scale: 0, rotate: -10 }}
-                            animate={{ scale: 1, rotate: -4 }}
+                            animate={{ scale: 1, rotate: -2 }}
                             transition={{ delay: 0.3, type: 'spring' }}
-                            className="absolute -bottom-3 -right-3 bg-primary text-dark px-4 py-2 rounded-xl border-2 border-dark shadow-brutal-sm flex items-center gap-2"
+                            className="absolute -bottom-4 -right-4 bg-primary text-dark px-4 py-2 rounded-full border-4 border-dark shadow-brutal-sm flex items-center gap-2 z-10 rotate-[-2deg]"
                         >
                             <span className="material-symbols-outlined material-symbols-filled text-lg">eco</span>
-                            <span className="text-xs font-black uppercase">Top Impact</span>
+                            <span className="text-xs font-black uppercase tracking-wider">Top Impact</span>
                         </motion.div>
                     )}
                 </motion.div>
@@ -195,34 +195,36 @@ export default function ItemDetailPage() {
                     {/* Eco Impact Banner */}
                     <motion.div
                         variants={itemVariants}
-                        className="bg-primary rounded-2xl border-2 border-dark shadow-brutal-sm p-4 relative overflow-hidden"
+                        className="bg-primary rounded-2xl border-4 border-dark shadow-[4px_4px_0px_0px_#000] p-4 relative overflow-hidden group"
                     >
-                        <div className="absolute right-[-10px] top-[-10px] opacity-20">
-                            <span className="material-symbols-outlined material-symbols-filled text-[80px]">eco</span>
+                        <div className="flex items-center gap-3 relative z-10">
+                            <span className="material-symbols-outlined text-2xl text-dark">forest</span>
+                            <div>
+                                <span className="block text-[10px] font-bold uppercase opacity-80 mb-0.5 text-dark">Eco Impact</span>
+                                <span className="block text-xl font-black uppercase leading-none text-dark">YOU CAN SAVE {co2Saved} KG OF CO<sub>2</sub></span>
+                            </div>
                         </div>
-                        <div className="flex items-center gap-2 mb-1">
-                            <span className="material-symbols-outlined material-symbols-filled text-lg text-dark">eco</span>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-dark/70">Eco Impact</p>
-                        </div>
-                        <h3 className="text-xl font-black text-dark uppercase">You save {co2Saved}kg CO₂</h3>
                     </motion.div>
 
                     {/* Title & Price */}
                     <motion.div variants={itemVariants}>
-                        <h1 className="text-2xl font-black text-dark dark:text-white uppercase tracking-tight">{listing.title}</h1>
-                        <div className="flex items-center gap-2 mt-2 flex-wrap">
-                            <span className="inline-flex items-center gap-2 px-4 py-2 bg-primary rounded-xl border-2 border-dark font-bold text-dark">
-                                {formatPrice(listing.price)}
-                            </span>
-                            {isOwner && (
-                                <span className="px-3 py-2 bg-[#fde047] text-dark rounded-xl text-sm font-bold border-2 border-dark">
-                                    Your Listing
-                                </span>
+                        <h2 className="text-4xl font-black uppercase leading-[0.9] tracking-tight mb-4 text-dark dark:text-white">{listing.title}</h2>
+                        <div className="flex items-center gap-3">
+                            <div className="inline-flex items-center justify-center bg-primary px-5 py-3 rounded-full border-4 border-dark shadow-[3px_3px_0px_0px_#000]">
+                                <span className="font-black text-lg text-dark">{formatPrice(listing.price)}</span>
+                            </div>
+                            {!isOwner && (
+                                <button
+                                    onClick={() => setShowTradeModal(true)}
+                                    className="flex-1 bg-accent-yellow text-dark font-black uppercase text-sm py-3 px-4 rounded-full border-4 border-dark shadow-[3px_3px_0px_0px_#000] hover:bg-yellow-300 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all flex items-center justify-center gap-2 whitespace-nowrap"
+                                >
+                                    <span className="material-symbols-outlined font-black" style={{ fontSize: '20px' }}>swap_horiz</span>
+                                    Request for Trade
+                                </button>
                             )}
-                            {listing.location && (
-                                <span className="inline-flex items-center gap-1 px-3 py-2 bg-gray-100 dark:bg-dark-bg rounded-xl text-sm font-medium text-dark/60 dark:text-white/60">
-                                    <span className="material-symbols-outlined text-sm">location_on</span>
-                                    {listing.location}
+                            {isOwner && (
+                                <span className="px-4 py-3 bg-accent-yellow text-dark rounded-full text-sm font-bold border-4 border-dark shadow-[3px_3px_0px_0px_#000]">
+                                    Your Listing
                                 </span>
                             )}
                         </div>
@@ -251,29 +253,31 @@ export default function ItemDetailPage() {
                     </motion.div>
 
                     {/* Details */}
-                    <motion.div variants={itemVariants} className="grid grid-cols-2 gap-3">
-                        <div className="p-3 rounded-xl bg-gray-50 dark:bg-dark-bg">
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-dark/40 dark:text-white/40">Condition</span>
-                            <p className="text-base font-bold text-dark dark:text-white">{listing.condition}</p>
+                    <motion.div variants={itemVariants} className="grid grid-cols-2 gap-4">
+                        <div className="p-3 rounded-xl bg-white dark:bg-dark-surface border-4 border-dark shadow-[3px_3px_0px_0px_#000]">
+                            <span className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Condition</span>
+                            <p className="text-lg font-bold text-dark dark:text-white">{listing.condition}</p>
                         </div>
-                        <div className="p-3 rounded-xl bg-gray-50 dark:bg-dark-bg">
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-dark/40 dark:text-white/40">Category</span>
-                            <p className="text-base font-bold text-dark dark:text-white">{listing.category}</p>
+                        <div className="p-3 rounded-xl bg-white dark:bg-dark-surface border-4 border-dark shadow-[3px_3px_0px_0px_#000]">
+                            <span className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Category</span>
+                            <p className="text-lg font-bold text-dark dark:text-white">{listing.category}</p>
                         </div>
-                        <div className="col-span-2 mt-1">
-                            <p className="text-sm text-dark/70 dark:text-white/70 leading-relaxed">{listing.description}</p>
-                        </div>
+                    </motion.div>
+
+                    {/* Description */}
+                    <motion.div variants={itemVariants}>
+                        <p className="text-sm font-medium text-gray-600 dark:text-gray-400 leading-relaxed">{listing.description}</p>
                     </motion.div>
 
                     {/* Seller Card - Hide for owner, show for buyers */}
                     {!isOwner && (
                         <motion.div
                             variants={itemVariants}
-                            className="bg-gray-50 dark:bg-dark-bg p-4 rounded-2xl flex items-center justify-between"
+                            className="bg-gray-50 dark:bg-dark-bg rounded-2xl border-4 border-dark p-4 flex items-center justify-between shadow-sm"
                         >
                             <div className="flex items-center gap-3">
                                 <div className="relative">
-                                    <div className="w-11 h-11 rounded-full border-2 border-dark overflow-hidden bg-gray-200">
+                                    <div className="w-12 h-12 rounded-full border-2 border-dark overflow-hidden bg-gray-300">
                                         <img src={listing.seller.avatar} alt={listing.seller.name} className="w-full h-full object-cover" />
                                     </div>
                                     <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-primary rounded-full border-2 border-white dark:border-dark-surface" />
@@ -343,6 +347,60 @@ export default function ItemDetailPage() {
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* Bottom Action Navigation */}
+            <motion.nav
+                initial={{ y: 50, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 w-[90%] max-w-sm"
+            >
+                <div className="bg-white dark:bg-dark-surface rounded-full border-4 border-dark shadow-[6px_6px_0px_0px_#000] py-3 px-6 flex items-center justify-between">
+                    <button
+                        onClick={() => router.back()}
+                        className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-dark-bg rounded-full transition-colors"
+                        aria-label="Go back"
+                    >
+                        <span className="material-symbols-outlined text-2xl text-dark dark:text-white">arrow_back</span>
+                    </button>
+                    <div className="w-px h-6 bg-gray-200 dark:bg-gray-700"></div>
+                    <button
+                        onClick={() => setIsFavorited(!isFavorited)}
+                        className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-dark-bg rounded-full transition-colors"
+                        aria-label="Bookmark"
+                    >
+                        <span
+                            className={`material-symbols-outlined text-2xl ${isFavorited ? 'text-red-500' : 'text-dark dark:text-white'}`}
+                            style={{ fontVariationSettings: isFavorited ? "'FILL' 1" : "'FILL' 0" }}
+                        >
+                            bookmark
+                        </span>
+                    </button>
+                    <div className="w-px h-6 bg-gray-200 dark:bg-gray-700"></div>
+                    <button
+                        onClick={() => {
+                            if (navigator.share) {
+                                navigator.share({
+                                    title: listing.title,
+                                    text: `Check out ${listing.title} on ReLoop!`,
+                                    url: window.location.href,
+                                });
+                            }
+                        }}
+                        className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-dark-bg rounded-full transition-colors"
+                        aria-label="Share"
+                    >
+                        <span className="material-symbols-outlined text-2xl text-dark dark:text-white">share</span>
+                    </button>
+                    <div className="w-px h-6 bg-gray-200 dark:bg-gray-700"></div>
+                    <button
+                        className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-dark-bg rounded-full transition-colors"
+                        aria-label="More options"
+                    >
+                        <span className="material-symbols-outlined text-2xl text-dark dark:text-white">more_horiz</span>
+                    </button>
+                </div>
+            </motion.nav>
         </div>
     );
 }

@@ -125,6 +125,12 @@ export interface Listing {
     };
     status: 'available' | 'sold' | 'pending';
     createdAt: Date;
+    // 14-Day Liquidity Protocol
+    droppedAt?: Date;
+    expiresAt?: Date;
+    reloopPointId?: string;
+    equityStatus?: 'active' | 'expired' | 'recycled' | 'donated';
+    equityChoice?: 'recycle' | 'donate';
 }
 
 
@@ -283,4 +289,31 @@ export interface WrappedStats {
     streakRecord: number;
     badgesEarned: number;
     impactEquivalent: string;
+}
+
+// Smart Bags System
+export interface SmartBag {
+    id: string;
+    qrCode: string;
+    ownerId?: string;
+    ownerName?: string;
+    status: 'unregistered' | 'registered' | 'filled' | 'collected' | 'processed';
+    registeredAt?: Date;
+    filledAt?: Date;
+    collectedAt?: Date;
+    estimatedWeight?: number;
+    coinsAwarded?: number;
+    wasteType?: 'recyclable' | 'organic' | 'mixed';
+}
+
+// Reloop Points (Collection Hubs)
+export interface ReloopPoint {
+    id: string;
+    name: string;
+    location: string;
+    type: 'collection' | 'dropoff' | 'both';
+    hours: string;
+    itemsCollected: number;
+    bagsProcessed: number;
+    icon?: string;
 }

@@ -159,7 +159,7 @@ export default function ReuseIdeasPage() {
                                 </div>
                                 <div className="text-center">
                                     <span className="block font-bold text-xs text-black dark:text-white">Trade It</span>
-                                    <span className="block text-[10px] text-black/60 dark:text-white/60">Get ReCoins</span>
+                                    <span className="block text-[10px] text-black/60 dark:text-white/60">Get Eco Coins</span>
                                 </div>
                             </button>
 
