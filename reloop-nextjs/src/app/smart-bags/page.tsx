@@ -8,6 +8,8 @@ import { SmartBag, User } from '@/types';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { DBService } from '@/lib/firebase/db';
 
+import { PageHeader } from '@/components/ui/PageHeader';
+
 const itemVariants = {
     hidden: { y: 15, opacity: 0 },
     visible: { y: 0, opacity: 1, transition: { type: 'spring' as const, stiffness: 300, damping: 24 } },
@@ -72,23 +74,7 @@ export default function SmartBagsPage() {
 
     return (
         <div className="text-on-surface min-h-screen pb-32 bg-surface font-['Plus_Jakarta_Sans']">
-            {/* TopAppBar Shell */}
-            <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 backdrop-blur-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] bg-[#f9f6f1]/80 max-w-md left-1/2 -translate-x-1/2">
-                <Link href="/" className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full overflow-hidden bg-surface-container-highest">
-                        <img 
-                            alt="User Profile" 
-                            className="w-full h-full object-cover"
-                            src={user.avatar || ("https://ui-avatars.com/api/?name=" + (user.name || 'User'))} 
-                        />
-                    </div>
-                    <span className="font-extrabold tracking-tighter text-2xl text-[#29664c]">RELOOP</span>
-                </Link>
-                <div className="flex items-center gap-2 bg-primary-container px-4 py-1.5 rounded-full">
-                    <span className="material-symbols-outlined text-primary text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>monetization_on</span>
-                    <span className="font-bold text-on-primary-container text-sm">{user.coins || 0}</span>
-                </div>
-            </header>
+            <PageHeader showBackButton={false} />
 
             <main className="pt-28 px-6 max-w-2xl mx-auto">
                 {/* Title & Tabs */}

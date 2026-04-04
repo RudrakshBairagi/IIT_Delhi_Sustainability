@@ -17,6 +17,8 @@ interface LeaderboardEntry {
 
 const podiumOrder = [1, 0, 2]; // 2nd, 1st, 3rd display positions
 
+import { PageHeader } from '@/components/ui/PageHeader';
+
 export default function LeaderboardPage() {
     const { user, isDemo, isLoading: authLoading } = useAuth();
     const [leaders, setLeaders] = useState<LeaderboardEntry[]>([]);
@@ -58,21 +60,7 @@ export default function LeaderboardPage() {
 
     return (
         <div className="min-h-screen text-[#29302f] pb-32" style={{ backgroundColor: '#f1f8f6' }}>
-
-            {/* Header */}
-            <header className="fixed top-0 w-full z-50 backdrop-blur-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] flex justify-between items-center px-6 h-16 max-w-md left-1/2 -translate-x-1/2" style={{ backgroundColor: 'rgba(241,248,246,0.8)' }}>
-                <div className="flex items-center gap-4">
-                    <Link href="/" className="material-symbols-outlined text-[#29664c] cursor-pointer">menu</Link>
-                    <h1 className="font-extrabold tracking-tighter text-2xl text-[#29302f]">Campus Leaderboard</h1>
-                </div>
-                <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-[#b9f9d6]">
-                    <img
-                        src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.name || 'You'}&background=29664c&color=fff`}
-                        alt="Profile"
-                        className="w-full h-full object-cover"
-                    />
-                </div>
-            </header>
+            <PageHeader title="LEADERBOARD" backHref="/" />
 
             <main className="pt-24 px-6 max-w-2xl mx-auto">
 

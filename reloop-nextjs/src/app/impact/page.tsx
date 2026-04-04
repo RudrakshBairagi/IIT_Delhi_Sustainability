@@ -35,6 +35,8 @@ const barData = [
     { month: 'May', height: '70%', active: false },
 ];
 
+import { PageHeader } from '@/components/ui/PageHeader';
+
 function ImpactContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -85,20 +87,7 @@ function ImpactContent() {
 
     return (
         <div className="min-h-screen text-[#29302f] pb-32" style={{ backgroundColor: '#f1f8f6' }}>
-
-            {/* Header */}
-            <header className="flex justify-between items-center w-full px-6 py-4 sticky top-0 z-50 backdrop-blur-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)]" style={{ backgroundColor: 'rgba(241,248,246,0.8)' }}>
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full overflow-hidden bg-[#d4dfdd]">
-                        <img src={user.avatar || `https://ui-avatars.com/api/?name=${user.name}&background=29664c&color=fff`} alt="Profile" className="w-full h-full object-cover" />
-                    </div>
-                    <span className="text-2xl font-extrabold tracking-tighter text-[#29664c]">RELOOP</span>
-                </div>
-                <div className="flex items-center gap-2 px-4 py-2 bg-[#b9f9d6] rounded-full hover:bg-[#eaf2f0] transition-all cursor-pointer">
-                    <span className="material-symbols-outlined text-[#29664c] text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>stars</span>
-                    <span className="text-[#246147] font-bold text-xs">{user.coins ?? 240} Coins</span>
-                </div>
-            </header>
+            <PageHeader showBackButton={false} />
 
             <main className="px-6 pt-6 space-y-8 max-w-2xl mx-auto">
 

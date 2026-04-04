@@ -5,6 +5,8 @@ import { useAuth } from '@/lib/contexts/AuthContext';
 import Link from 'next/link';
 import DemoManager from '@/lib/demo-manager';
 
+import { PageHeader } from '@/components/ui/PageHeader';
+
 export default function GiveBackPage() {
     const { user } = useAuth();
     const userCoins = user?.coins ?? 2450;
@@ -64,19 +66,7 @@ export default function GiveBackPage() {
 
     return (
         <div className="min-h-screen text-[#29302f] bg-[#f1f8f6] pb-32">
-            {/* Header */}
-            <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 backdrop-blur-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] max-w-md left-1/2 -translate-x-1/2" style={{ backgroundColor: 'rgba(241,248,246,0.8)' }}>
-                <div className="flex items-center gap-3">
-                    <Link href="/" className="w-10 h-10 rounded-full overflow-hidden bg-[#d4dfdd] block active:scale-95 transition-transform">
-                        <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNcJOvFUS0GWf5vbUdZjHLdDzC7HznpjR4IEIC6Umc2rwvLcN1127cSaUggCTjEl1k9RWeYz688zXytmn8rXhCIHEXRU4hnWXdYp6VkSjRdvf-jgy8kux75y5MH_BYULzHmVyaI4Wwrt5-4rrF-YzMTMnT4K42WpmXB_fwj1XcyYRUBXPFMGzfoDrD3-fEDiSINGeWQRhgQsJ4WrOyr4zPVGDtR-MCGUraEwTVRJmVSOuCKMZ5GLDH3fOHGzz3osMVWmlm_ZV1vLk" alt="Profile" />
-                    </Link>
-                    <span className="text-2xl font-extrabold text-[#29664c] tracking-tighter uppercase">RELOOP</span>
-                </div>
-                <div className="bg-[#b9f9d6] px-4 py-2 rounded-full flex items-center gap-2 transition-transform active:scale-95 duration-150 cursor-pointer">
-                    <span className="material-symbols-outlined text-[#246147] text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>monetization_on</span>
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#246147]">{userCoins} COINS</span>
-                </div>
-            </header>
+            <PageHeader showBackButton={false} />
 
             <main className="pt-24 px-6 max-w-2xl mx-auto">
                 {/* Community Impact Header */}

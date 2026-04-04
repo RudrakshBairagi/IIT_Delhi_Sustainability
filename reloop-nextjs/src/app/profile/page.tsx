@@ -58,8 +58,9 @@ export default function ProfilePage() {
     return (
         <div className="min-h-screen bg-background">
             <PageHeader
-                title="Profile"
+                title="PROFILE"
                 backHref="/"
+                hideUserProfile={true}
                 rightAction={
                     <Link href="/settings" className="w-10 h-10 flex items-center justify-center bg-white dark:bg-dark-surface rounded-xl border border-outline-variant/10 dark:border-gray-600 shadow-sm">
                         <span className="material-symbols-outlined text-dark dark:text-white">settings</span>

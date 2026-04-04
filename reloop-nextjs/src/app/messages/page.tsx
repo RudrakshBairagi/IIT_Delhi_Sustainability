@@ -20,6 +20,8 @@ const itemVariants = {
 
 type TabType = 'marketplace' | 'community';
 
+import { PageHeader } from '@/components/ui/PageHeader';
+
 export default function MessagesPage() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -91,17 +93,7 @@ export default function MessagesPage() {
 
     return (
         <div className="min-h-screen text-[#29302f]" style={{ backgroundColor: '#f1f8f6' }}>
-
-            {/* Header */}
-            <header className="fixed top-0 w-full z-50 flex items-center px-6 h-16 backdrop-blur-3xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] max-w-md left-1/2 -translate-x-1/2" style={{ backgroundColor: 'rgba(241,248,246,0.8)' }}>
-                <div className="flex items-center gap-4 w-full">
-                    <Link href="/" className="material-symbols-outlined text-[#29664c] hover:bg-[#eaf2f0] p-2 rounded-full transition-colors active:scale-95 duration-200">
-                        arrow_back
-                    </Link>
-                    <h1 className="font-extrabold tracking-tight text-xl text-[#29302f]">Messages</h1>
-                </div>
-                <div className="absolute bottom-0 left-0 w-full h-[2px] bg-[#eaf2f0]" />
-            </header>
+            <PageHeader title="MESSAGES" backHref="/" />
 
             <main className="pt-24 pb-32 px-6 max-w-2xl mx-auto space-y-8">
 
