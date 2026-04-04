@@ -456,9 +456,13 @@ class DemoManagerService {
     // ===== LEADERBOARD/RANKINGS (Mock) =====
     getLeaderboard() {
         return [
-            { rank: 1, name: 'EcoChampion', avatar: 'https://ui-avatars.com/api/?name=Eco+Champion&background=22c55e&color=fff', xp: 2450, co2Saved: 89 },
-            { rank: 2, name: 'GreenWarrior', avatar: 'https://ui-avatars.com/api/?name=Green+Warrior&background=3b82f6&color=fff', xp: 2180, co2Saved: 76 },
-            { rank: 3, name: 'SustainableX', avatar: 'https://ui-avatars.com/api/?name=Sustainable+X&background=a855f7&color=fff', xp: 1920, co2Saved: 65 },
+            { rank: 1, name: 'Subrat Kumar', avatar: '/images/ranking/rank1.jpg', xp: 2850, co2Saved: 94.5 },
+            { rank: 2, name: 'Meemansa Soni', avatar: '/images/ranking/rank2.jpg', xp: 2680, co2Saved: 88.2 },
+            { rank: 3, name: 'Srajan Tiwari', avatar: '/images/ranking/rank3.jpg', xp: 2420, co2Saved: 82.5 },
+            { rank: 4, name: 'Shaolin Prajapati', avatar: '/images/ranking/rank4.jpg', xp: 2210, co2Saved: 76.8 },
+            { rank: 5, name: 'Rudraksh Bairagi', avatar: '/images/ranking/rank5.jpg', xp: 2100, co2Saved: 71.2 },
+            { rank: 6, name: 'Mihir Kalway', avatar: '/images/ranking/rank6.jpg', xp: 1950, co2Saved: 65.5 },
+            { rank: 7, name: 'Arjun Jain', avatar: '/images/ranking/rank7.jpg', xp: 1820, co2Saved: 59.8 }
         ];
     }
 
