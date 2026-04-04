@@ -68,7 +68,7 @@ export default function GiveBackPage() {
         <div className="min-h-screen text-[#29302f] bg-[#f1f8f6] pb-32">
             <PageHeader showBackButton={false} />
 
-            <main className="pt-24 px-6 max-w-2xl mx-auto">
+            <main className="pt-2 px-6 max-w-2xl mx-auto">
                 {/* Community Impact Header */}
                 <section className="mb-10">
                     <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#29664c] mb-2 block">Global Ecosystem</label>
