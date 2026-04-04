@@ -157,7 +157,7 @@ export const TradeOfferModal = ({ targetListing, onClose, onSuccess }: TradeOffe
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-dark/80 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-dark/80 backdrop-blur-sm w-full max-w-md left-1/2 -translate-x-1/2"
         >
             <motion.div
                 initial={{ y: '100%' }}

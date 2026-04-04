@@ -60,7 +60,7 @@ export default function LeaderboardPage() {
         <div className="min-h-screen text-[#29302f] pb-32" style={{ backgroundColor: '#f1f8f6' }}>
 
             {/* Header */}
-            <header className="fixed top-0 w-full z-50 backdrop-blur-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] flex justify-between items-center px-6 h-16" style={{ backgroundColor: 'rgba(241,248,246,0.8)' }}>
+            <header className="fixed top-0 w-full z-50 backdrop-blur-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] flex justify-between items-center px-6 h-16 max-w-md left-1/2 -translate-x-1/2" style={{ backgroundColor: 'rgba(241,248,246,0.8)' }}>
                 <div className="flex items-center gap-4">
                     <Link href="/" className="material-symbols-outlined text-[#29664c] cursor-pointer">menu</Link>
                     <h1 className="font-extrabold tracking-tighter text-2xl text-[#29302f]">Campus Leaderboard</h1>

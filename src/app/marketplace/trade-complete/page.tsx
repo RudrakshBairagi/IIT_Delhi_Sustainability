@@ -116,7 +116,7 @@ export default function TradeCompletePage() {
 
             {/* Confetti Effect */}
             {showConfetti && (
-                <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
+                <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden w-full max-w-md left-1/2 -translate-x-1/2">
                     {Array.from({ length: 20 }).map((_, i) => (
                         <motion.div
                             key={i}

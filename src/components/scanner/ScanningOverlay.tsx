@@ -36,7 +36,7 @@ export const ScanningOverlay = ({ onCancel, imageUrl }: ScanningOverlayProps) =>
     };
 
     return (
-        <div className="fixed inset-0 z-50 bg-[#fcf9f2] flex flex-col overflow-x-hidden font-body text-[#29302f]">
+        <div className="fixed inset-0 z-50 bg-[#fcf9f2] flex flex-col overflow-x-hidden font-body text-[#29302f] w-full max-w-md left-1/2 -translate-x-1/2">
             <style jsx>{`
                 .striped-progress {
                     background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent);
@@ -150,7 +150,7 @@ export const ScanningOverlay = ({ onCancel, imageUrl }: ScanningOverlayProps) =>
             </main>
 
             {/* Bottom Bar Component (Fixed Progress) */}
-            <footer className="fixed bottom-0 left-0 w-full bg-[#fcf9f2] p-8 z-50">
+            <footer className="fixed bottom-0 w-full bg-[#fcf9f2] p-8 z-50 max-w-md left-1/2 -translate-x-1/2">
                 <div className="max-w-lg mx-auto">
                     <div className="flex justify-between items-end mb-3">
                         <div className="flex flex-col">

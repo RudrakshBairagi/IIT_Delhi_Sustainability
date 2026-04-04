@@ -93,7 +93,7 @@ function QRCouponModal({ reward, code, onClose }: { reward: Reward; code: string
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-5"
+            className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-5 w-full max-w-md left-1/2 -translate-x-1/2"
             onClick={onClose}
         >
             <motion.div
@@ -172,7 +172,7 @@ function CommunityStoryModal({ reward, onClose }: { reward: Reward; onClose: () 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-5"
+            className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-5 w-full max-w-md left-1/2 -translate-x-1/2"
             onClick={onClose}
         >
             <motion.div

@@ -34,7 +34,7 @@ export function BadgeRevealModal({ isOpen, onClose, badge, onViewCollection }: B
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-dark/90 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-dark/90 backdrop-blur-sm w-full max-w-md left-1/2 -translate-x-1/2">
             {/* Sparkle particles */}
             {showSparkles && (
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">

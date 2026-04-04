@@ -17,7 +17,7 @@ export default function VideoModal({ isOpen, onClose, videoId, videoSrc }: Video
     return (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center px-4 w-full max-w-md left-1/2 -translate-x-1/2">
                     {/* Backdrop */}
                     <motion.div
                         initial={{ opacity: 0 }}

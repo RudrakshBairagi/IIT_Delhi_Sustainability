@@ -154,7 +154,7 @@ export default function ScanResultPage() {
                 </main>
 
                 {/* Sticky Save Button */}
-                <div className="fixed bottom-6 w-full max-w-md px-6 z-50 pointer-events-none left-1/2 -translate-x-1/2">
+                <div className="fixed bottom-6 w-full px-6 z-50 pointer-events-none -translate-x-1/2 max-w-md left-1/2 -translate-x-1/2">
                     <button
                         onClick={() => router.push('/')}
                         className="pointer-events-auto active:scale-95 transition-transform group relative w-full h-16 cursor-pointer flex items-center justify-center"

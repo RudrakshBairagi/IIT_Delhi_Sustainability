@@ -91,7 +91,7 @@ export default function ReuseIdeasPage() {
     return (
         <div className="bg-[#f1f8f6] font-body text-[#29302f] antialiased min-h-screen pb-32">
             {/* TopAppBar */}
-            <header className="flex items-center justify-between px-6 py-4 w-full fixed top-0 z-50 bg-[#f1f8f6]/80 backdrop-blur-3xl shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
+            <header className="flex items-center justify-between px-6 py-4 w-full fixed top-0 z-50 bg-[#f1f8f6]/80 backdrop-blur-3xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] max-w-md left-1/2 -translate-x-1/2">
                 <div className="flex items-center gap-4">
                     <button onClick={() => router.back()} className="text-[#29664c] hover:opacity-80 transition-opacity active:scale-95 duration-200">
                         <span className="material-symbols-outlined" style={{ fontSize: 28 }}>arrow_back</span>

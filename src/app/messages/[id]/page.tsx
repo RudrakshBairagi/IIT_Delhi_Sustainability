@@ -197,7 +197,7 @@ export default function ChatPage() {
     return (
         <div className="min-h-screen bg-[#f1f8f6] text-[#29302f] font-body flex flex-col">
             {/* TopAppBar */}
-            <header className="fixed top-0 w-full z-50 bg-[#f1f8f6]/80 backdrop-blur-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
+            <header className="fixed top-0 w-full z-50 bg-[#f1f8f6]/80 backdrop-blur-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] max-w-md left-1/2 -translate-x-1/2">
                 <div className="flex justify-between items-center px-6 py-4 w-full">
                     <div className="flex items-center gap-4">
                         <button onClick={() => router.push('/messages')} className="w-10 h-10 flex items-center justify-center hover:bg-[#eaf2f0] transition-colors rounded-full active:scale-95 duration-200">
@@ -437,7 +437,7 @@ export default function ChatPage() {
 
             {/* Bottom Input Area */}
             {!showOfferUI && (
-                <footer className="fixed bottom-0 w-full z-50 bg-[#f1f8f6]/80 backdrop-blur-xl pt-4 pb-10 px-6">
+                <footer className="fixed bottom-0 w-full z-50 bg-[#f1f8f6]/80 backdrop-blur-xl pt-4 pb-10 px-6 max-w-md left-1/2 -translate-x-1/2">
                     <div className="flex items-center gap-3">
                         {contact?.conversationType === 'marketplace' && (
                             <button

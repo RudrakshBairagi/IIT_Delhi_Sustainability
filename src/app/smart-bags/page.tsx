@@ -73,7 +73,7 @@ export default function SmartBagsPage() {
     return (
         <div className="text-on-surface min-h-screen pb-32 bg-surface font-['Plus_Jakarta_Sans']">
             {/* TopAppBar Shell */}
-            <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-4 backdrop-blur-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] bg-[#f9f6f1]/80">
+            <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 backdrop-blur-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] bg-[#f9f6f1]/80 max-w-md left-1/2 -translate-x-1/2">
                 <Link href="/" className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full overflow-hidden bg-surface-container-highest">
                         <img 

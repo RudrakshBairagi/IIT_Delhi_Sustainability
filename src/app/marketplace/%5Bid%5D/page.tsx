@@ -187,7 +187,7 @@ export default function ItemDetailPage() {
             </div>
 
             {/* Sticky Bottom Actions */}
-            <div className="fixed bottom-0 left-0 w-full p-4 bg-white/80 dark:bg-[#112118]/80 backdrop-blur-xl border-t border-gray-200 dark:border-gray-800 z-50">
+            <div className="fixed bottom-0 w-full p-4 bg-white/80 dark:bg-[#112118]/80 backdrop-blur-xl border-t border-gray-200 dark:border-gray-800 z-50 max-w-md left-1/2 -translate-x-1/2">
                 <div className="flex gap-3 max-w-4xl mx-auto">
                     <Link href={`/messages/${listing.seller.id}`} className="flex-1 h-14 rounded-full border-[3px] border-[#111714] dark:border-white bg-transparent text-[#111714] dark:text-white text-base font-bold tracking-wide hover:bg-gray-50 dark:hover:bg-white/10 active:scale-95 transition-all flex items-center justify-center">
                         MESSAGE SELLER

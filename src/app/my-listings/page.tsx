@@ -389,7 +389,7 @@ export default function MyListingsPage() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 bg-dark/80 backdrop-blur-sm flex items-center justify-center p-4"
+                        className="fixed inset-0 z-50 bg-dark/80 backdrop-blur-sm flex items-center justify-center p-4 w-full max-w-md left-1/2 -translate-x-1/2"
                         onClick={() => !isDeleting && setDeleteTarget(null)}
                     >
                         <motion.div

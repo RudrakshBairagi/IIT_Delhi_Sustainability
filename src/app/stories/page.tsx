@@ -134,7 +134,7 @@ export default function StoriesPage() {
 
     return (
         <div
-            className="fixed inset-0 bg-black z-50 select-none"
+            className="fixed inset-0 bg-black z-50 select-none w-full max-w-md left-1/2 -translate-x-1/2"
             onClick={handleTap}
             onMouseDown={() => setIsPaused(true)}
             onMouseUp={() => setIsPaused(false)}

@@ -89,7 +89,7 @@ export default function MarketplacePage() {
     return (
         <div className="bg-surface text-on-surface min-h-screen pb-32 font-['Plus_Jakarta_Sans']">
             {/* TopAppBar */}
-            <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 h-20 bg-surface/80 dark:bg-[#1a1c1b]/80 backdrop-blur-3xl shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
+            <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-20 bg-surface/80 dark:bg-[#1a1c1b]/80 backdrop-blur-3xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] max-w-md left-1/2 -translate-x-1/2">
                 <div className="flex items-center gap-4">
                     <button onClick={() => router.push('/')} className="material-symbols-outlined text-[#29664c] dark:text-[#b9f9d6] cursor-pointer active:scale-95 transition-transform hover:bg-[#eaf2f0] p-2 rounded-full">arrow_back</button>
                     <h1 className="font-extrabold tracking-tight text-2xl text-[#29664c] dark:text-[#b9f9d6] tracking-[-2%]">RELOOP</h1>

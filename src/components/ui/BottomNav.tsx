@@ -29,7 +29,7 @@ export function BottomNav() {
     }
 
     return (
-        <nav className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-8 pt-4 bg-[#f1f8f6]/80 backdrop-blur-xl rounded-t-[3rem] shadow-[0_-20px_40px_-10px_rgba(41,48,47,0.06)]">
+        <nav className="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 pb-8 pt-4 bg-[#f1f8f6]/80 backdrop-blur-xl rounded-t-[3rem] shadow-[0_-20px_40px_-10px_rgba(41,48,47,0.06)] max-w-md left-1/2 -translate-x-1/2">
             {navItems.map((item) => {
                 const isActive = pathname === item.href ||
                     (item.href !== '/' && pathname.startsWith(item.href));

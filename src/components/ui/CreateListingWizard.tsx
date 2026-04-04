@@ -298,7 +298,7 @@ export function CreateListingWizard({ isOpen, onClose, onSuccess }: CreateListin
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-dark/80 backdrop-blur-sm"
+                className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-dark/80 backdrop-blur-sm w-full max-w-md left-1/2 -translate-x-1/2"
                 onClick={(e) => e.target === e.currentTarget && onClose()}
             >
                 <motion.div

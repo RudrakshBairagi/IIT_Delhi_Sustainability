@@ -24,7 +24,7 @@ export const LevelUpModal = ({ level, title, xp, onClose }: LevelUpModalProps) =
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-dark/90 backdrop-blur-md"
+                className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-dark/90 backdrop-blur-md w-full max-w-md left-1/2 -translate-x-1/2"
             >
                 <Confetti
                     width={windowSize.width}

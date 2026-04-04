@@ -192,7 +192,7 @@ export default function VerifyTradePage() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50"
+                        className="fixed inset-0 z-50 w-full max-w-md left-1/2 -translate-x-1/2"
                     >
                         <ScanningOverlay onCancel={() => setShowScanner(false)} />
                     </motion.div>
