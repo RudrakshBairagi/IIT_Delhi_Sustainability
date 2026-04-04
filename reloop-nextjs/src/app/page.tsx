@@ -10,6 +10,7 @@ import { useAuth } from '@/lib/contexts/AuthContext';
 import { StreakBadge } from '@/components/ui/StreakBadge';
 import { StoriesBar } from '@/components/ui/StoriesBar';
 import { User } from '@/types';
+import DemoManager from '@/lib/demo-manager';
 
 // Animation variants
 const containerVariants = {
@@ -47,12 +48,45 @@ export default function HomePage() {
     }
   }, [user, isLoading, router]);
 
-  // Mock leaderboard for display
-  const leaderboard = [
-    { uid: '1', name: 'Alex Johnson', level: 8, xp: 8450, avatar: 'https://ui-avatars.com/api/?name=Alex+Johnson' },
-    { uid: '2', name: 'Sarah Chen', level: 7, xp: 7200, avatar: 'https://ui-avatars.com/api/?name=Sarah+Chen' },
-    { uid: '3', name: 'Mike Smith', level: 6, xp: 6100, avatar: 'https://ui-avatars.com/api/?name=Mike+Smith' }
-  ];
+  // Extended leaderboard for rank calculation (simulates campus users)
+  const allCampusUsers = [
+    { uid: '1', name: 'EcoChampion', xp: 8450 },
+    { uid: '2', name: 'GreenWarrior', xp: 7200 },
+    { uid: '3', name: 'SustainableX', xp: 6100 },
+    { uid: '4', name: 'RecycleKing', xp: 5800 },
+    { uid: '5', name: 'PlanetHero', xp: 5200 },
+    { uid: '6', name: 'EcoNinja', xp: 4900 },
+    { uid: '7', name: 'GreenThumb', xp: 4500 },
+    { uid: '8', name: 'TradeQueen', xp: 4100 },
+    { uid: '9', name: 'ReLooper', xp: 3800 },
+    { uid: '10', name: 'CircularEco', xp: 3500 },
+    { uid: '11', name: 'ZeroWaste', xp: 3200 },
+    { uid: 'current', name: user?.name || 'You', xp: user?.xp || 2800 }, // Current user
+    { uid: '12', name: 'CarbonCutter', xp: 2600 },
+    { uid: '13', name: 'ReusePro', xp: 2200 },
+    { uid: '14', name: 'EcoStarter', xp: 1800 },
+    { uid: '15', name: 'GreenNewbie', xp: 1200 },
+  ].sort((a, b) => b.xp - a.xp); // Sort by XP descending
+
+  // Calculate user's rank
+  const userRank = allCampusUsers.findIndex(u => u.uid === 'current') + 1;
+  const totalUsers = allCampusUsers.length;
+  const percentile = Math.round(((totalUsers - userRank) / totalUsers) * 100);
+  const usersAhead = userRank - 1;
+  const usersBehind = totalUsers - userRank;
+
+  // Get previous rank from localStorage for "up/down" indicator
+  const [rankChange, setRankChange] = useState(0);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const prevRank = localStorage.getItem('reloop_prev_rank');
+      if (prevRank) {
+        const change = parseInt(prevRank) - userRank;
+        setRankChange(change);
+      }
+      localStorage.setItem('reloop_prev_rank', userRank.toString());
+    }
+  }, [userRank]);
 
   if (isLoading) {
     return (
@@ -105,63 +139,71 @@ export default function HomePage() {
           <StoriesBar />
         </motion.div>
 
-        {/* Scan Hero - Compact Banner */}
+        {/* Scan Hero - Bigger Banner */}
         <motion.div variants={itemVariants} className="relative group">
           <div className="absolute inset-0 bg-dark rounded-[2rem] translate-x-1 translate-y-1"></div>
-          <div className="relative bg-primary rounded-[2rem] border-3 border-dark dark:border-gray-600 p-5 overflow-hidden flex items-center justify-between min-h-[120px]">
+          <div className="relative bg-gradient-to-br from-primary via-green-400 to-emerald-500 rounded-[2rem] border-3 border-dark dark:border-gray-600 p-6 overflow-hidden flex items-center justify-between min-h-[150px]">
             {/* Background Decoration */}
-            <div className="absolute -right-4 -bottom-4 text-9xl opacity-10 pointer-events-none rotate-12">
-              <span className="material-symbols-outlined text-[100px]">photo_camera</span>
+            <div className="absolute -right-6 -bottom-6 opacity-15 pointer-events-none rotate-12">
+              <span className="material-symbols-outlined text-[120px]">photo_camera</span>
             </div>
 
             <div className="relative z-10 flex-1">
-              <h2 className="text-2xl font-[900] text-dark dark:text-white uppercase tracking-tight mb-1 leading-none">Scan &<br />Earn!</h2>
-              <p className="text-dark/80 dark:text-white/80 font-bold text-xs mb-3 max-w-[150px] leading-tight">
-                Reveal upcycling ideas & coins.
+              <h2 className="text-3xl font-[900] text-dark uppercase tracking-tight mb-2 leading-none">Scan &<br />Earn!</h2>
+              <p className="text-dark/70 font-bold text-sm max-w-[160px] leading-tight">
+                Reveal upcycling ideas & earn coins.
               </p>
             </div>
             <Link href="/scanner"
-              className="relative z-10 flex flex-col items-center justify-center gap-1 bg-dark text-white w-20 h-20 rounded-2xl shadow-brutal-sm hover:translate-y-1 active:scale-95 transition-all group-hover:shadow-none"
+              className="relative z-10 flex flex-col items-center justify-center gap-1.5 bg-dark text-white w-24 h-24 rounded-2xl shadow-brutal hover:translate-y-1 active:scale-95 transition-all group-hover:shadow-brutal-sm"
             >
-              <span className="material-symbols-outlined text-2xl">photo_camera</span>
-              <span className="text-[10px] font-bold uppercase">Scan</span>
+              <span className="material-symbols-outlined text-3xl">photo_camera</span>
+              <span className="text-xs font-black uppercase tracking-wide">Scan</span>
             </Link>
           </div>
         </motion.div>
 
-        {/* Stats Cards - Compact Padding */}
+        {/* Stats Cards - Beautified */}
         <motion.div variants={itemVariants} className="grid grid-cols-2 gap-3">
-          {/* Coins Card */}
-          <div className="bg-white dark:bg-dark-surface rounded-xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm p-3">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 bg-card-yellow rounded-lg border-2 border-dark dark:border-gray-600 flex items-center justify-center">
-                <span className="material-symbols-outlined text-sm text-dark">monetization_on</span>
+          {/* Rank Card */}
+          <Link href="/impact" className="relative group">
+            <div className="absolute inset-0 bg-dark rounded-2xl translate-x-0.5 translate-y-0.5"></div>
+            <div className="relative bg-gradient-to-br from-blue-100 to-cyan-100 rounded-2xl border-2 border-dark p-4 transition-all group-hover:translate-x-0.5 group-hover:translate-y-0.5">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-xl border-2 border-dark flex items-center justify-center">
+                  <span className="material-symbols-outlined text-xl text-white">leaderboard</span>
+                </div>
+                <div>
+                  <p className="text-2xl font-[900] text-dark leading-none">#{userRank}</p>
+                  <p className="text-[10px] text-dark/50 font-bold">Campus Rank</p>
+                </div>
               </div>
-              <div>
-                <p className="text-xl font-[900] text-dark dark:text-white leading-none">{user.coins}</p>
-                <p className="text-[9px] text-gray-500 dark:text-gray-400 font-bold">ReCoins</p>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-black text-blue-600">Top {100 - percentile}%</span>
+                <span className="material-symbols-outlined text-sm text-dark/40">arrow_forward</span>
               </div>
             </div>
-            <Link href="/rewards" className="text-[10px] font-bold text-primary flex items-center gap-1">
-              Redeem <span className="material-symbols-outlined text-[10px]">arrow_forward</span>
-            </Link>
-          </div>
+          </Link>
 
           {/* CO2 Card */}
-          <div className="bg-white dark:bg-dark-surface rounded-xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm p-3">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 bg-card-green rounded-lg border-2 border-dark dark:border-gray-600 flex items-center justify-center">
-                <span className="material-symbols-outlined text-sm text-dark">eco</span>
+          <Link href="/impact" className="relative group">
+            <div className="absolute inset-0 bg-dark rounded-2xl translate-x-0.5 translate-y-0.5"></div>
+            <div className="relative bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl border-2 border-dark p-4 transition-all group-hover:translate-x-0.5 group-hover:translate-y-0.5">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl border-2 border-dark flex items-center justify-center">
+                  <span className="material-symbols-outlined text-xl text-white">eco</span>
+                </div>
+                <div>
+                  <p className="text-2xl font-[900] text-dark leading-none">{user.co2Saved}</p>
+                  <p className="text-[10px] text-dark/50 font-bold">kg CO₂ Saved</p>
+                </div>
               </div>
-              <div>
-                <p className="text-xl font-[900] text-dark dark:text-white leading-none">{user.co2Saved}</p>
-                <p className="text-[9px] text-gray-500 dark:text-gray-400 font-bold">kg CO₂ Saved</p>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-black text-green-600">Your Impact</span>
+                <span className="material-symbols-outlined text-sm text-dark/40">arrow_forward</span>
               </div>
             </div>
-            <Link href="/impact" className="text-[10px] font-bold text-primary flex items-center gap-1">
-              Impact <span className="material-symbols-outlined text-[10px]">arrow_forward</span>
-            </Link>
-          </div>
+          </Link>
         </motion.div>
 
         {/* Quick Actions - Compact Grid */}
@@ -203,31 +245,7 @@ export default function HomePage() {
           </div>
         </motion.div>
 
-        {/* Personalized Leaderboard - Compact My Rank */}
-        <motion.div variants={itemVariants}>
-          <div className="flex items-center justify-between mb-2 px-1">
-            <p className="font-extrabold text-dark dark:text-white text-sm">Your Rank</p>
-            <Link href="/impact" className="text-xs font-bold text-primary flex items-center gap-1">
-              View All <span className="material-symbols-outlined text-xs">arrow_forward</span>
-            </Link>
-          </div>
-          <div className="bg-white dark:bg-dark-surface rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm overflow-hidden p-3 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-card-blue border-2 border-dark flex items-center justify-center flex-col shrink-0">
-              <span className="text-[8px] font-bold uppercase text-dark">Rank</span>
-              <span className="text-lg font-black text-dark">#42</span>
-            </div>
-            <div className="flex-1">
-              <p className="font-bold text-dark dark:text-white text-sm">Top 15%</p>
-              <p className="text-[10px] text-dark/60 dark:text-white/60 font-medium">Ahead of 841 students!</p>
-            </div>
-            <div className="text-right">
-              <span className="block font-[900] text-primary text-lg">
-                <span className="text-[10px] text-dark dark:text-white mr-1">up</span>
-                3
-              </span>
-            </div>
-          </div>
-        </motion.div>
+
       </div>
     </motion.div>
   );

@@ -1,22 +1,38 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
-import { useParams } from 'next/navigation';
+import { useEffect, useState, useRef, useMemo } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import DemoManager from '@/lib/demo-manager';
 import { DBService } from '@/lib/firebase/db';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { ChatMessage, Message } from '@/types';
+import { useNavContext, NavPresets } from '@/lib/hooks/useNavContext';
+import { QuickReplies } from '@/components/chat/QuickReplies';
+import { InlineOffer } from '@/components/chat/InlineOffer';
+
+// Format price as Indian Rupees
+const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+    }).format(price);
+};
 
 export default function ChatPage() {
     const params = useParams();
+    const router = useRouter();
     const conversationId = params.id as string;
     const { user } = useAuth();
     const [messages, setChatMessages] = useState<ChatMessage[]>([]);
     const [contact, setContact] = useState<Message | null>(null);
     const [newMessage, setNewMessage] = useState('');
     const [isLoading, setIsLoading] = useState(true);
+    const [showOfferUI, setShowOfferUI] = useState(false);
+    const [showQuickReplies, setShowQuickReplies] = useState(true);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     // Real-time message subscription
@@ -41,7 +57,10 @@ export default function ChatPage() {
                             lastMessage: '',
                             timestamp: new Date(),
                             unread: false,
-                            listingTitle: conv.listingTitle
+                            conversationType: conv.listingId ? 'marketplace' : 'community',
+                            listingTitle: conv.listingTitle,
+                            listingPrice: conv.listingPrice,
+                            listingImage: conv.listingImage,
                         });
                     }
 
@@ -68,7 +87,9 @@ export default function ChatPage() {
 
         const loadMockData = () => {
             const allMessages = DemoManager.getMockMessages();
-            const found = allMessages.find(m => m.senderId === conversationId);
+            // Find by message id first, then fall back to senderId for legacy support
+            const found = allMessages.find(m => m.id === conversationId) ||
+                allMessages.find(m => m.senderId === conversationId);
             if (found) setContact(found as Message);
             setChatMessages(DemoManager.getConversation(conversationId));
             DemoManager.markConversationRead(conversationId);
@@ -89,6 +110,35 @@ export default function ChatPage() {
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
+
+    // Dynamic navigation context for chat
+    const navContextConfig = useMemo(() => {
+        if (!contact) return null;
+
+        // Only show offer action for marketplace conversations
+        if (contact.conversationType !== 'marketplace') return null;
+
+        return NavPresets.chat({
+            onOffer: () => {
+                // Pre-fill offer message
+                const offerAmount = contact.listingPrice
+                    ? Math.round(contact.listingPrice * 0.9)
+                    : 0;
+                setNewMessage(`I'd like to offer ${formatPrice(offerAmount)} for this item. Let me know if that works!`);
+            },
+            onBack: () => router.back(),
+            onCall: () => {
+                // Could integrate with phone/video calling
+                alert('Calling feature coming soon!');
+            },
+            onAttach: () => {
+                // Could open media picker
+                alert('Attach media coming soon!');
+            },
+        });
+    }, [contact, router]);
+
+    useNavContext(navContextConfig);
 
     const sendMessage = async () => {
         if (!newMessage.trim()) return;
@@ -178,6 +228,46 @@ export default function ChatPage() {
                 )}
             </header>
 
+            {/* Context Header - Shows item/project info - STICKY */}
+            {contact && (contact.conversationType === 'marketplace' || contact.listingTitle || contact.projectId) && (
+                <div className="px-5 py-3 bg-gray-50/95 dark:bg-dark-surface/95 backdrop-blur-md border-b-2 border-gray-100 dark:border-gray-700 flex items-center gap-3 sticky top-[72px] z-10">
+                    {/* Item/Project Image */}
+                    <div className="w-14 h-14 rounded-xl border-2 border-dark overflow-hidden bg-gray-200 shrink-0">
+                        <img
+                            src={contact.listingImage || 'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=100&h=100&fit=crop'}
+                            alt={contact.listingTitle || contact.projectTitle || 'Item'}
+                            className="w-full h-full object-cover"
+                        />
+                    </div>
+
+                    {/* Item/Project Details */}
+                    <div className="flex-1 min-w-0">
+                        <p className="font-bold text-dark dark:text-white truncate text-sm">
+                            {contact.listingTitle || contact.projectTitle}
+                        </p>
+                        {contact.listingPrice && (
+                            <p className="text-primary font-black text-lg">
+                                {formatPrice(contact.listingPrice)}
+                            </p>
+                        )}
+                        {contact.projectTitle && !contact.listingPrice && (
+                            <p className="text-xs text-gray-500">DIY Project Discussion</p>
+                        )}
+                    </div>
+
+                    {/* Make Offer Button - Only for marketplace items */}
+                    {contact.conversationType === 'marketplace' && contact.listingPrice && (
+                        <button
+                            onClick={() => setShowOfferUI(true)}
+                            className="shrink-0 h-10 px-4 bg-[#fde047] text-dark font-bold text-sm rounded-xl border-2 border-dark shadow-brutal-sm flex items-center gap-2 active:shadow-none active:translate-x-[1px] active:translate-y-[1px] transition-all"
+                        >
+                            <span className="material-symbols-outlined text-[18px]">local_offer</span>
+                            Offer
+                        </button>
+                    )}
+                </div>
+            )}
+
             {/* Messages */}
             <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
                 {messages.length === 0 ? (
@@ -212,26 +302,85 @@ export default function ChatPage() {
                 <div ref={messagesEndRef} />
             </div>
 
-            {/* Input */}
-            <div className="p-4 bg-white/80 dark:bg-dark-bg/80 backdrop-blur-lg border-t-2 border-gray-100 dark:border-gray-700 sticky bottom-0">
-                <div className="flex items-center gap-3">
-                    <input
-                        type="text"
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-                        placeholder="Type a message..."
-                        className="flex-1 h-12 rounded-full bg-gray-100 dark:bg-dark-surface border border-gray-200 dark:border-gray-700 px-5 font-medium placeholder:text-gray-400 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
+            {/* Inline Offer UI - OLX Style */}
+            <AnimatePresence>
+                {showOfferUI && contact?.listingPrice && (
+                    <InlineOffer
+                        listingPrice={contact.listingPrice}
+                        onSubmit={(amount) => {
+                            const offerMessage = `💰 Offer: ${formatPrice(amount)}\n\nI'd like to offer ${formatPrice(amount)} for "${contact.listingTitle}". Let me know if that works!`;
+                            setNewMessage(offerMessage);
+                            setShowOfferUI(false);
+                            // Auto-send the offer
+                            setTimeout(() => {
+                                const msg: ChatMessage = {
+                                    id: `chat-${Date.now()}`,
+                                    senderId: user?.uid || 'demo-user-123',
+                                    text: offerMessage,
+                                    timestamp: new Date(),
+                                    isOwn: true,
+                                };
+                                setChatMessages(prev => [...prev, msg]);
+                                setNewMessage('');
+                                DemoManager.addMessage(conversationId, msg);
+                            }, 100);
+                        }}
+                        onCancel={() => setShowOfferUI(false)}
                     />
-                    <button
-                        onClick={sendMessage}
-                        disabled={!newMessage.trim()}
-                        className="w-12 h-12 bg-primary rounded-full border-2 border-dark dark:border-gray-600 flex items-center justify-center shadow-brutal-sm disabled:opacity-50 active:scale-95 transition-transform"
-                    >
-                        <span className="material-symbols-outlined text-dark dark:text-white">send</span>
-                    </button>
+                )}
+            </AnimatePresence>
+
+            {/* Standard Input - Hidden when offer UI is showing */}
+            {!showOfferUI && (
+                <div className="sticky bottom-0">
+                    {/* Quick Replies - Inline with input, shown when user toggles or no messages */}
+                    <AnimatePresence>
+                        {contact && contact.conversationType === 'marketplace' && showQuickReplies && (
+                            <QuickReplies
+                                onSelect={(message) => {
+                                    setNewMessage(message);
+                                    setShowQuickReplies(false);
+                                }}
+                                listingTitle={contact.listingTitle}
+                                listingPrice={contact.listingPrice}
+                            />
+                        )}
+                    </AnimatePresence>
+
+                    <div className="p-4 bg-white/80 dark:bg-dark-bg/80 backdrop-blur-lg border-t-2 border-gray-100 dark:border-gray-700">
+                        <div className="flex items-center gap-2">
+                            {/* Quick Reply Toggle Button */}
+                            {contact?.conversationType === 'marketplace' && (
+                                <button
+                                    onClick={() => setShowQuickReplies(!showQuickReplies)}
+                                    className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all ${showQuickReplies
+                                        ? 'bg-primary border-dark text-dark'
+                                        : 'bg-gray-100 dark:bg-dark-surface border-gray-200 dark:border-gray-600 text-gray-500'
+                                        }`}
+                                    title="Quick replies"
+                                >
+                                    <span className="material-symbols-outlined text-[20px]">bolt</span>
+                                </button>
+                            )}
+                            <input
+                                type="text"
+                                value={newMessage}
+                                onChange={(e) => setNewMessage(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+                                placeholder="Type a message..."
+                                className="flex-1 h-12 rounded-full bg-gray-100 dark:bg-dark-surface border border-gray-200 dark:border-gray-700 px-5 font-medium placeholder:text-gray-400 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                            />
+                            <button
+                                onClick={sendMessage}
+                                disabled={!newMessage.trim()}
+                                className="w-12 h-12 bg-primary rounded-full border-2 border-dark dark:border-gray-600 flex items-center justify-center shadow-brutal-sm disabled:opacity-50 active:scale-95 transition-transform"
+                            >
+                                <span className="material-symbols-outlined text-dark dark:text-white">send</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 }

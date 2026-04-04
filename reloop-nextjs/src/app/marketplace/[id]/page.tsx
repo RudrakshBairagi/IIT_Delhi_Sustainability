@@ -1,14 +1,25 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import DemoManager from '@/lib/demo-manager';
 import { DBService } from '@/lib/firebase/db';
+import { useAuth } from '@/lib/contexts/AuthContext';
 import { Listing } from '@/types';
-import { useNavStore } from '@/lib/store/nav-store';
+import { useNavContext, NavPresets } from '@/lib/hooks/useNavContext';
 import { TradeOfferModal } from '@/components/marketplace/TradeOfferModal';
+
+// Format price as Indian Rupees
+const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+    }).format(price);
+};
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -23,12 +34,16 @@ const itemVariants = {
 export default function ItemDetailPage() {
     const params = useParams();
     const router = useRouter();
-    const { setActions, reset } = useNavStore();
+    const { user, isDemo } = useAuth();
     const [listing, setListing] = useState<Listing | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isFavorited, setIsFavorited] = useState(false);
     const [showTradeModal, setShowTradeModal] = useState(false);
     const [showSuccessToast, setShowSuccessToast] = useState(false);
+
+    // Owner detection
+    const currentUserId = isDemo ? 'demo-user-123' : user?.uid;
+    const isOwner = listing?.seller?.id === currentUserId;
 
     useEffect(() => {
         const loadListing = async () => {
@@ -61,18 +76,30 @@ export default function ItemDetailPage() {
         loadListing();
     }, [params.id, router]);
 
-    // Register nav actions
-    useEffect(() => {
-        if (!listing) return;
+    // Dynamic navigation context using presets
+    const navContextConfig = useMemo(() => {
+        if (!listing) return null;
 
-        setActions({
-            label: 'Trade',
-            onClick: () => setShowTradeModal(true),
-            icon: 'swap_horiz'
+        return NavPresets.itemDetail({
+            onMessage: () => router.push(`/messages/new?itemId=${listing.id}&sellerId=${listing.seller?.id}`),
+            onBack: () => router.back(),
+            onShare: () => {
+                if (navigator.share) {
+                    navigator.share({
+                        title: listing.title,
+                        text: `Check out ${listing.title} on ReLoop!`,
+                        url: window.location.href,
+                    });
+                }
+            },
+            onSave: () => setIsFavorited(!isFavorited),
+            isOwner,
+            onEdit: () => router.push(`/marketplace/${listing.id}/edit`),
         });
+    }, [listing, isOwner, isFavorited, router]);
 
-        return () => reset();
-    }, [listing, setActions, reset]);
+    // Register the navigation context
+    useNavContext(navContextConfig);
 
     const handleTradeSuccess = () => {
         setShowTradeModal(false);
@@ -185,8 +212,13 @@ export default function ItemDetailPage() {
                         <h1 className="text-2xl font-black text-dark dark:text-white uppercase tracking-tight">{listing.title}</h1>
                         <div className="flex items-center gap-2 mt-2 flex-wrap">
                             <span className="inline-flex items-center gap-2 px-4 py-2 bg-primary rounded-xl border-2 border-dark font-bold text-dark">
-                                <span className="text-lg">🪙</span> {listing.price} Coins
+                                {formatPrice(listing.price)}
                             </span>
+                            {isOwner && (
+                                <span className="px-3 py-2 bg-[#fde047] text-dark rounded-xl text-sm font-bold border-2 border-dark">
+                                    Your Listing
+                                </span>
+                            )}
                             {listing.location && (
                                 <span className="inline-flex items-center gap-1 px-3 py-2 bg-gray-100 dark:bg-dark-bg rounded-xl text-sm font-medium text-dark/60 dark:text-white/60">
                                     <span className="material-symbols-outlined text-sm">location_on</span>
@@ -233,33 +265,58 @@ export default function ItemDetailPage() {
                         </div>
                     </motion.div>
 
-                    {/* Seller Card */}
-                    <motion.div
-                        variants={itemVariants}
-                        className="bg-gray-50 dark:bg-dark-bg p-4 rounded-2xl flex items-center justify-between"
-                    >
-                        <div className="flex items-center gap-3">
-                            <div className="relative">
-                                <div className="w-11 h-11 rounded-full border-2 border-dark overflow-hidden bg-gray-200">
-                                    <img src={listing.seller.avatar} alt={listing.seller.name} className="w-full h-full object-cover" />
-                                </div>
-                                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-primary rounded-full border-2 border-white dark:border-dark-surface" />
-                            </div>
-                            <div>
-                                <p className="font-bold text-dark dark:text-white">{listing.seller.name}</p>
-                                <p className="text-xs text-dark/50 dark:text-white/50 flex items-center gap-1">
-                                    <span className="material-symbols-outlined text-primary text-xs">bolt</span>
-                                    Responds in {listing.seller.responseTime || '2h'}
-                                </p>
-                            </div>
-                        </div>
-                        <button
-                            onClick={() => router.push(`/messages/${listing.seller.id}`)}
-                            className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-dark-surface border-2 border-dark shadow-brutal-sm active:scale-95 transition-transform"
+                    {/* Seller Card - Hide for owner, show for buyers */}
+                    {!isOwner && (
+                        <motion.div
+                            variants={itemVariants}
+                            className="bg-gray-50 dark:bg-dark-bg p-4 rounded-2xl flex items-center justify-between"
                         >
-                            <span className="material-symbols-outlined text-dark dark:text-white">chat</span>
-                        </button>
-                    </motion.div>
+                            <div className="flex items-center gap-3">
+                                <div className="relative">
+                                    <div className="w-11 h-11 rounded-full border-2 border-dark overflow-hidden bg-gray-200">
+                                        <img src={listing.seller.avatar} alt={listing.seller.name} className="w-full h-full object-cover" />
+                                    </div>
+                                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-primary rounded-full border-2 border-white dark:border-dark-surface" />
+                                </div>
+                                <div>
+                                    <p className="font-bold text-dark dark:text-white">{listing.seller.name}</p>
+                                    <p className="text-xs text-dark/50 dark:text-white/50 flex items-center gap-1">
+                                        <span className="material-symbols-outlined text-primary text-xs">bolt</span>
+                                        Responds in {listing.seller.responseTime || '2h'}
+                                    </p>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => router.push(`/messages/${listing.seller.id}`)}
+                                className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-dark-surface border-2 border-dark shadow-brutal-sm active:scale-95 transition-transform"
+                            >
+                                <span className="material-symbols-outlined text-dark dark:text-white">chat</span>
+                            </button>
+                        </motion.div>
+                    )}
+
+                    {/* Owner Actions */}
+                    {isOwner && (
+                        <motion.div variants={itemVariants} className="flex gap-3">
+                            <button
+                                onClick={() => router.push(`/marketplace/${listing.id}/edit`)}
+                                className="flex-1 h-12 bg-white dark:bg-dark-surface border-2 border-dark rounded-xl font-bold text-dark dark:text-white shadow-brutal-sm flex items-center justify-center gap-2 active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all"
+                            >
+                                <span className="material-symbols-outlined">edit</span>
+                                Edit Listing
+                            </button>
+                            <button
+                                onClick={() => {
+                                    if (confirm('Delete this listing?')) {
+                                        router.push('/marketplace');
+                                    }
+                                }}
+                                className="h-12 px-4 bg-red-100 dark:bg-red-900/30 border-2 border-dark rounded-xl font-bold text-red-600 shadow-brutal-sm flex items-center justify-center active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all"
+                            >
+                                <span className="material-symbols-outlined">delete</span>
+                            </button>
+                        </motion.div>
+                    )}
                 </div>
             </motion.div>
 

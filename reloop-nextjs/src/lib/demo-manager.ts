@@ -151,8 +151,56 @@ class DemoManagerService {
 
     // ===== MESSAGING (Mock for now) =====
     private _mockMessages = [
-        { id: 'msg-1', senderId: 'user-abc', senderName: 'Emma Watson', senderAvatar: 'https://ui-avatars.com/api/?name=Emma+Watson', lastMessage: 'Is the lamp still available?', timestamp: new Date(Date.now() - 3600000), unread: true, listingTitle: 'Vintage Desk Lamp' },
-        { id: 'msg-2', senderId: 'user-xyz', senderName: 'John Doe', senderAvatar: 'https://ui-avatars.com/api/?name=John+Doe', lastMessage: 'Thanks for the trade!', timestamp: new Date(Date.now() - 86400000), unread: false, listingTitle: 'Textbook Bundle' },
+        {
+            id: 'msg-1',
+            senderId: 'user-abc',
+            senderName: 'Priya Sharma',
+            senderAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop',
+            lastMessage: 'Is the lamp still available?',
+            timestamp: new Date(Date.now() - 3600000),
+            unread: true,
+            listingTitle: 'Vintage Desk Lamp',
+            listingImage: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=200&h=200&fit=crop',
+            listingPrice: 750,
+            conversationType: 'marketplace' as const
+        },
+        {
+            id: 'msg-2',
+            senderId: 'user-xyz',
+            senderName: 'Rahul Mehta',
+            senderAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop',
+            lastMessage: 'Thanks for the trade!',
+            timestamp: new Date(Date.now() - 86400000),
+            unread: false,
+            listingTitle: 'MacBook Pro 2019',
+            listingImage: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=200&h=200&fit=crop',
+            listingPrice: 45000,
+            conversationType: 'marketplace' as const
+        },
+        {
+            id: 'msg-3',
+            senderId: 'user-diy-1',
+            senderName: 'Sneha Kapoor',
+            senderAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop',
+            lastMessage: 'Love your lamp project! How did you wire it?',
+            timestamp: new Date(Date.now() - 7200000),
+            unread: true,
+            projectId: 'project-1',
+            projectTitle: 'Boho Lamp From Bottles',
+            conversationType: 'community' as const
+        },
+        {
+            id: 'msg-4',
+            senderId: 'user-diy-2',
+            senderName: 'Vikram Agarwal',
+            senderAvatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop',
+            lastMessage: 'Want to collab on the pallet table?',
+            timestamp: new Date(Date.now() - 172800000),
+            unread: false,
+            projectId: 'project-3',
+            projectTitle: 'Pallet Coffee Table',
+            conversationType: 'community' as const
+        },
     ];
 
     private _conversations: Record<string, any[]> = {
@@ -163,6 +211,12 @@ class DemoManagerService {
         'user-xyz': [
             { id: 'chat-3', senderId: 'user-xyz', text: 'Thanks for the trade!', timestamp: new Date(Date.now() - 86400000), isOwn: false },
         ],
+        'user-diy-1': [
+            { id: 'chat-4', senderId: 'user-diy-1', text: 'Love your lamp project! How did you wire it?', timestamp: new Date(Date.now() - 7200000), isOwn: false },
+        ],
+        'user-diy-2': [
+            { id: 'chat-5', senderId: 'user-diy-2', text: 'Want to collab on the pallet table?', timestamp: new Date(Date.now() - 172800000), isOwn: false },
+        ],
     };
 
     getMockMessages() {
@@ -170,19 +224,39 @@ class DemoManagerService {
     }
 
     getConversation(contactId: string) {
-        return this._conversations[contactId] || [];
+        // Try contactId directly, then try sender ID from message lookup
+        if (this._conversations[contactId]) {
+            return this._conversations[contactId];
+        }
+        // Look up by message id to get the sender id
+        const msg = this._mockMessages.find(m => m.id === contactId);
+        if (msg && this._conversations[msg.senderId]) {
+            return this._conversations[msg.senderId];
+        }
+        return [];
     }
 
     addMessage(contactId: string, message: any) {
-        if (!this._conversations[contactId]) {
-            this._conversations[contactId] = [];
+        // Find the actual sender ID if contactId is a message ID
+        let actualContactId = contactId;
+        const msg = this._mockMessages.find(m => m.id === contactId);
+        if (msg) {
+            actualContactId = msg.senderId;
         }
-        this._conversations[contactId].push(message);
+        if (!this._conversations[actualContactId]) {
+            this._conversations[actualContactId] = [];
+        }
+        this._conversations[actualContactId].push(message);
     }
 
     markConversationRead(contactId: string) {
-        const msg = this._mockMessages.find(m => m.senderId === contactId);
+        // Support both message id and sender id
+        let msg = this._mockMessages.find(m => m.id === contactId);
+        if (!msg) {
+            msg = this._mockMessages.find(m => m.senderId === contactId);
+        }
         if (msg) msg.unread = false;
+        this.notifyListeners();
     }
 
     // ===== NOTIFICATIONS (Mock) =====
@@ -263,8 +337,11 @@ class DemoManagerService {
 
     // ===== LISTINGS (Mock) =====
     private _mockListings = [
-        { id: 'listing-1', title: 'Vintage Desk Lamp', description: 'Beautiful brass lamp', price: 75, category: 'Home', condition: 'Good', status: 'available' as const, images: ['https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400'], seller: { id: 'user-1', name: 'Emma', avatar: 'https://ui-avatars.com/api/?name=Emma' }, isTopImpact: true, co2Saved: 15, createdAt: new Date() },
-        { id: 'listing-2', title: 'MacBook Pro 2019', description: 'Great condition laptop', price: 200, category: 'Electronics', condition: 'Like New', status: 'available' as const, images: ['https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400'], seller: { id: 'user-2', name: 'John', avatar: 'https://ui-avatars.com/api/?name=John' }, isTopImpact: false, co2Saved: 30, createdAt: new Date() },
+        { id: 'listing-1', title: 'Vintage Desk Lamp', description: 'Beautiful brass lamp, perfect for study desk', price: 750, category: 'Home', condition: 'Good', status: 'available' as const, images: ['https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400'], seller: { id: 'user-abc', name: 'Priya', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop' }, isTopImpact: true, co2Saved: 15, createdAt: new Date() },
+        { id: 'listing-2', title: 'MacBook Pro 2019', description: 'Great condition laptop, 16GB RAM, 512GB SSD', price: 45000, category: 'Electronics', condition: 'Like New', status: 'available' as const, images: ['https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400'], seller: { id: 'user-xyz', name: 'Rahul', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop' }, isTopImpact: false, co2Saved: 30, createdAt: new Date() },
+        { id: 'listing-3', title: 'Engineering Textbooks', description: 'Complete set of 3rd year mechanical engineering books', price: 1200, category: 'Books', condition: 'Good', status: 'available' as const, images: ['https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400'], seller: { id: 'demo-user-123', name: 'You', avatar: 'https://ui-avatars.com/api/?name=Demo+User&background=4ce68a&color=fff' }, isTopImpact: true, co2Saved: 8, createdAt: new Date() },
+        { id: 'listing-4', title: 'Acoustic Guitar', description: 'Yamaha F310, slight scratches but plays beautifully', price: 5500, category: 'Other', condition: 'Fair', status: 'available' as const, images: ['https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=400'], seller: { id: 'user-guitar', name: 'Ananya', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop' }, isTopImpact: false, co2Saved: 12, createdAt: new Date() },
+        { id: 'listing-5', title: 'Study Table', description: 'Wooden study table with drawers, moving out sale', price: 2000, category: 'Home', condition: 'Good', status: 'available' as const, images: ['https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=400'], seller: { id: 'demo-user-123', name: 'You', avatar: 'https://ui-avatars.com/api/?name=Demo+User&background=4ce68a&color=fff' }, isTopImpact: true, co2Saved: 20, createdAt: new Date() },
     ];
 
     getListingById(id: string) {
@@ -436,6 +513,148 @@ class DemoManagerService {
         console.log('[DemoManager] Donated', coins, 'to charity', charityId);
         return { success: true, remainingCoins: this._mockUser.coins };
     }
+
+    // ===== GIVE BACK PAGE DATA =====
+
+    // Community-wide donation stats
+    getGiveBackStats() {
+        return {
+            totalDonations: 24850,
+            treesPlanted: 342,
+            mealsProvided: 1560,
+            plasticRemoved: 890, // lbs
+            co2Offset: 6840, // kg
+            activeDonors: 523,
+            weeklyGoal: 30000,
+            weeklyProgress: 21500,
+        };
+    }
+
+    // Recent community donations for live feed
+    getRecentDonations() {
+        return [
+            { id: 'd1', userName: 'Priya S.', avatar: '👩🏽', action: 'planted a tree', charity: 'Trees for Future', coins: 50, timeAgo: '2 min ago' },
+            { id: 'd2', userName: 'Rahul M.', avatar: '👨🏻', action: 'donated a meal', charity: 'Local Food Bank', coins: 10, timeAgo: '5 min ago' },
+            { id: 'd3', userName: 'Sneha K.', avatar: '👩🏻', action: 'cleaned the ocean', charity: 'Ocean Cleanup', coins: 25, timeAgo: '8 min ago' },
+            { id: 'd4', userName: 'Vikram A.', avatar: '👨🏽', action: 'planted 2 trees', charity: 'Trees for Future', coins: 100, timeAgo: '12 min ago' },
+            { id: 'd5', userName: 'Ananya R.', avatar: '👩🏾', action: 'donated 5 meals', charity: 'Local Food Bank', coins: 50, timeAgo: '15 min ago' },
+            { id: 'd6', userName: 'Arjun K.', avatar: '👨🏾', action: 'cleaned the ocean', charity: 'Ocean Cleanup', coins: 75, timeAgo: '20 min ago' },
+            { id: 'd7', userName: 'Meera P.', avatar: '👩🏽', action: 'planted a tree', charity: 'Trees for Future', coins: 50, timeAgo: '25 min ago' },
+            { id: 'd8', userName: 'Dev J.', avatar: '👨🏻', action: 'donated 10 meals', charity: 'Local Food Bank', coins: 100, timeAgo: '30 min ago' },
+        ];
+    }
+
+    // User's personal donation history
+    getUserDonationHistory() {
+        return {
+            totalDonated: 175,
+            treesPlanted: 2,
+            mealsProvided: 5,
+            plasticRemoved: 2, // lbs
+            lastDonation: new Date(Date.now() - 86400000),
+            streak: 3,
+        };
+    }
+
+    // Enhanced charity data with goals
+    getCharityGoals() {
+        return [
+            {
+                id: 'charity-1',
+                name: 'Trees for Future',
+                description: 'Plant trees worldwide to fight climate change',
+                longDescription: 'Partner with local communities to plant native trees, restore ecosystems, and create sustainable livelihoods.',
+                logo: '🌳',
+                impact: '1 tree per 50 coins',
+                impactMetric: 'trees planted',
+                minDonation: 50,
+                category: 'environment',
+                goal: 500,
+                current: 342,
+                color: 'green',
+                featured: true,
+            },
+            {
+                id: 'charity-2',
+                name: 'Ocean Cleanup',
+                description: 'Remove plastic from oceans',
+                longDescription: 'Deploy advanced technology to remove millions of pounds of plastic from our oceans and rivers.',
+                logo: '🌊',
+                impact: '1lb plastic per 25 coins',
+                impactMetric: 'lbs removed',
+                minDonation: 25,
+                category: 'environment',
+                goal: 1000,
+                current: 890,
+                color: 'blue',
+                featured: false,
+                almostThere: true,
+            },
+            {
+                id: 'charity-3',
+                name: 'Local Food Bank',
+                description: 'Feed hunger in your community',
+                longDescription: 'Provide nutritious meals to families in need across college towns and local communities.',
+                logo: '🍎',
+                impact: '1 meal per 10 coins',
+                impactMetric: 'meals provided',
+                minDonation: 10,
+                category: 'community',
+                goal: 2000,
+                current: 1560,
+                color: 'orange',
+                featured: false,
+                popular: true,
+            },
+        ];
+    }
+
+    // Charity partner stories - what they're doing with donations
+    getCharityStories() {
+        return [
+            {
+                id: 's1',
+                charityId: 'charity-1',
+                charityName: 'Trees for Future',
+                charityLogo: '🌳',
+                thumbnail: '🌱',
+                title: 'Just planted 50 trees in Kerala!',
+                timeAgo: '2h ago',
+                viewed: false,
+            },
+            {
+                id: 's2',
+                charityId: 'charity-2',
+                charityName: 'Ocean Cleanup',
+                charityLogo: '🌊',
+                thumbnail: '🐢',
+                title: 'Beach cleanup in Goa - 200kg collected!',
+                timeAgo: '5h ago',
+                viewed: false,
+            },
+            {
+                id: 's3',
+                charityId: 'charity-3',
+                charityName: 'Local Food Bank',
+                charityLogo: '🍎',
+                thumbnail: '👨‍👩‍👧',
+                title: 'Fed 150 families this week',
+                timeAgo: '1d ago',
+                viewed: true,
+            },
+            {
+                id: 's4',
+                charityId: 'charity-1',
+                charityName: 'Trees for Future',
+                charityLogo: '🌳',
+                thumbnail: '🌿',
+                title: 'New nursery in Tamil Nadu',
+                timeAgo: '2d ago',
+                viewed: true,
+            },
+        ];
+    }
+
 
     // ===== ADMIN METHODS =====
 

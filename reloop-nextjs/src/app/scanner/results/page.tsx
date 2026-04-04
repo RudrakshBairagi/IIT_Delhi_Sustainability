@@ -14,11 +14,11 @@ const itemVariants = {
     visible: { y: 0, opacity: 1, transition: { type: 'spring' as const, stiffness: 300, damping: 24 } },
 };
 
+
 export default function ScanResultPage() {
     const router = useRouter();
     const [result, setResult] = useState<ScanResult | null>(null);
     const [scannedImage, setScannedImage] = useState<string | null>(null);
-    const [showImage, setShowImage] = useState(false);
     const { setActions, reset } = useNavStore();
 
     useEffect(() => {
@@ -31,22 +31,19 @@ export default function ScanResultPage() {
         }
 
         setResult(storedResult);
-        setScannedImage(storedImage);
+        setScannedImage(storedImage); // Allow fallback to demo image if null
     }, [router]);
 
+    // Hide global nav for full immersion
     useEffect(() => {
-        setActions({
-            label: 'Done',
-            onClick: () => router.push('/'),
-            variant: 'primary'
-        });
+        setActions({ label: '', onClick: () => { }, hidden: true });
         return () => reset();
-    }, [router, setActions, reset]);
+    }, [setActions, reset]);
 
     if (!result) {
         return (
-            <div className="min-h-screen bg-background flex items-center justify-center">
-                <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+            <div className="min-h-screen bg-[#d0f0fd] flex items-center justify-center">
+                <div className="w-10 h-10 border-4 border-[#4ce68a] border-t-transparent rounded-full animate-spin" />
             </div>
         );
     }
@@ -54,146 +51,102 @@ export default function ScanResultPage() {
     const { item } = result;
     const classification = result.classification || 'safe';
     const xpEarned = result.xpEarned || 15;
+    const co2Saved = result.item.co2Savings || 0.5;
 
-    const isSafe = classification === 'safe';
-    const isHazardous = classification === 'hazardous';
-    const isNonReusable = classification === 'non_reusable';
+    // Logic for badge text
+    const badgeText = classification === 'non_reusable' ? 'RECYCLE ONLY' :
+        classification === 'hazardous' ? 'HAZARDOUS' : '98% RECYCLABLE';
 
-    const classificationStyles: Record<ItemClassification, { bg: string; text: string; icon: string }> = {
-        safe: { bg: 'bg-card-green', text: 'Safe & Reusable', icon: 'check_circle' },
-        hazardous: { bg: 'bg-orange-200 dark:bg-orange-900', text: 'Hazardous', icon: 'warning' },
-        non_reusable: { bg: 'bg-gray-200 dark:bg-gray-700', text: 'Recycle Only', icon: 'recycling' }
-    };
+    // Background Image logic - use stored image or a placeholder
+    const bgImage = scannedImage || 'https://images.unsplash.com/photo-1550989460-0adf9ea622e2?q=80&w=600&auto=format&fit=crop';
 
-    const currentStyle = classificationStyles[classification];
-
-    // Build action items based on classification
-    const actions = [];
-
-    if (isSafe) {
-        actions.push({ href: '/scanner/ideas', icon: 'palette', label: 'DIY Ideas', color: 'bg-card-pink' });
-        actions.push({ href: '/makeover', icon: 'brush', label: 'Art Makeover', color: 'bg-gradient-to-br from-pink-200 to-purple-200' });
-    }
-
-    if (isSafe || isHazardous) {
-        actions.push({
-            href: `/marketplace/create?title=${encodeURIComponent(item.objectName)}&category=${encodeURIComponent(item.category)}&condition=${encodeURIComponent(item.condition || 'Good')}&price=${item.estimatedCoins}`,
-            icon: 'storefront',
-            label: 'Sell',
-            color: 'bg-card-blue',
-            badge: `~${item.estimatedCoins} coins`
-        });
-    }
-
-    if (isSafe) {
-
-    }
-
-    actions.push({
-        href: '/recycle',
-        icon: 'recycling',
-        label: 'Recycle',
-        color: isNonReusable ? 'bg-card-green' : 'bg-gray-100 dark:bg-gray-800'
-    });
+    // Action Links
+    const sellLink = `/marketplace/create?title=${encodeURIComponent(item.objectName)}&category=${encodeURIComponent(item.category)}&price=${item.estimatedCoins || 10}`;
+    const reuseLink = `/scanner/ideas`; // Could pass query params if needed
 
     return (
-        <div className="min-h-screen bg-background">
-            <PageHeader title={item.objectName} backHref="/scanner" />
+        <div className="min-h-screen bg-[#d0f0fd] dark:bg-[#112118] text-[#111714] dark:text-white font-sans overflow-x-hidden selection:bg-[#4ce68a] selection:text-[#111714]">
+            <div className="relative flex min-h-screen flex-col w-full max-w-md mx-auto bg-[#d0f0fd] dark:bg-[#112118] border-x-2 border-[#111714]/5 dark:border-white/5 shadow-2xl pb-28">
 
-            <motion.div
-                className="px-5 pb-28 space-y-4"
-                initial="hidden"
-                animate="visible"
-                variants={{ visible: { transition: { staggerChildren: 0.08 } } }}
-            >
-                {/* Classification + Stats Row */}
-                <motion.div variants={itemVariants} className="flex items-center gap-3">
-                    {/* Classification Badge */}
-                    <div className={`flex-1 ${currentStyle.bg} rounded-2xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm p-4 flex items-center gap-3`}>
-                        <div className="w-10 h-10 bg-white/50 rounded-full flex items-center justify-center">
-                            <span className="material-symbols-outlined text-xl text-dark">{currentStyle.icon}</span>
-                        </div>
-                        <div>
-                            <p className="font-bold text-dark dark:text-white text-sm">{currentStyle.text}</p>
-                            <p className="text-xs text-dark/60 dark:text-white/60">{item.category}</p>
-                        </div>
-                    </div>
-                </motion.div>
+                {/* Header */}
+                <header className="flex items-center justify-between pt-8 pb-4 px-6 w-full z-10">
+                    <button
+                        onClick={() => router.push('/')}
+                        aria-label="Close"
+                        className="p-2 -ml-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+                    >
+                        <span className="material-symbols-outlined text-3xl font-bold">close</span>
+                    </button>
+                    <span className="font-extrabold text-sm tracking-widest uppercase text-[#111714]/60 dark:text-white/60">AI Scan Result</span>
+                    <div className="w-10"></div>
+                </header>
 
-                {/* Rewards Row - Compact */}
-                <motion.div variants={itemVariants} className="grid grid-cols-2 gap-3">
-                    <div className="bg-card-yellow rounded-xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm p-3 text-center">
-                        <p className="text-2xl font-black text-dark dark:text-white">+{xpEarned}</p>
-                        <p className="text-xs font-bold text-dark/60 dark:text-white/60">XP Earned</p>
-                    </div>
-                    <div className="bg-card-green rounded-xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm p-3 text-center">
-                        <p className="text-2xl font-black text-dark dark:text-white">{item.co2Savings}</p>
-                        <p className="text-xs font-bold text-dark/60 dark:text-white/60">kg CO₂ Saved</p>
-                    </div>
-                </motion.div>
-
-                {/* Scanned Image - Thumbnail with expand */}
-                {scannedImage && (
-                    <motion.div variants={itemVariants}>
-                        <button
-                            onClick={() => setShowImage(!showImage)}
-                            className="w-full bg-white dark:bg-dark-surface rounded-xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm overflow-hidden"
-                        >
-                            <img
-                                src={scannedImage}
-                                alt="Scanned item"
-                                className={`w-full object-cover transition-all ${showImage ? 'h-48' : 'h-20'}`}
-                            />
-                            <div className="p-2 flex items-center justify-center gap-1 text-xs font-bold text-dark/50 dark:text-white/50">
-                                <span className="material-symbols-outlined text-sm">{showImage ? 'expand_less' : 'expand_more'}</span>
-                                {showImage ? 'Collapse' : 'View photo'}
+                <main className="flex-1 flex flex-col px-6 pt-2 w-full gap-6">
+                    {/* Hero Card */}
+                    <div className="w-full relative bg-white dark:bg-[#1e2a24] rounded-[2rem] border-[3px] border-[#111714] dark:border-white shadow-[8px_8px_0px_0px_rgba(17,23,20,1)] p-6 flex flex-col items-center text-center">
+                        <div className="relative mb-6">
+                            <div
+                                className="w-48 h-48 rounded-full border-4 border-[#111714] dark:border-white bg-cover bg-center overflow-hidden shadow-sm"
+                                style={{ backgroundImage: `url('${bgImage}')` }}
+                            >
                             </div>
-                        </button>
-                    </motion.div>
-                )}
+                            <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-[#4ce68a] border-[3px] border-[#111714] px-4 py-1.5 rounded-full shadow-[2px_2px_0px_0px_rgba(17,23,20,1)] -rotate-3 z-10 whitespace-nowrap">
+                                <span className="text-[#111714] text-sm font-black tracking-wider">{badgeText}</span>
+                            </div>
+                            <span className="material-symbols-outlined absolute -top-2 -right-4 text-[#111714] text-4xl animate-bounce" style={{ fontVariationSettings: "'FILL' 1" }}>spark</span>
+                        </div>
+                        <div className="mt-2 space-y-2">
+                            <h1 className="text-4xl font-black uppercase leading-[0.9] tracking-tight text-[#111714] dark:text-white">
+                                Ready<br />To Loop!
+                            </h1>
+                            <p className="text-lg font-bold leading-tight text-[#111714]/80 dark:text-white/80 max-w-[240px] mx-auto mt-3">
+                                You earned <span className="text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30 px-1 rounded">+{xpEarned} COINS</span> and saved {co2Saved}kg of CO2!
+                            </p>
+                        </div>
+                    </div>
 
-                {/* Quick Actions Grid - Compact */}
-                <motion.div variants={itemVariants}>
-                    <p className="font-bold text-dark dark:text-white text-sm mb-2 ml-1">Quick Actions</p>
-                    <div className={`grid ${actions.length <= 3 ? 'grid-cols-3' : 'grid-cols-3'} gap-2`}>
-                        {actions.slice(0, 3).map((action) => (
-                            <Link key={action.href} href={action.href}>
-                                <div className={`${action.color} rounded-xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm p-3 flex flex-col items-center gap-1 hover:-translate-y-1 transition-transform min-h-[80px] justify-center`}>
-                                    <span className="material-symbols-outlined text-2xl text-dark dark:text-white">{action.icon}</span>
-                                    <span className="text-[10px] font-[800] text-dark dark:text-white text-center">{action.label}</span>
-                                    {action.badge && (
-                                        <span className="text-[9px] font-bold text-dark/60 dark:text-white/60">{action.badge}</span>
-                                    )}
+                    {/* Options Grid */}
+                    <div className="flex flex-col w-full">
+                        <div className="flex items-center gap-2 mb-3 px-1">
+                            <span className="material-symbols-outlined text-[#111714]/60 dark:text-white/60 text-xl">alt_route</span>
+                            <span className="text-[#111714]/60 dark:text-white/60 font-bold text-sm uppercase tracking-wider">Choose your path</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4 w-full">
+                            {/* Reuse Option */}
+                            <Link href={reuseLink} className="group relative w-full h-auto active:scale-95 transition-transform">
+                                <div className="absolute inset-0 bg-white dark:bg-white/10 rounded-2xl border-[3px] border-[#111714] dark:border-white shadow-[4px_4px_0px_0px_rgba(17,23,20,1)] group-hover:shadow-[8px_8px_0px_0px_#4ce68a] transition-all"></div>
+                                <div className="relative p-5 flex flex-col items-center justify-center gap-2 z-10 text-center min-h-[140px]">
+                                    <span className="material-symbols-outlined text-4xl text-[#111714] dark:text-white">palette</span>
+                                    <span className="text-[#111714] dark:text-white font-black text-lg uppercase tracking-wide leading-tight">Reuse<br />It</span>
                                 </div>
                             </Link>
-                        ))}
-                    </div>
 
-                    {/* More actions row */}
-                    {actions.length > 3 && (
-                        <div className="grid grid-cols-2 gap-2 mt-2">
-                            {actions.slice(3).map((action) => (
-                                <Link key={action.href} href={action.href}>
-                                    <div className={`${action.color} rounded-xl border-2 border-dark dark:border-gray-600 shadow-brutal-sm p-3 flex items-center gap-3 hover:-translate-y-1 transition-transform`}>
-                                        <span className="material-symbols-outlined text-xl text-dark dark:text-white">{action.icon}</span>
-                                        <span className="text-xs font-[800] text-dark dark:text-white">{action.label}</span>
-                                    </div>
-                                </Link>
-                            ))}
+                            {/* Trade Option */}
+                            <Link href={sellLink} className="group relative w-full h-auto active:scale-95 transition-transform">
+                                <div className="absolute inset-0 bg-white dark:bg-white/10 rounded-2xl border-[3px] border-[#111714] dark:border-white shadow-[4px_4px_0px_0px_rgba(17,23,20,1)] group-hover:shadow-[8px_8px_0px_0px_#4ce68a] transition-all"></div>
+                                <div className="relative p-5 flex flex-col items-center justify-center gap-2 z-10 text-center min-h-[140px]">
+                                    <span className="material-symbols-outlined text-4xl text-[#111714] dark:text-white">handshake</span>
+                                    <span className="text-[#111714] dark:text-white font-black text-lg uppercase tracking-wide leading-tight">Trade<br />It</span>
+                                </div>
+                            </Link>
                         </div>
-                    )}
-                </motion.div>
+                    </div>
+                </main>
 
-                {/* Scan Another Button */}
-                <motion.div variants={itemVariants}>
-                    <Link href="/scanner">
-                        <button className="w-full py-4 bg-dark text-white rounded-2xl font-bold flex items-center justify-center gap-2 shadow-brutal-sm border-2 border-dark hover:bg-gray-800 transition-colors">
-                            <span className="material-symbols-outlined">photo_camera</span>
-                            Scan Another Item
-                        </button>
-                    </Link>
-                </motion.div>
-            </motion.div>
+                {/* Sticky Save Button */}
+                <div className="fixed bottom-6 w-full max-w-md px-6 z-50 pointer-events-none left-1/2 -translate-x-1/2">
+                    <button
+                        onClick={() => router.push('/')}
+                        className="pointer-events-auto active:scale-95 transition-transform group relative w-full h-16 cursor-pointer flex items-center justify-center"
+                    >
+                        <div className="absolute inset-0 bg-[#4ce68a] rounded-xl translate-y-1.5 translate-x-1.5 border-2 border-[#111714] transition-transform group-hover:translate-y-2 group-hover:translate-x-2"></div>
+                        <div className="absolute inset-0 bg-[#111714] dark:bg-white rounded-xl border-2 border-[#111714] flex items-center justify-center gap-2 transition-transform group-active:translate-y-1 group-active:translate-x-1">
+                            <span className="material-symbols-outlined text-white dark:text-[#111714] text-2xl">save</span>
+                            <span className="text-white dark:text-[#111714] text-xl font-black tracking-widest uppercase">Save Result</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
         </div>
     );
 }

@@ -162,6 +162,11 @@ export interface Message {
     timestamp: Date;
     unread: boolean;
     listingTitle?: string;
+    listingImage?: string;
+    listingPrice?: number;
+    conversationType: 'marketplace' | 'community';
+    projectId?: string;
+    projectTitle?: string;
 }
 
 export interface ChatMessage {

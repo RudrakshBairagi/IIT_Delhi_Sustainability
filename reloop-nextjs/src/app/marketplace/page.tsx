@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { DBService } from '@/lib/firebase/db';
 import DemoManager from '@/lib/demo-manager';
@@ -19,21 +20,33 @@ const itemVariants = {
     visible: { y: 0, opacity: 1, transition: { type: 'spring' as const, stiffness: 300, damping: 24 } },
 };
 
-const CATEGORIES = ['All', 'Electronics', 'Books', 'Clothing', 'Home'];
+const CATEGORIES = [
+    { id: 'Books', icon: 'menu_book', color: 'bg-accent-blue' },
+    { id: 'Tech', icon: 'devices', color: 'bg-primary' },
+    { id: 'Decor', icon: 'potted_plant', color: 'bg-accent-yellow' },
+    { id: 'Clothes', icon: 'checkroom', color: 'bg-white' },
+    { id: 'More', icon: 'more_horiz', color: 'bg-white' }
+];
+
 const SORT_OPTIONS = [
     { value: 'newest', label: 'Newest' },
     { value: 'price-asc', label: 'Price: Low to High' },
     { value: 'price-desc', label: 'Price: High to Low' },
 ];
 
+type TabType = 'all' | 'my-listings';
+
 export default function MarketplacePage() {
+    const router = useRouter();
     const [listings, setListings] = useState<Listing[]>([]);
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
     const [sortBy, setSortBy] = useState('newest');
     const [isLoading, setIsLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState<TabType>('all');
 
-    const { isDemo } = useAuth();
+    const { user, isDemo } = useAuth();
+    const currentUserId = isDemo ? 'demo-user-123' : user?.uid;
 
     const loadListings = async () => {
         setIsLoading(true);
@@ -62,84 +75,138 @@ export default function MarketplacePage() {
         }
     }, [isDemo]);
 
-    // Filter and sort listings
-    const filteredListings = listings
-        .filter(l => {
-            const matchesCategory = selectedCategory === 'All' || l.category.toLowerCase().includes(selectedCategory.toLowerCase());
-            const matchesSearch = !searchQuery ||
-                l.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                l.description?.toLowerCase().includes(searchQuery.toLowerCase());
-            return matchesCategory && matchesSearch;
-        })
-        .sort((a, b) => {
-            switch (sortBy) {
-                case 'price-asc':
-                    return a.price - b.price;
-                case 'price-desc':
-                    return b.price - a.price;
-                case 'newest':
-                default:
-                    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    // Handle edit action
+    const handleEdit = (id: string) => {
+        router.push(`/marketplace/${id}/edit`);
+    };
+
+    // Handle delete action
+    const handleDelete = (id: string) => {
+        if (confirm('Are you sure you want to delete this listing?')) {
+            // In demo mode, just filter the local state
+            if (isDemo) {
+                setListings(prev => prev.filter(l => l.id !== id));
+            } else {
+                // TODO: Call Firebase delete
+                console.log('Delete listing:', id);
             }
-        });
+        }
+    };
+
+    // Filter and sort listings based on active tab
+    const getFilteredListings = () => {
+        let filtered = listings;
+
+        // Tab filtering
+        if (activeTab === 'all') {
+            // Exclude current user's listings from "All Items"
+            filtered = filtered.filter(l => l.seller.id !== currentUserId);
+        } else {
+            // Show only current user's listings in "My Listings"
+            filtered = filtered.filter(l => l.seller.id === currentUserId);
+        }
+
+        // Category and search filtering
+        filtered = filtered
+            .filter(l => {
+                const matchesCategory = selectedCategory === 'All' || l.category.toLowerCase().includes(selectedCategory.toLowerCase());
+                const matchesSearch = !searchQuery ||
+                    l.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    l.description?.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesCategory && matchesSearch;
+            })
+            .sort((a, b) => {
+                switch (sortBy) {
+                    case 'price-asc':
+                        return a.price - b.price;
+                    case 'price-desc':
+                        return b.price - a.price;
+                    case 'newest':
+                    default:
+                        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+                }
+            });
+
+        return filtered;
+    };
+
+    const filteredListings = getFilteredListings();
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-background-light font-sans text-[#111714]">
             {/* Header */}
             <motion.header
-                className="px-5 pt-6 pb-4"
+                className="pt-4 pb-4 px-6 w-full z-10"
                 initial={{ y: -20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
             >
                 <div className="flex items-center justify-between mb-4">
-                    <div>
-                        <h1 className="text-3xl font-[900] text-dark dark:text-white">Marketplace</h1>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Trade sustainably</p>
-                    </div>
-                    <Link
-                        href="/sell"
-                        className="w-12 h-12 bg-primary rounded-full border-2 border-dark flex items-center justify-center shadow-brutal-sm hover:scale-105 active:scale-95 transition-transform"
-                    >
-                        <span className="material-symbols-outlined text-2xl text-dark">add</span>
+                    <Link href="/" className="p-2 -ml-2 rounded-full hover:bg-black/5 transition-colors group">
+                        <span className="material-symbols-outlined text-3xl font-bold group-hover:-translate-x-1 transition-transform">arrow_back</span>
                     </Link>
-                </div>
-
-                {/* Search Bar */}
-                <div className="relative mb-4">
-                    <input
-                        type="text"
-                        placeholder="Search items..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="input-search"
-                    />
-                    <span className="material-symbols-outlined absolute right-5 top-1/2 -translate-y-1/2 text-gray-400" style={{ fontSize: 22 }}>
-                        search
-                    </span>
-                </div>
-
-                {/* Categories + Sort */}
-                <div className="flex items-center justify-between gap-3">
-                    <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1 flex-1">
-                        {CATEGORIES.map((cat) => (
+                    <div className="flex items-center gap-3">
+                        <div className="bg-white border-2 border-black rounded-full px-3 py-1 flex items-center gap-1 shadow-brutal-sm">
+                            <span className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse"></span>
                             <button
-                                key={cat}
-                                onClick={() => setSelectedCategory(cat)}
-                                className={selectedCategory === cat ? 'tab-pill-active' : 'tab-pill-inactive'}
+                                onClick={() => setActiveTab(activeTab === 'all' ? 'my-listings' : 'all')}
+                                className="text-xs font-bold uppercase tracking-wide"
                             >
-                                {cat}
+                                {activeTab === 'all' ? 'Live' : 'My Items'}
                             </button>
-                        ))}
+                        </div>
+                        <button className="w-10 h-10 flex items-center justify-center rounded-full border-2 border-black bg-white hover:bg-gray-50 transition-colors shadow-brutal-sm active:translate-y-0.5 active:shadow-none">
+                            <span className="material-symbols-outlined text-xl font-bold">notifications</span>
+                        </button>
+                        <Link
+                            href="/sell"
+                            className="w-10 h-10 flex items-center justify-center rounded-full border-2 border-black bg-accent-yellow hover:bg-yellow-400 transition-colors shadow-brutal-sm active:translate-y-0.5 active:shadow-none"
+                        >
+                            <span className="material-symbols-outlined text-xl font-bold">add</span>
+                        </Link>
                     </div>
-                    <select
-                        value={sortBy}
-                        onChange={(e) => setSortBy(e.target.value)}
-                        className="shrink-0 text-xs font-bold bg-white dark:bg-dark-surface border-2 border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 focus:outline-none focus:border-primary transition-colors"
+                </div>
+
+                <div className="mb-6">
+                    <h1 className="text-4xl font-black uppercase tracking-tight leading-none mb-4">Market<br />Hub</h1>
+                    <div className="relative group">
+                        <input
+                            className="w-full bg-white border-[3px] border-[#111714] rounded-full py-3 pl-12 pr-12 font-bold placeholder:text-gray-400 focus:outline-none focus:ring-0 shadow-brutal transition-all group-hover:shadow-brutal-hover"
+                            placeholder="Search for books, tech..."
+                            type="text"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                        <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-2xl text-[#111714]">search</span>
+                        <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-accent-yellow border-2 border-black p-1.5 rounded-full hover:bg-yellow-400 transition-colors">
+                            <span className="material-symbols-outlined text-lg font-bold">tune</span>
+                        </button>
+                    </div>
+                </div>
+
+                {/* Categories */}
+                <div className="flex gap-4 overflow-x-auto pb-6 -mx-6 px-6 no-scrollbar snap-x">
+                    <div
+                        onClick={() => setSelectedCategory('All')}
+                        className={`flex flex-col items-center gap-2 snap-start shrink-0 cursor-pointer group ${selectedCategory === 'All' ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}
                     >
-                        {SORT_OPTIONS.map((opt) => (
-                            <option key={opt.value} value={opt.value}>{opt.label}</option>
-                        ))}
-                    </select>
+                        <div className={`w-16 h-16 rounded-full bg-white border-[3px] border-[#111714] flex items-center justify-center shadow-brutal group-hover:scale-110 group-active:scale-95 transition-all`}>
+                            <span className="material-symbols-outlined text-3xl font-bold text-[#111714]">grid_view</span>
+                        </div>
+                        <span className="text-xs font-extrabold uppercase tracking-wide">All</span>
+                    </div>
+
+                    {CATEGORIES.map((cat) => (
+                        <div
+                            key={cat.id}
+                            onClick={() => setSelectedCategory(cat.id)}
+                            className={`flex flex-col items-center gap-2 snap-start shrink-0 cursor-pointer group ${selectedCategory === cat.id ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}
+                        >
+                            <div className={`w-16 h-16 rounded-full ${cat.color} border-[3px] border-[#111714] flex items-center justify-center shadow-brutal group-hover:scale-110 group-active:scale-95 transition-all`}>
+                                <span className="material-symbols-outlined text-3xl font-bold text-[#111714]" style={{ fontVariationSettings: "'FILL' 1" }}>{cat.icon}</span>
+                            </div>
+                            <span className="text-xs font-extrabold uppercase tracking-wide">{cat.id}</span>
+                        </div>
+                    ))}
                 </div>
             </motion.header>
 
@@ -155,10 +222,21 @@ export default function MarketplacePage() {
                         animate={{ opacity: 1, scale: 1 }}
                     >
                         <div className="w-20 h-20 bg-white dark:bg-dark-surface rounded-2xl border-2 border-gray-200 dark:border-gray-700 mx-auto flex items-center justify-center mb-4">
-                            <span className="material-symbols-outlined text-4xl text-gray-300">inventory_2</span>
+                            <span className="material-symbols-outlined text-4xl text-gray-300">
+                                {activeTab === 'my-listings' ? 'inventory_2' : 'search_off'}
+                            </span>
                         </div>
-                        <p className="text-gray-500 dark:text-gray-400 font-medium">No items found</p>
-                        <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Try a different category or search term</p>
+                        {activeTab === 'my-listings' ? (
+                            <>
+                                <p className="text-gray-500 dark:text-gray-400 font-medium">No listings yet</p>
+                                <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Start selling your pre-loved items!</p>
+                            </>
+                        ) : (
+                            <>
+                                <p className="text-gray-500 dark:text-gray-400 font-medium">No items found</p>
+                                <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Try a different category or search term</p>
+                            </>
+                        )}
                         <Link
                             href="/sell"
                             className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-primary text-dark font-bold rounded-xl border-2 border-dark shadow-brutal-sm hover:scale-105 active:scale-95 transition-transform"
@@ -169,14 +247,19 @@ export default function MarketplacePage() {
                     </motion.div>
                 ) : (
                     <motion.div
-                        className="grid grid-cols-2 gap-4"
+                        className="grid grid-cols-2 gap-4 pb-4"
                         initial="hidden"
                         animate="visible"
                         variants={containerVariants}
                     >
                         {filteredListings.map((listing) => (
                             <motion.div key={listing.id} variants={itemVariants}>
-                                <ListingCard listing={listing} />
+                                <ListingCard
+                                    listing={listing}
+                                    isOwner={activeTab === 'my-listings'}
+                                    onEdit={handleEdit}
+                                    onDelete={handleDelete}
+                                />
                             </motion.div>
                         ))}
                     </motion.div>

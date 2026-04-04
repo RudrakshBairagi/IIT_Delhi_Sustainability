@@ -37,10 +37,11 @@ const trendingCreators = [
     },
 ];
 
-// DIY Projects feed
+// DIY Projects feed - mapped to tutorial IDs
 const projects = [
     {
         id: '1',
+        tutorialId: 'tutorial-1', // Maps to "Upcycle a T-Shirt" tutorial
         title: 'Boho Lamp From Bottles',
         author: '@EcoWarrior_22',
         authorImage: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop',
@@ -51,6 +52,7 @@ const projects = [
     },
     {
         id: '2',
+        tutorialId: 'tutorial-1', // Maps to clothing tutorial
         title: 'Vintage Kurta Revival',
         author: '@DesignStudent99',
         authorImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop',
@@ -61,6 +63,7 @@ const projects = [
     },
     {
         id: '3',
+        tutorialId: 'tutorial-2', // Maps to "Jar Planter DIY" tutorial
         title: 'Pallet Coffee Table',
         author: '@WoodWork_Wiz',
         authorImage: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop',
@@ -174,62 +177,59 @@ export default function CommunityPage() {
                 >
                     <div className="flex items-center justify-between">
                         <h1 className="text-3xl font-black italic tracking-tighter uppercase text-dark dark:text-white">Fresh Projects</h1>
-                        <button className="text-sm font-bold underline decoration-2 decoration-primary underline-offset-4 text-dark dark:text-white">View All</button>
+                        <Link href="/tutorials" className="text-sm font-bold underline decoration-2 decoration-primary underline-offset-4 text-dark dark:text-white">View All</Link>
                     </div>
 
                     {/* Project Cards - 2 Column Grid */}
                     <div className="grid grid-cols-2 gap-3">
                         {projects.map((project) => (
-                            <motion.article
-                                key={project.id}
-                                variants={itemVariants}
-                                className="bg-white dark:bg-dark-surface border-2 border-dark dark:border-gray-600 rounded-2xl shadow-brutal overflow-hidden flex flex-col group"
-                            >
-                                {/* Image */}
-                                <div className="relative aspect-square w-full border-b-2 border-dark dark:border-gray-600 overflow-hidden">
-                                    <img
-                                        src={project.image}
-                                        alt={project.title}
-                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                    />
-                                    <div className="absolute top-2 right-2 bg-white border border-dark px-2 py-0.5 rounded-full text-[10px] font-bold">
-                                        {project.time}
-                                    </div>
-                                    {/* Tags overlay */}
-                                    <div className="absolute bottom-2 left-2 flex flex-wrap gap-1">
-                                        {project.tags.slice(0, 1).map((tag) => (
-                                            <span key={tag.name} className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${tag.color} text-dark border border-dark`}>
-                                                {tag.name}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Content */}
-                                <div className="p-3 flex flex-col gap-2">
-                                    <h3 className="text-sm font-extrabold uppercase leading-tight tracking-tight text-dark dark:text-white line-clamp-2">
-                                        {project.title}
-                                    </h3>
-
-                                    {/* User */}
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-6 h-6 rounded-full border border-dark overflow-hidden bg-gray-200">
-                                            <img src={project.authorImage} alt={project.author} className="w-full h-full object-cover" />
+                            <Link key={project.id} href={`/tutorials/${project.tutorialId}`}>
+                                <motion.article
+                                    variants={itemVariants}
+                                    className="bg-white dark:bg-dark-surface border-2 border-dark dark:border-gray-600 rounded-2xl shadow-brutal overflow-hidden flex flex-col group cursor-pointer hover:shadow-brutal-lg transition-shadow"
+                                >
+                                    {/* Image */}
+                                    <div className="relative aspect-square w-full border-b-2 border-dark dark:border-gray-600 overflow-hidden">
+                                        <img
+                                            src={project.image}
+                                            alt={project.title}
+                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                        />
+                                        <div className="absolute top-2 right-2 bg-white border border-dark px-2 py-0.5 rounded-full text-[10px] font-bold">
+                                            {project.time}
                                         </div>
-                                        <span className="text-xs font-medium text-gray-600 dark:text-gray-400 truncate">{project.author}</span>
+                                        {/* Tags overlay */}
+                                        <div className="absolute bottom-2 left-2 flex flex-wrap gap-1">
+                                            {project.tags.slice(0, 1).map((tag) => (
+                                                <span key={tag.name} className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${tag.color} text-dark border border-dark`}>
+                                                    {tag.name}
+                                                </span>
+                                            ))}
+                                        </div>
                                     </div>
 
-                                    {/* Actions */}
-                                    <div className="flex gap-2 mt-1">
-                                        <button className="flex-1 flex items-center justify-center gap-1 h-8 bg-[#fde047] text-dark font-bold text-xs border-2 border-dark rounded-lg shadow-brutal-sm active:shadow-none active:translate-x-[1px] active:translate-y-[1px] transition-all">
-                                            <span className="material-symbols-outlined text-[16px]">bookmark</span>
-                                        </button>
-                                        <button className="flex-1 flex items-center justify-center gap-1 h-8 bg-primary text-dark font-bold text-xs border-2 border-dark rounded-lg shadow-brutal-sm active:shadow-none active:translate-x-[1px] active:translate-y-[1px] transition-all">
-                                            <span className="material-symbols-outlined text-[16px]">chat_bubble</span>
-                                        </button>
+                                    {/* Content */}
+                                    <div className="p-3 flex flex-col gap-2">
+                                        <h3 className="text-sm font-extrabold uppercase leading-tight tracking-tight text-dark dark:text-white line-clamp-2">
+                                            {project.title}
+                                        </h3>
+
+                                        {/* User */}
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-6 h-6 rounded-full border border-dark overflow-hidden bg-gray-200">
+                                                <img src={project.authorImage} alt={project.author} className="w-full h-full object-cover" />
+                                            </div>
+                                            <span className="text-xs font-medium text-gray-600 dark:text-gray-400 truncate">{project.author}</span>
+                                        </div>
+
+                                        {/* View Tutorial CTA */}
+                                        <div className="flex items-center justify-center gap-1 h-8 bg-primary text-dark font-bold text-xs border-2 border-dark rounded-lg mt-1">
+                                            <span className="material-symbols-outlined text-[16px]">play_circle</span>
+                                            View Tutorial
+                                        </div>
                                     </div>
-                                </div>
-                            </motion.article>
+                                </motion.article>
+                            </Link>
                         ))}
                     </div>
 
