@@ -8,6 +8,7 @@ export interface NavAction {
     disabled?: boolean;
     loading?: boolean;
     variant?: 'primary' | 'secondary' | 'danger';
+    hidden?: boolean;
 }
 
 // Context action for dynamic nav items
