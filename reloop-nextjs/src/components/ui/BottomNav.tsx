@@ -1,37 +1,36 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useNavStore, ContextAction } from '@/lib/store/nav-store';
-import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { usePathname, useRouter } from 'next/navigation';
+import { useNavStore } from '@/lib/store/nav-store';
+import { useEffect, useState, useRef } from 'react';
+import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import DemoManager from '@/lib/demo-manager';
 
+// Navigation items - symmetric 2-1-2 layout around center FAB
 const navItems = [
     { href: '/', icon: 'home', label: 'Home' },
     { href: '/marketplace', icon: 'storefront', label: 'Market' },
     { href: '/scanner', icon: 'qr_code_scanner', label: 'Scan', isFab: true },
-    { href: '/messages', icon: 'chat_bubble', label: 'Chat' },
-    { href: '/community', icon: 'lightbulb', label: 'DIY' }, // Keeping DIY as per app structure, styled as Profile slot
+    { href: '/community', icon: 'lightbulb', label: 'DIY' },
+    { href: '/settings', icon: 'settings', label: 'Settings' },
 ];
 
-// Animation variants
-const centerButtonVariants = {
-    initial: { scale: 0.8, opacity: 0, y: 20 },
-    animate: {
-        scale: 1,
-        opacity: 1,
-        y: 0,
-        transition: { type: 'spring' as const, stiffness: 400, damping: 25 }
-    },
-    exit: { scale: 0.8, opacity: 0, y: 20 },
-    tap: { scale: 0.95 }
-};
+// Quick actions for swipe-up panel
+const quickActions = [
+    { icon: 'add_circle', label: 'New Trade', href: '/marketplace/create', color: 'bg-green-500' },
+    { icon: 'qr_code_scanner', label: 'Quick Scan', href: '/scanner', color: 'bg-blue-500' },
+    { icon: 'favorite', label: 'Donate', href: '/charity', color: 'bg-pink-500' },
+    { icon: 'recycling', label: 'Recycle', href: '/scanner/recycling-centers', color: 'bg-emerald-500' },
+];
 
 export function BottomNav() {
     const pathname = usePathname();
-    const { navContext } = useNavStore(); // Removed unused primaryAction destructuring if not needed for FAB override
+    const router = useRouter();
+    const { navContext, primaryAction } = useNavStore();
     const [unreadCount, setUnreadCount] = useState(0);
+    const [isQuickPanelOpen, setIsQuickPanelOpen] = useState(false);
+    const navRef = useRef<HTMLElement>(null);
 
     // Track unread messages for badge
     useEffect(() => {
@@ -40,99 +39,265 @@ export function BottomNav() {
             const count = messages.filter(m => m.unread).length;
             setUnreadCount(count);
         };
-
         updateUnread();
         const unsubscribe = DemoManager.subscribe(updateUnread);
         return unsubscribe;
     }, []);
 
-    // Hide nav on auth pages and scanner pages (for immersion/collision avoidance)
+    // Hide nav on auth pages and scanner (scanner has its own controls)
     const hiddenRoutes = ['/login', '/register', '/onboarding', '/scanner'];
     if (hiddenRoutes.some(route => pathname.startsWith(route))) {
         return null;
     }
 
-    // Check if we're in context mode (e.g. inside a selection view)
-    // If context mode active, we might want to hide the standard nav or show context actions?
-    // User requested specific design. I'll overlay context actions if needed, or replace content.
+    // Check if in scanner flow (show minimal nav)
+    const isInScanner = pathname.startsWith('/scanner');
+
+    // Handle swipe up gesture
+    const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+        if (info.offset.y < -50 && info.velocity.y < -100) {
+            setIsQuickPanelOpen(true);
+        }
+    };
+
+    // Context mode check
     const isContextMode = navContext && navContext.mode !== 'standard';
 
     return (
-        <nav className="fixed bottom-0 left-0 right-0 z-50 px-0 pb-0 shrink-0">
-            {/* Main Bar Container */}
-            <div className="bg-white dark:bg-[#112118] border-t-[3px] border-black dark:border-white rounded-t-[32px] px-6 pb-6 pt-3 flex justify-around items-end shadow-[0px_-4px_20px_rgba(0,0,0,0.1)] max-w-md mx-auto relative h-[88px]">
+        <>
+            {/* Quick Actions Panel (Swipe Up) */}
+            <AnimatePresence>
+                {isQuickPanelOpen && (
+                    <>
+                        {/* Backdrop */}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setIsQuickPanelOpen(false)}
+                            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+                        />
+                        {/* Panel */}
+                        <motion.div
+                            initial={{ y: '100%', opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            exit={{ y: '100%', opacity: 0 }}
+                            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                            className="fixed bottom-0 left-0 right-0 z-50 max-w-md mx-auto"
+                        >
+                            <div className="bg-white dark:bg-[#1a2e23] rounded-t-[32px] border-t-[3px] border-x-[3px] border-black dark:border-white/20 p-6 pb-8 shadow-2xl">
+                                {/* Handle */}
+                                <div className="w-12 h-1.5 bg-gray-300 dark:bg-white/30 rounded-full mx-auto mb-6" />
 
-                {isContextMode ? (
-                    <div className="flex items-center justify-between w-full h-full pb-2">
-                        {/* Context Mode Rendering (Simplified to match height constraint) */}
-                        {navContext.actions?.map((action, idx) => (
-                            <button
-                                key={idx}
-                                onClick={action.onClick}
-                                className="flex flex-col items-center gap-1 group w-16"
-                            >
-                                <div className={`h-10 w-10 flex items-center justify-center rounded-xl transition-colors ${action.variant === 'danger' ? 'bg-red-100' : 'bg-gray-100'} dark:bg-white/10`}>
-                                    <span className="material-symbols-outlined text-black dark:text-white text-[24px]">
-                                        {action.icon}
-                                    </span>
+                                {/* Title */}
+                                <h3 className="text-lg font-black text-center mb-4 uppercase tracking-wider text-black dark:text-white">
+                                    Quick Actions
+                                </h3>
+
+                                {/* Actions Grid */}
+                                <div className="grid grid-cols-4 gap-3">
+                                    {quickActions.map((action) => (
+                                        <button
+                                            key={action.href}
+                                            onClick={() => {
+                                                setIsQuickPanelOpen(false);
+                                                router.push(action.href);
+                                            }}
+                                            className="flex flex-col items-center gap-2 p-3 rounded-2xl bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-all active:scale-95 group"
+                                        >
+                                            <div className={`w-12 h-12 ${action.color} rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
+                                                <span className="material-symbols-outlined text-white text-2xl">
+                                                    {action.icon}
+                                                </span>
+                                            </div>
+                                            <span className="text-[10px] font-bold text-black/70 dark:text-white/70 text-center leading-tight">
+                                                {action.label}
+                                            </span>
+                                        </button>
+                                    ))}
                                 </div>
-                                <span className="text-[11px] font-bold text-black dark:text-white truncate max-w-full">{action.label}</span>
-                            </button>
-                        ))}
-                    </div>
-                ) : (
-                    navItems.map((item) => {
-                        const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
 
-                        // Special Render for FAB (Scan)
-                        if (item.isFab) {
+                                {/* Close hint */}
+                                <p className="text-center text-xs text-gray-400 mt-4">Tap outside to close</p>
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
+
+            {/* Main Navigation */}
+            <motion.nav
+                ref={navRef}
+                drag="y"
+                dragConstraints={{ top: 0, bottom: 0 }}
+                dragElastic={0.1}
+                onDragEnd={handleDragEnd}
+                className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50"
+            >
+                {/* Floating Pill Container */}
+                <motion.div
+                    layout
+                    className={`
+                        bg-white dark:bg-[#1a2e23] 
+                        border-[3px] border-black dark:border-white/20
+                        rounded-full px-3 py-2
+                        shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(76,230,138,0.3)]
+                        flex items-center gap-1
+                        ${isInScanner ? 'opacity-90' : ''}
+                    `}
+                >
+                    {/* Context Mode Actions */}
+                    {isContextMode ? (
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key="context"
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.9 }}
+                                className="flex items-center gap-2 px-2"
+                            >
+                                {navContext.actions?.map((action, idx) => (
+                                    <motion.button
+                                        key={idx}
+                                        whileTap={{ scale: 0.9 }}
+                                        onClick={action.onClick}
+                                        className={`
+                                            h-12 px-4 rounded-full flex items-center gap-2 font-bold text-sm
+                                            transition-all
+                                            ${action.variant === 'primary'
+                                                ? 'bg-[#4ce68a] text-black'
+                                                : action.variant === 'danger'
+                                                    ? 'bg-red-500 text-white'
+                                                    : 'bg-gray-100 dark:bg-white/10 text-black dark:text-white'
+                                            }
+                                        `}
+                                    >
+                                        <span className="material-symbols-outlined text-xl">
+                                            {action.icon}
+                                        </span>
+                                        {action.label && (
+                                            <span className="hidden sm:inline">{action.label}</span>
+                                        )}
+                                    </motion.button>
+                                ))}
+                            </motion.div>
+                        </AnimatePresence>
+                    ) : (
+                        /* Standard Navigation */
+                        navItems.map((item) => {
+                            const isActive = pathname === item.href ||
+                                (item.href !== '/' && pathname.startsWith(item.href));
+
+                            // Center FAB Button (Scan)
+                            if (item.isFab) {
+                                return (
+                                    <Link
+                                        key={item.href}
+                                        href={item.href}
+                                        className="relative -mt-6 mx-1"
+                                    >
+                                        <motion.div
+                                            whileTap={{ scale: 0.9 }}
+                                            whileHover={{ scale: 1.05 }}
+                                            className={`
+                                                w-14 h-14 rounded-full 
+                                                flex items-center justify-center
+                                                border-[3px] border-black dark:border-white
+                                                shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]
+                                                transition-colors
+                                                ${isActive
+                                                    ? 'bg-[#4ce68a]'
+                                                    : 'bg-black dark:bg-[#4ce68a]'
+                                                }
+                                            `}
+                                        >
+                                            <span className={`material-symbols-outlined text-2xl ${isActive ? 'text-black' : 'text-white dark:text-black'}`}>
+                                                {item.icon}
+                                            </span>
+                                        </motion.div>
+                                    </Link>
+                                );
+                            }
+
+                            // Standard Nav Items
                             return (
                                 <Link
                                     key={item.href}
                                     href={item.href}
-                                    className="relative -top-8 flex flex-col items-center group"
+                                    className="relative"
                                 >
-                                    <div className="h-16 w-16 bg-black dark:bg-[#4ce68a] rounded-full border-[4px] border-white dark:border-[#112118] flex items-center justify-center shadow-lg transform active:scale-95 transition-transform group-hover:scale-105">
-                                        <span className="material-symbols-outlined text-white dark:text-[#112118] text-[32px]">
+                                    <motion.div
+                                        whileTap={{ scale: 0.9 }}
+                                        className={`
+                                            w-12 h-12 rounded-full
+                                            flex items-center justify-center
+                                            transition-all duration-200
+                                            ${isActive
+                                                ? 'bg-black dark:bg-[#4ce68a]'
+                                                : 'bg-transparent hover:bg-gray-100 dark:hover:bg-white/10'
+                                            }
+                                        `}
+                                    >
+                                        <span
+                                            className={`
+                                                material-symbols-outlined text-2xl
+                                                transition-colors
+                                                ${isActive
+                                                    ? 'text-white dark:text-black'
+                                                    : 'text-black/50 dark:text-white/50'
+                                                }
+                                            `}
+                                            style={{ fontVariationSettings: isActive ? "'FILL' 1, 'wght' 600" : "'wght' 400" }}
+                                        >
                                             {item.icon}
                                         </span>
-                                    </div>
-                                    <span className="text-[11px] font-bold text-black dark:text-white relative -top-1">
-                                        {item.label}
-                                    </span>
+                                    </motion.div>
+
+                                    {/* Unread Badge */}
+                                    {item.href === '/messages' && unreadCount > 0 && (
+                                        <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white dark:border-[#1a2e23]">
+                                            {unreadCount > 9 ? '9+' : unreadCount}
+                                        </span>
+                                    )}
                                 </Link>
                             );
-                        }
+                        })
+                    )}
 
-                        // Standard Items
-                        return (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                className="flex flex-col items-center gap-1 group w-16 pb-2"
-                            >
-                                <div className={`h-10 w-10 flex items-center justify-center rounded-xl transition-colors ${isActive ? 'bg-gray-100 dark:bg-white/10' : 'group-hover:bg-gray-100 dark:group-hover:bg-white/5'}`}>
-                                    <span
-                                        className={`material-symbols-outlined text-[28px] transition-colors ${isActive ? 'text-black dark:text-white font-bold' : 'text-black/50 dark:text-white/50 group-hover:text-black dark:group-hover:text-white'}`}
-                                        style={{ fontVariationSettings: isActive ? "'wght' 600" : "'wght' 400" }}
-                                    >
-                                        {item.icon}
+                    {/* Primary Action Override (if set) */}
+                    {primaryAction && !isContextMode && (
+                        <motion.button
+                            whileTap={{ scale: 0.9 }}
+                            onClick={primaryAction.onClick}
+                            disabled={primaryAction.disabled || primaryAction.loading}
+                            className="ml-2 h-10 px-4 bg-[#4ce68a] text-black rounded-full font-bold text-sm flex items-center gap-2 shadow-md"
+                        >
+                            {primaryAction.loading ? (
+                                <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                            ) : (
+                                <>
+                                    <span className="material-symbols-outlined text-lg">
+                                        {primaryAction.icon || 'check'}
                                     </span>
-                                </div>
-                                <span className={`text-[11px] font-bold transition-colors ${isActive ? 'text-black dark:text-white' : 'text-black/50 dark:text-white/50 group-hover:text-black dark:group-hover:text-white'}`}>
-                                    {item.label}
-                                </span>
+                                    <span>{primaryAction.label}</span>
+                                </>
+                            )}
+                        </motion.button>
+                    )}
+                </motion.div>
 
-                                {/* Unread badge */}
-                                {item.href === '/messages' && unreadCount > 0 && (
-                                    <span className="absolute top-2 right-4 w-3 h-3 bg-red-500 rounded-full border border-white"></span>
-                                )}
-                            </Link>
-                        );
-                    })
-                )}
-            </div>
-        </nav>
+                {/* Swipe Hint (subtle) */}
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 0.5 }}
+                    className="absolute -top-6 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none"
+                >
+                    <span className="material-symbols-outlined text-sm text-gray-400 dark:text-white/30 animate-bounce">
+                        keyboard_arrow_up
+                    </span>
+                </motion.div>
+            </motion.nav>
+        </>
     );
 }
 

@@ -38,7 +38,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AuthProvider>
             <div className="relative flex min-h-screen flex-col w-full max-w-md mx-auto border-x border-gray-200 dark:border-gray-700 shadow-xl bg-white/50 dark:bg-dark-bg transition-colors duration-300">
-              <main className="flex-1 pb-24">
+              <main className="flex-1 pb-28">
                 {children}
               </main>
               <BottomNav />

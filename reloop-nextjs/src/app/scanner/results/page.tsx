@@ -63,6 +63,8 @@ export default function ScanResultPage() {
     // Action Links
     const sellLink = `/marketplace/create?title=${encodeURIComponent(item.objectName)}&category=${encodeURIComponent(item.category)}&price=${item.estimatedCoins || 10}`;
     const reuseLink = `/scanner/ideas`; // Could pass query params if needed
+    const donateLink = `/charity`; // Link to charity page
+    const recycleLink = `/scanner/recycling-centers`; // Link to recycling centers
 
     return (
         <div className="min-h-screen bg-[#d0f0fd] dark:bg-[#112118] text-[#111714] dark:text-white font-sans overflow-x-hidden selection:bg-[#4ce68a] selection:text-[#111714]">
@@ -127,6 +129,24 @@ export default function ScanResultPage() {
                                 <div className="relative p-5 flex flex-col items-center justify-center gap-2 z-10 text-center min-h-[140px]">
                                     <span className="material-symbols-outlined text-4xl text-[#111714] dark:text-white">handshake</span>
                                     <span className="text-[#111714] dark:text-white font-black text-lg uppercase tracking-wide leading-tight">Trade<br />It</span>
+                                </div>
+                            </Link>
+
+                            {/* Donate Option */}
+                            <Link href={donateLink} className="group relative w-full h-auto active:scale-95 transition-transform">
+                                <div className="absolute inset-0 bg-white dark:bg-white/10 rounded-2xl border-[3px] border-[#111714] dark:border-white shadow-[4px_4px_0px_0px_rgba(17,23,20,1)] group-hover:shadow-[8px_8px_0px_0px_#4ce68a] transition-all"></div>
+                                <div className="relative p-5 flex flex-col items-center justify-center gap-2 z-10 text-center min-h-[140px]">
+                                    <span className="material-symbols-outlined text-4xl text-[#111714] dark:text-white">favorite</span>
+                                    <span className="text-[#111714] dark:text-white font-black text-lg uppercase tracking-wide leading-tight">Donate<br />It</span>
+                                </div>
+                            </Link>
+
+                            {/* Recycle Option */}
+                            <Link href={recycleLink} className="group relative w-full h-auto active:scale-95 transition-transform">
+                                <div className="absolute inset-0 bg-white dark:bg-white/10 rounded-2xl border-[3px] border-[#111714] dark:border-white shadow-[4px_4px_0px_0px_rgba(17,23,20,1)] group-hover:shadow-[8px_8px_0px_0px_#4ce68a] transition-all"></div>
+                                <div className="relative p-5 flex flex-col items-center justify-center gap-2 z-10 text-center min-h-[140px]">
+                                    <span className="material-symbols-outlined text-4xl text-[#111714] dark:text-white">recycling</span>
+                                    <span className="text-[#111714] dark:text-white font-black text-lg uppercase tracking-wide leading-tight">Recycle<br />It</span>
                                 </div>
                             </Link>
                         </div>

@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { useState } from 'react';
+import VideoModal from '@/components/ui/VideoModal';
 
 // Trending creators data with Indian names
 const trendingCreators = [
@@ -36,41 +38,62 @@ const trendingCreators = [
         featured: false,
     },
 ];
-
-// DIY Projects feed - mapped to tutorial IDs
 const projects = [
     {
         id: '1',
-        tutorialId: 'tutorial-1', // Maps to "Upcycle a T-Shirt" tutorial
-        title: 'Boho Lamp From Bottles',
-        author: '@EcoWarrior_22',
+        tutorialId: 'tutorial-1',
+        title: 'Pista Shell Tulip Vase',
+        author: '@Artistic_Priya',
         authorImage: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop',
-        image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=400&fit=crop',
+        image: '/videos/thumb-1.png',
         time: '2h ago',
-        tags: [{ name: '#Glass', color: 'bg-purple-100' }, { name: '#Lighting', color: 'bg-blue-100' }],
-        description: 'Turned these old glass bottles into a sick desk lamp! Wiring was easier than I thought. 💡✨',
+        tags: [{ name: '#Art', color: 'bg-purple-100' }, { name: '#Upcycle', color: 'bg-green-100' }],
+        description: 'Transform a glass bottle into a beautiful vase using pistachio shells! 🌷✨',
+        link: 'https://www.instagram.com/reel/DTVrC3JEi7r/',
+        videoId: 'DTVrC3JEi7r',
+        videoSrc: '/videos/tutorial-1.mp4'
     },
     {
         id: '2',
-        tutorialId: 'tutorial-1', // Maps to clothing tutorial
-        title: 'Vintage Kurta Revival',
-        author: '@DesignStudent99',
+        tutorialId: 'tutorial-2',
+        title: 'Aesthetic Minimalist Crafts',
+        author: '@Design_Rahul',
         authorImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop',
-        image: 'https://images.unsplash.com/photo-1558171813-4c088753af8f?w=600&h=400&fit=crop',
+        image: '/videos/thumb-2.png',
         time: '5h ago',
-        tags: [{ name: '#Fashion', color: 'bg-pink-100' }, { name: '#Sewing', color: 'bg-indigo-100' }],
-        description: 'Found this old kurta at a thrift shop. Added some block prints and it looks brand new! 🎨🧵',
+        tags: [{ name: '#Decor', color: 'bg-pink-100' }, { name: '#Paper', color: 'bg-blue-100' }],
+        description: 'Simple and clean DIY paper craft ideas for modern desk decor. ✂️📄',
+        link: 'https://www.instagram.com/p/DLwADuaRPq4/',
+        videoId: 'DLwADuaRPq4',
+        videoSrc: '/videos/tutorial-2.mp4'
     },
     {
         id: '3',
-        tutorialId: 'tutorial-2', // Maps to "Jar Planter DIY" tutorial
-        title: 'Pallet Coffee Table',
-        author: '@WoodWork_Wiz',
+        tutorialId: 'tutorial-3',
+        title: 'Family DIY Studio Day',
+        author: '@Sneha_Creations',
         authorImage: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop',
-        image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&h=400&fit=crop',
+        image: '/videos/thumb-1.png',
         time: '1d ago',
-        tags: [{ name: '#Wood', color: 'bg-orange-100' }, { name: '#Eco', color: 'bg-green-100' }],
-        description: 'Sanded down a pallet I found behind the store. Total cost: ₹200 for screws. 🔨🪵',
+        tags: [{ name: '#Family', color: 'bg-orange-100' }, { name: '#Kids', color: 'bg-yellow-100' }],
+        description: 'Fun crafting activities for kids and family at a creative 2D studio! 🎨👨‍👩‍👧',
+        link: 'https://www.instagram.com/reel/DSxN0sOgRNd/',
+        videoId: 'DSxN0sOgRNd',
+        videoSrc: '/videos/tutorial-1.mp4'
+    },
+    {
+        id: '4',
+        tutorialId: 'tutorial-4',
+        title: 'Cardboard Bangle Box',
+        author: '@Vikram_Makes',
+        authorImage: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&h=100&fit=crop',
+        image: '/videos/thumb-2.png',
+        time: '2d ago',
+        tags: [{ name: '#Storage', color: 'bg-indigo-100' }, { name: '#Cardboard', color: 'bg-red-100' }],
+        description: 'Create a segmented jewelry organizer using waste cardboard boxes. 📦💍',
+        link: 'https://www.instagram.com/reel/DTc9Um6EUJO/',
+        videoId: 'DTc9Um6EUJO',
+        videoSrc: '/videos/tutorial-2.mp4'
     },
 ];
 
@@ -92,8 +115,18 @@ const itemVariants = {
 };
 
 export default function CommunityPage() {
+    const [selectedVideo, setSelectedVideo] = useState<{ videoId?: string, videoSrc?: string } | null>(null);
+
     return (
         <div className="min-h-screen bg-white dark:bg-dark-bg pb-32 relative">
+            <VideoModal
+                isOpen={!!selectedVideo}
+                onClose={() => setSelectedVideo(null)}
+                videoId={selectedVideo?.videoId}
+                videoSrc={selectedVideo?.videoSrc}
+            />
+            {/* ... (rest of the component) */}
+
             {/* Dot Grid Background */}
             <div
                 className="fixed inset-0 pointer-events-none z-0 opacity-40 dark:opacity-20"
@@ -183,7 +216,15 @@ export default function CommunityPage() {
                     {/* Project Cards - 2 Column Grid */}
                     <div className="grid grid-cols-2 gap-3">
                         {projects.map((project) => (
-                            <Link key={project.id} href={`/tutorials/${project.tutorialId}`}>
+                            <div
+                                key={project.id}
+                                onClick={(e) => {
+                                    if (project.videoSrc || project.videoId) {
+                                        e.preventDefault();
+                                        setSelectedVideo({ videoId: project.videoId, videoSrc: project.videoSrc });
+                                    }
+                                }}
+                            >
                                 <motion.article
                                     variants={itemVariants}
                                     className="bg-white dark:bg-dark-surface border-2 border-dark dark:border-gray-600 rounded-2xl shadow-brutal overflow-hidden flex flex-col group cursor-pointer hover:shadow-brutal-lg transition-shadow"
@@ -229,7 +270,7 @@ export default function CommunityPage() {
                                         </div>
                                     </div>
                                 </motion.article>
-                            </Link>
+                            </div>
                         ))}
                     </div>
 
