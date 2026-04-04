@@ -30,7 +30,7 @@ export default function ScanBagPage() {
     }, []);
 
     useEffect(() => {
-        if (!scanning || isDemo || scannedQR) return;
+        if (!scanning || scannedQR) return;
 
         const initScanner = async () => {
             await new Promise(resolve => setTimeout(resolve, 100));
@@ -71,17 +71,6 @@ export default function ScanBagPage() {
     const handleScan = async () => {
         setError('');
         setCameraError('');
-
-        if (isDemo) {
-            setScanning(true);
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            const DemoManager = require('@/lib/demo-manager').default;
-            const qr = DemoManager.getUnregisteredBagQR();
-            setScannedQR(qr);
-            setScanning(false);
-            return;
-        }
-
         setScanning(true);
     };
 
@@ -235,16 +224,16 @@ export default function ScanBagPage() {
                     <div className="absolute bottom-4 right-4 w-8 h-8 border-b-4 border-r-4 border-[#c8ffe0] rounded-br-md z-20" />
 
                     <div className="w-full h-full rounded-xl overflow-hidden bg-[#dbe5e2] relative">
-                        {scanning && !isDemo ? (
+                        {scanning ? (
                             <div id="qr-reader" className="w-full h-full object-cover" />
                         ) : (
                             <img
                                 src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&h=800&fit=crop"
                                 alt="Scanner placeholder"
-                                className={`w-full h-full object-cover transition-all duration-500 ${scanning ? 'brightness-100 grayscale-0' : 'brightness-90 grayscale-[20%] group-hover:brightness-100'}`}
+                                className={`w-full h-full object-cover transition-all duration-500 brightness-90 grayscale-[20%] group-hover:brightness-100`}
                             />
                         )}
-                        {(scanning || isDemo) && (
+                        {scanning && (
                             <motion.div
                                 animate={{ y: ['0%', '100%', '0%'] }}
                                 transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
@@ -317,9 +306,9 @@ export default function ScanBagPage() {
                     <div className="mt-8 w-full max-w-md bg-[#fffbeb] border border-[#fef3c7] p-4 rounded-lg flex items-start gap-3 shadow-sm">
                         <span className="material-symbols-outlined text-[#b45309]">info</span>
                         <div className="flex-1">
-                            <p className="text-sm font-bold text-[#b45309]">Demo Mode</p>
+                            <p className="text-sm font-bold text-[#b45309]">Demo Mode Target</p>
                             <p className="text-xs text-[#92400e] leading-relaxed mt-1">
-                                Tap the camera button to simulate scanning a QR code and proceed to bag details.
+                                Because you are in demo mode, you can scan <strong>any QR code</strong> from your environment to simulate a successful read. Or use manual entry.
                             </p>
                         </div>
                     </div>
