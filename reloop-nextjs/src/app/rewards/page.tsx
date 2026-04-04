@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { DBService } from '@/lib/firebase/db';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import DemoManager from '@/lib/demo-manager';
 import { Reward } from '@/types';
@@ -19,6 +18,18 @@ const itemVariants = {
 };
 
 const TABS = ['All', 'Vouchers', 'Merch', 'Donate'];
+
+const ACCENT_COLORS: Record<string, string> = {
+    voucher: '#4a90e2',
+    merch: '#d1a054',
+    donation: '#29664c',
+};
+
+const ACCENT_ICONS: Record<string, string> = {
+    voucher: 'confirmation_number',
+    merch: 'checkroom',
+    donation: 'volunteer_activism',
+};
 
 // Generate a QR-like pattern (simplified visual representation)
 function QRPattern({ code }: { code: string }) {
@@ -48,7 +59,7 @@ function QRPattern({ code }: { code: string }) {
     }
 
     return (
-        <svg width={size} height={size} className="text-dark">
+        <svg width={size} height={size} className="text-[#29302f]">
             {cells}
             <rect x="0" y="0" width="21" height="21" fill="none" stroke="currentColor" strokeWidth="2" />
             <rect x="5" y="5" width="11" height="11" fill="currentColor" />
@@ -57,29 +68,6 @@ function QRPattern({ code }: { code: string }) {
             <rect x="0" y={size - 21} width="21" height="21" fill="none" stroke="currentColor" strokeWidth="2" />
             <rect x="5" y={size - 16} width="11" height="11" fill="currentColor" />
         </svg>
-    );
-}
-
-// Floating particles component for community card
-function FloatingParticles({ type }: { type: 'tree' | 'ocean' }) {
-    const particles = type === 'tree'
-        ? ['🍃', '🌿', '🌱', '✨', '💚']
-        : ['🌊', '💧', '🐠', '✨', '💙'];
-
-    return (
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {particles.map((emoji, i) => (
-                <motion.span
-                    key={i}
-                    className="absolute text-2xl"
-                    initial={{ x: Math.random() * 100 + '%', y: '110%', opacity: 0 }}
-                    animate={{ y: '-10%', opacity: [0, 1, 1, 0], x: `${Math.random() * 100}%` }}
-                    transition={{ duration: 4 + Math.random() * 2, repeat: Infinity, delay: i * 0.6, ease: 'easeOut' }}
-                >
-                    {emoji}
-                </motion.span>
-            ))}
-        </div>
     );
 }
 
@@ -93,7 +81,7 @@ function QRCouponModal({ reward, code, onClose }: { reward: Reward; code: string
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-5 w-full max-w-md left-1/2 -translate-x-1/2"
+            className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-5"
             onClick={onClose}
         >
             <motion.div
@@ -102,10 +90,10 @@ function QRCouponModal({ reward, code, onClose }: { reward: Reward; code: string
                 exit={{ scale: 0.85, y: 30 }}
                 transition={{ type: 'spring', damping: 25, stiffness: 300 }}
                 onClick={e => e.stopPropagation()}
-                className="w-full max-w-sm bg-white rounded-3xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)]-lg overflow-hidden"
+                className="w-full max-w-sm bg-white rounded-3xl shadow-2xl overflow-hidden"
             >
                 {/* Ticket-style Header */}
-                <div className="bg-gradient-to-br from-primary via-green-400 to-emerald-500 p-6 text-center relative">
+                <div className="bg-gradient-to-br from-[#29664c] to-[#1b5a40] p-6 text-center relative">
                     <div className="absolute -left-3 top-1/2 w-6 h-6 bg-black/70 rounded-full" />
                     <div className="absolute -right-3 top-1/2 w-6 h-6 bg-black/70 rounded-full" />
                     <motion.span
@@ -115,34 +103,34 @@ function QRCouponModal({ reward, code, onClose }: { reward: Reward; code: string
                     >
                         {reward.icon}
                     </motion.span>
-                    <h2 className="text-2xl font-extrabold text-dark tracking-tight">{reward.title}</h2>
-                    <p className="text-sm text-dark/70 font-bold mt-1">{reward.description}</p>
+                    <h2 className="text-2xl font-extrabold text-white tracking-tight">{reward.title}</h2>
+                    <p className="text-sm text-white/70 font-bold mt-1">{reward.description}</p>
                 </div>
 
                 {/* Dashed Separator */}
-                <div className="border-t-2 border-dashed border-dark/20 mx-4" />
+                <div className="border-t-2 border-dashed border-[#29302f]/20 mx-4" />
 
                 {/* QR Code Section */}
                 <div className="p-6 flex flex-col items-center bg-gradient-to-b from-white to-gray-50">
                     <motion.div
-                        className="bg-white p-5 rounded-2xl border border-outline-variant/10 shadow-sm"
+                        className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm"
                         whileHover={{ scale: 1.02 }}
                     >
                         <QRPattern code={code} />
                     </motion.div>
 
                     {/* Redemption Code */}
-                    <div className="mt-5 w-full bg-gray-100 rounded-2xl px-5 py-4 border-2 border-dashed border-dark/20 text-center">
-                        <p className="text-[10px] text-dark/40 font-extrabold uppercase tracking-widest">Your Coupon Code</p>
-                        <p className="text-2xl font-mono font-extrabold text-dark tracking-[0.2em] mt-1">{code}</p>
+                    <div className="mt-5 w-full bg-gray-100 rounded-2xl px-5 py-4 border-2 border-dashed border-[#29302f]/20 text-center">
+                        <p className="text-[10px] text-[#29302f]/40 font-extrabold uppercase tracking-widest">Your Coupon Code</p>
+                        <p className="text-2xl font-mono font-extrabold text-[#29302f] tracking-[0.2em] mt-1">{code}</p>
                     </div>
 
                     {/* Instructions */}
-                    <div className="mt-4 flex items-center gap-3 bg-card-blue rounded-xl px-4 py-3 w-full">
-                        <span className="material-symbols-outlined text-2xl text-dark">qr_code_scanner</span>
+                    <div className="mt-4 flex items-center gap-3 bg-primary-container rounded-xl px-4 py-3 w-full">
+                        <span className="material-symbols-outlined text-2xl text-on-primary-container">qr_code_scanner</span>
                         <div>
-                            <p className="text-sm font-extrabold text-dark">Show at Counter</p>
-                            <p className="text-[10px] text-dark/50 font-bold">
+                            <p className="text-sm font-extrabold text-on-primary-container">Show at Counter</p>
+                            <p className="text-[10px] text-on-primary-container/50 font-bold">
                                 Valid until {expiryDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
                             </p>
                         </div>
@@ -150,10 +138,10 @@ function QRCouponModal({ reward, code, onClose }: { reward: Reward; code: string
                 </div>
 
                 {/* Close Button */}
-                <div className="p-5 bg-gray-50 border-t-2 border-dark/10">
+                <div className="p-5 bg-gray-50 border-t border-gray-200">
                     <button
                         onClick={onClose}
-                        className="w-full py-4 bg-dark text-white font-extrabold text-lg rounded-2xl active:scale-[0.98] transition-transform shadow-sm border border-outline-variant/10"
+                        className="w-full py-4 bg-[#29302f] text-white font-extrabold text-lg rounded-2xl active:scale-[0.98] transition-transform shadow-sm"
                     >
                         Got It! ✓
                     </button>
@@ -163,16 +151,14 @@ function QRCouponModal({ reward, code, onClose }: { reward: Reward; code: string
     );
 }
 
-// Community Story Celebration Modal
+// Community Donation Celebration Modal
 function CommunityStoryModal({ reward, onClose }: { reward: Reward; onClose: () => void }) {
-    const isTree = reward.title.toLowerCase().includes('tree');
-
     return (
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-5 w-full max-w-md left-1/2 -translate-x-1/2"
+            className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-5"
             onClick={onClose}
         >
             <motion.div
@@ -181,134 +167,65 @@ function CommunityStoryModal({ reward, onClose }: { reward: Reward; onClose: () 
                 exit={{ scale: 0.85, y: 30 }}
                 transition={{ type: 'spring', damping: 25, stiffness: 300 }}
                 onClick={e => e.stopPropagation()}
-                className="w-full max-w-sm rounded-3xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)]-lg overflow-hidden relative"
+                className="w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden bg-gradient-to-b from-green-100 via-green-50 to-white"
             >
-                {/* Gradient border glow */}
-                <motion.div
-                    className="absolute -inset-1 rounded-3xl opacity-60 blur-md z-0"
-                    style={{ background: isTree ? 'linear-gradient(45deg, #22c55e, #86efac, #22c55e)' : 'linear-gradient(45deg, #3b82f6, #93c5fd, #3b82f6)' }}
-                    animate={{ rotate: [0, 360] }}
-                    transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-                />
-
-                {/* Card Content */}
-                <div className={`relative z-10 ${isTree ? 'bg-gradient-to-b from-green-100 via-green-50 to-white' : 'bg-gradient-to-b from-blue-100 via-blue-50 to-white'}`}>
-                    <FloatingParticles type={isTree ? 'tree' : 'ocean'} />
-
-                    {/* Header */}
-                    <div className="p-8 text-center relative">
-                        <motion.div
-                            className="text-8xl mb-4 drop-shadow-lg"
-                            animate={{ scale: [1, 1.15, 1], y: [0, -8, 0] }}
-                            transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
-                        >
-                            {reward.icon}
-                        </motion.div>
-
-                        <motion.h2
-                            className="text-3xl font-extrabold text-dark mb-2 tracking-tight"
-                            initial={{ opacity: 0, y: 15 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.2 }}
-                        >
-                            You Did It! 🎉
-                        </motion.h2>
-
-                        <motion.p
-                            className="text-dark/60 font-bold text-lg"
-                            initial={{ opacity: 0, y: 15 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3 }}
-                        >
-                            {reward.description}
-                        </motion.p>
-                    </div>
-
-                    {/* Story Feature Banner */}
+                <div className="p-8 text-center">
                     <motion.div
-                        className={`mx-5 p-5 rounded-2xl border border-outline-variant/10 ${isTree ? 'bg-green-200' : 'bg-blue-200'} shadow-sm`}
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 0.4, type: 'spring' }}
+                        className="text-8xl mb-4 drop-shadow-lg"
+                        animate={{ scale: [1, 1.15, 1], y: [0, -8, 0] }}
+                        transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
                     >
-                        <div className="flex items-center gap-4">
-                            <div className={`w-14 h-14 rounded-2xl ${isTree ? 'bg-green-500' : 'bg-blue-500'} flex items-center justify-center border border-outline-variant/10 shadow-sm`}>
-                                <span className="material-symbols-outlined text-white text-3xl">auto_stories</span>
-                            </div>
-                            <div className="flex-1">
-                                <p className="font-extrabold text-dark text-base">Your Story is Coming!</p>
-                                <p className="text-xs text-dark/60 font-bold">We'll feature you in Community Stories ✨</p>
-                            </div>
-                        </div>
+                        {reward.icon}
                     </motion.div>
+                    <h2 className="text-3xl font-extrabold text-[#29302f] mb-2 tracking-tight">You Did It! 🎉</h2>
+                    <p className="text-[#29302f]/60 font-bold text-lg">{reward.description}</p>
+                </div>
 
-                    {/* Impact Stats */}
-                    <motion.div
-                        className="grid grid-cols-2 gap-4 p-5"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.5 }}
-                    >
-                        <div className={`${isTree ? 'bg-green-100' : 'bg-blue-100'} rounded-2xl p-4 text-center border border-outline-variant/10/10`}>
-                            <p className="text-3xl font-extrabold text-dark">{isTree ? '1' : '1lb'}</p>
-                            <p className="text-xs font-bold text-dark/50 uppercase tracking-wide">{isTree ? 'Tree Planted' : 'Plastic Removed'}</p>
-                        </div>
-                        <div className={`${isTree ? 'bg-green-100' : 'bg-blue-100'} rounded-2xl p-4 text-center border border-outline-variant/10/10`}>
-                            <p className="text-3xl font-extrabold text-dark">{isTree ? '20kg' : '5kg'}</p>
-                            <p className="text-xs font-bold text-dark/50 uppercase tracking-wide">CO₂ Offset</p>
-                        </div>
-                    </motion.div>
-
-                    {/* Action Buttons */}
-                    <div className="p-5 flex gap-3 bg-white/50">
-                        <button
-                            onClick={onClose}
-                            className="flex-1 py-4 bg-white border border-outline-variant/10 text-dark font-extrabold rounded-2xl active:scale-[0.98] transition-transform shadow-sm"
-                        >
-                            Done
-                        </button>
-                        <button
-                            onClick={() => {
-                                const text = `I just unlocked the ${reward.title} reward on ReLoop! 🌍✨`;
-                                if (navigator.share) {
-                                    navigator.share({
-                                        title: 'ReLoop Impact',
-                                        text: text,
-                                        url: window.location.origin
-                                    }).catch(console.error);
-                                } else {
-                                    navigator.clipboard.writeText(text);
-                                    alert('Copied to clipboard!');
-                                }
-                            }}
-                            className={`flex-1 py-4 ${isTree ? 'bg-green-500' : 'bg-blue-500'} text-white font-extrabold rounded-2xl active:scale-[0.98] transition-transform flex items-center justify-center gap-2 shadow-sm border border-outline-variant/10`}
-                        >
-                            <span className="material-symbols-outlined">share</span>
-                            Share
-                        </button>
+                <div className="grid grid-cols-2 gap-4 px-5 pb-5">
+                    <div className="bg-green-100 rounded-2xl p-4 text-center">
+                        <p className="text-3xl font-extrabold text-[#29302f]">1</p>
+                        <p className="text-xs font-bold text-[#29302f]/50 uppercase tracking-wide">Tree Planted</p>
                     </div>
+                    <div className="bg-green-100 rounded-2xl p-4 text-center">
+                        <p className="text-3xl font-extrabold text-[#29302f]">20kg</p>
+                        <p className="text-xs font-bold text-[#29302f]/50 uppercase tracking-wide">CO₂ Offset</p>
+                    </div>
+                </div>
+
+                <div className="p-5 flex gap-3 bg-white/50">
+                    <button
+                        onClick={onClose}
+                        className="flex-1 py-4 bg-white border border-gray-200 text-[#29302f] font-extrabold rounded-2xl active:scale-[0.98] transition-transform"
+                    >
+                        Done
+                    </button>
+                    <button
+                        onClick={() => {
+                            const text = `I just contributed to ${reward.title} on ReLoop! 🌍✨`;
+                            if (navigator.share) {
+                                navigator.share({ title: 'ReLoop Impact', text, url: window.location.origin }).catch(() => {});
+                            } else {
+                                navigator.clipboard.writeText(text);
+                            }
+                        }}
+                        className="flex-1 py-4 bg-green-500 text-white font-extrabold rounded-2xl active:scale-[0.98] transition-transform flex items-center justify-center gap-2"
+                    >
+                        <span className="material-symbols-outlined">share</span>
+                        Share
+                    </button>
                 </div>
             </motion.div>
         </motion.div>
     );
 }
 
-const categoryColors: Record<string, string> = {
-    voucher: 'from-amber-300 to-orange-400',
-    merch: 'from-pink-300 to-rose-400',
-    donation: 'from-green-300 to-emerald-400',
-};
-
 export default function RewardsPage() {
     const { user: authUser, isDemo } = useAuth();
     const [rewards, setRewards] = useState<Reward[]>([]);
     const [activeTab, setActiveTab] = useState('All');
     const [redeemed, setRedeemed] = useState<Set<string>>(new Set());
-    const [showHowToEarn, setShowHowToEarn] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [isRedeeming, setIsRedeeming] = useState(false);
-
-    // Modal state
     const [selectedReward, setSelectedReward] = useState<Reward | null>(null);
     const [redemptionCode, setRedemptionCode] = useState('');
 
@@ -316,27 +233,8 @@ export default function RewardsPage() {
         const loadData = async () => {
             setIsLoading(true);
             try {
-                // Try Firebase first
-                if (authUser?.uid && !isDemo) {
-                    const firebaseRewards = await DBService.getRewards();
-                    if (firebaseRewards.length > 0) {
-                        setRewards(firebaseRewards as Reward[]);
-                        // Get user's redeemed rewards
-                        const redeemedSet = await DBService.getRedemptionsByRewardIds(
-                            authUser.uid,
-                            firebaseRewards.map(r => r.id)
-                        );
-                        setRedeemed(redeemedSet);
-                    } else {
-                        // Fallback to demo data if no Firebase rewards
-                        setRewards(DemoManager.getMockRewards());
-                        setRedeemed(new Set(DemoManager.getRedeemedRewards()));
-                    }
-                } else {
-                    // Demo mode
-                    setRewards(DemoManager.getMockRewards());
-                    setRedeemed(new Set(DemoManager.getRedeemedRewards()));
-                }
+                setRewards(DemoManager.getMockRewards());
+                setRedeemed(new Set(DemoManager.getRedeemedRewards()));
             } catch (error) {
                 console.error('Error loading rewards:', error);
                 setRewards(DemoManager.getMockRewards());
@@ -371,32 +269,16 @@ export default function RewardsPage() {
 
         setIsRedeeming(true);
         try {
-            if (!isDemo) {
-                // Firebase redemption
-                const result = await DBService.redeemReward(authUser.uid, reward.id, reward.cost);
-                if (result.success) {
-                    setRedeemed(prev => new Set([...prev, reward.id]));
-                    if (reward.category !== 'donation') {
-                        setRedemptionCode(generateRedemptionCode());
-                    }
-                    setSelectedReward(reward);
-                } else {
-                    alert(result.error || 'Failed to redeem reward');
+            const success = DemoManager.redeemReward(reward.id, reward.cost);
+            if (success) {
+                setRedeemed(new Set(DemoManager.getRedeemedRewards()));
+                if (reward.category !== 'donation') {
+                    setRedemptionCode(generateRedemptionCode());
                 }
-            } else {
-                // Demo mode
-                const success = DemoManager.redeemReward(reward.id, reward.cost);
-                if (success) {
-                    setRedeemed(new Set(DemoManager.getRedeemedRewards()));
-                    if (reward.category !== 'donation') {
-                        setRedemptionCode(generateRedemptionCode());
-                    }
-                    setSelectedReward(reward);
-                }
+                setSelectedReward(reward);
             }
         } catch (error) {
             console.error('Error redeeming reward:', error);
-            alert('Failed to redeem reward. Please try again.');
         }
         setIsRedeeming(false);
     };
@@ -408,7 +290,7 @@ export default function RewardsPage() {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-background flex items-center justify-center">
+            <div className="min-h-screen bg-surface flex items-center justify-center">
                 <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
             </div>
         );
@@ -416,218 +298,156 @@ export default function RewardsPage() {
 
     if (!authUser) {
         return (
-            <div className="min-h-screen bg-background flex items-center justify-center p-6">
+            <div className="min-h-screen bg-surface flex items-center justify-center p-6">
                 <div className="text-center">
-                    <span className="material-symbols-outlined text-6xl text-gray-300 mb-4">redeem</span>
-                    <p className="font-bold text-dark dark:text-white">Sign in to view rewards</p>
+                    <span className="material-symbols-outlined text-6xl text-outline mb-4">redeem</span>
+                    <p className="font-bold text-on-surface">Sign in to view rewards</p>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-background via-background to-card-yellow/20">
-            <PageHeader title="Rewards" backHref="/" />
+        <div className="min-h-screen bg-surface text-on-surface font-['Plus_Jakarta_Sans']">
+            <PageHeader title="REWARDS" backHref="/" />
 
-            <motion.div
-                className="px-4 pb-28 space-y-5"
+            <motion.main
+                className="pt-2 pb-32 px-6 max-w-2xl mx-auto space-y-6"
                 initial="hidden"
                 animate="visible"
                 variants={containerVariants}
             >
-                {/* Hero Balance Card */}
-                <motion.div
+                {/* Hero: Wallet Card */}
+                <motion.section
                     variants={itemVariants}
-                    className="relative overflow-hidden bg-gradient-to-br from-primary via-green-400 to-emerald-500 rounded-3xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] p-6"
+                    className="relative overflow-hidden rounded-xl p-8 text-on-primary shadow-[0_20px_40px_rgba(41,68,58,0.15)]"
+                    style={{ background: 'linear-gradient(135deg, #29664c 0%, #1b5a40 100%)' }}
                 >
-                    {/* Decorative circles */}
-                    <div className="absolute -right-8 -top-8 w-32 h-32 bg-white/20 rounded-full blur-2xl" />
-                    <div className="absolute -left-4 -bottom-4 w-24 h-24 bg-black/10 rounded-full blur-xl" />
+                    <div className="relative z-10">
+                        <span className="text-xs font-bold uppercase tracking-[0.1em] opacity-80">YOUR BALANCE</span>
+                        <div className="mt-1 flex items-baseline gap-2">
+                            <h2 className="text-5xl font-extrabold tracking-tighter">{authUser.coins}</h2>
+                            <span className="text-xl font-bold opacity-90">Eco Coins</span>
+                        </div>
+                        <p className="mt-1 text-sm font-medium opacity-70">≈ ₹{Math.round(authUser.coins * 0.5)} Value</p>
 
-                    <div className="relative z-10 flex items-center justify-between">
-                        <div>
-                            <p className="text-dark/50 font-extrabold text-xs uppercase tracking-widest">Your Balance</p>
-                            <div className="flex items-baseline gap-2 mt-1">
-                                <p className="text-5xl font-extrabold text-dark">{authUser.coins}</p>
-                                <span className="text-lg font-extrabold text-dark/60">Eco Coins</span>
+                        {/* Tier Progress */}
+                        <div className="mt-10 space-y-3">
+                            <div className="flex justify-between items-end">
+                                <div>
+                                    <span className="block text-[10px] font-black tracking-widest opacity-60 uppercase">CURRENT STATUS</span>
+                                    <span className="text-lg font-extrabold tracking-tight">SILVER TIER</span>
+                                </div>
+                                <div className="text-right">
+                                    <span className="text-xs font-bold opacity-70">550 to GOLD</span>
+                                </div>
                             </div>
-                            <p className="text-xs font-bold text-dark/40 mt-2">≈ ₹{(authUser.coins * 0.5).toFixed(0)} value</p>
-                        </div>
-                        <motion.div
-                            className="text-7xl"
-                            animate={{ rotate: [0, 10, -10, 0], scale: [1, 1.1, 1] }}
-                            transition={{ duration: 3, repeat: Infinity }}
-                        >
-                            🪙
-                        </motion.div>
-                    </div>
-
-                    {/* Progress to next tier */}
-                    <div className="mt-5 relative">
-                        <div className="flex justify-between text-[10px] font-extrabold text-dark/50 uppercase mb-1">
-                            <span>Silver Tier</span>
-                            <span>250 more for Gold</span>
-                        </div>
-                        <div className="h-3 bg-black/20 rounded-full overflow-hidden border border-black/10">
-                            <motion.div
-                                className="h-full bg-dark rounded-full"
-                                initial={{ width: 0 }}
-                                animate={{ width: '65%' }}
-                                transition={{ delay: 0.5, duration: 1, ease: 'easeOut' }}
-                            />
+                            <div className="h-3 w-full bg-black/20 rounded-full overflow-hidden">
+                                <motion.div
+                                    className="h-full bg-secondary-fixed-dim rounded-full shadow-[0_0_12px_rgba(146,247,195,0.4)]"
+                                    initial={{ width: 0 }}
+                                    animate={{ width: '65%' }}
+                                    transition={{ delay: 0.5, duration: 1, ease: 'easeOut' }}
+                                />
+                            </div>
                         </div>
                     </div>
-                </motion.div>
+                    {/* Decorative */}
+                    <div className="absolute -right-4 -top-4 w-40 h-40 opacity-20 pointer-events-none">
+                        <span className="material-symbols-outlined text-[10rem]" style={{ fontVariationSettings: "'FILL' 1" }}>military_tech</span>
+                    </div>
+                </motion.section>
 
-                {/* Category Tabs */}
-                <motion.div variants={itemVariants} className="flex gap-2 overflow-x-auto no-scrollbar py-1">
+                {/* Category Filters */}
+                <motion.nav variants={itemVariants} className="flex items-center gap-3 overflow-x-auto no-scrollbar -mx-6 px-6">
                     {TABS.map(tab => (
-                        <motion.button
+                        <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
-                            whileTap={{ scale: 0.95 }}
-                            className={`px-5 py-2.5 rounded-full font-extrabold text-sm transition-all border-2 whitespace-nowrap ${activeTab === tab
-                                ? 'bg-dark text-white border-outline-variant/20 shadow-sm'
-                                : 'bg-white text-dark border-dark/20 hover:border-dark/40'
-                                }`}
+                            className={`flex-none px-6 py-2.5 rounded-full text-sm font-bold tracking-tight transition-all active:scale-95 ${
+                                activeTab === tab
+                                    ? 'bg-primary text-on-primary'
+                                    : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container'
+                            }`}
                         >
                             {tab}
-                        </motion.button>
+                        </button>
                     ))}
-                </motion.div>
+                </motion.nav>
 
-                {/* Rewards List - Vertical Cards */}
-                <motion.div variants={containerVariants} className="space-y-4">
+                {/* Rewards List */}
+                <motion.section variants={containerVariants} className="space-y-4">
+                    <h3 className="text-xs font-black uppercase tracking-[0.15em] text-on-surface-variant mb-4">Available Rewards</h3>
+
                     {filtered.map((reward) => {
                         const isRedeemed = redeemed.has(reward.id);
                         const canAfford = authUser.coins >= reward.cost;
-                        const isDonation = reward.category === 'donation';
-                        const gradientClass = categoryColors[reward.category] || 'from-gray-300 to-gray-400';
+                        const accentColor = ACCENT_COLORS[reward.category] || '#29664c';
+                        const accentIcon = ACCENT_ICONS[reward.category] || 'redeem';
 
                         return (
                             <motion.div
                                 key={reward.id}
                                 variants={itemVariants}
-                                whileHover={{ scale: 1.01 }}
-                                whileTap={{ scale: 0.99 }}
+                                className="group relative flex items-center bg-white rounded-xl overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.03)] transition-transform active:scale-[0.98]"
                             >
-                                <div className={`bg-white dark:bg-dark-surface rounded-3xl border border-outline-variant/10 dark:border-gray-600 shadow-sm overflow-hidden ${!reward.available ? 'opacity-50' : ''}`}>
-                                    <div className="flex items-stretch">
-                                        {/* Left Icon Section */}
-                                        <div className={`w-28 bg-gradient-to-br ${gradientClass} flex flex-col items-center justify-center p-4 border-r-3 border-outline-variant/20 relative overflow-hidden`}>
-                                            {isDonation && (
-                                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" style={{ backgroundSize: '200% 100%' }} />
-                                            )}
-                                            <span className="text-5xl relative z-10 drop-shadow-sm">{reward.icon}</span>
-                                            <span className="mt-2 text-[10px] font-extrabold uppercase text-dark/70 bg-white/50 px-2 py-0.5 rounded-full">
-                                                {reward.category}
-                                            </span>
-                                        </div>
+                                {/* Accent bar */}
+                                <div className="absolute left-0 top-0 bottom-0 w-2" style={{ backgroundColor: accentColor }} />
 
-                                        {/* Content */}
-                                        <div className="flex-1 p-4 flex flex-col justify-between">
-                                            <div>
-                                                <div className="flex items-start justify-between gap-2">
-                                                    <h3 className="font-extrabold text-dark dark:text-white text-lg leading-tight">{reward.title}</h3>
-                                                    {isDonation && (
-                                                        <span className="text-[9px] font-extrabold bg-green-500 text-white px-2 py-1 rounded-lg uppercase">
-                                                            Impact
-                                                        </span>
-                                                    )}
-                                                </div>
-                                                <p className="text-xs text-dark/50 dark:text-white/50 font-medium mt-1 line-clamp-2">{reward.description}</p>
-                                            </div>
+                                {/* Icon */}
+                                <div className="p-5 flex-shrink-0 flex items-center justify-center bg-surface-container-low ml-6 rounded-lg">
+                                    <span className="material-symbols-outlined text-3xl" style={{ color: accentColor }}>{accentIcon}</span>
+                                </div>
 
-                                            <div className="flex items-center justify-between mt-3">
-                                                {/* Price */}
-                                                <div className="flex items-center gap-1.5 bg-surface-container-low rounded-xl px-3 py-1.5 border border-outline-variant/10/10">
-                                                    <span className="text-lg">🪙</span>
-                                                    <span className="text-xl font-extrabold text-dark">{reward.cost}</span>
-                                                </div>
-
-                                                {/* Action Button */}
-                                                {isRedeemed ? (
-                                                    <div className="flex items-center gap-1.5 text-green-600 font-extrabold text-sm bg-green-100 px-4 py-2 rounded-xl">
-                                                        <span className="material-symbols-outlined text-lg">check_circle</span>
-                                                        Claimed
-                                                    </div>
-                                                ) : (
-                                                    <motion.button
-                                                        onClick={() => handleRedeem(reward)}
-                                                        disabled={!canAfford || !reward.available}
-                                                        whileTap={{ scale: 0.95 }}
-                                                        className={`px-5 py-2.5 rounded-xl border border-outline-variant/10 font-extrabold text-sm transition-all ${canAfford && reward.available
-                                                            ? isDonation
-                                                                ? 'bg-gradient-to-r from-green-400 to-emerald-500 text-dark shadow-sm hover:shadow-[0_2px_10px_rgba(0,0,0,0.02)]'
-                                                                : 'bg-primary text-dark shadow-sm hover:shadow-[0_2px_10px_rgba(0,0,0,0.02)]'
-                                                            : 'bg-gray-100 dark:bg-dark-bg text-dark/30 dark:text-white/30 cursor-not-allowed border-dark/20'
-                                                            }`}
-                                                    >
-                                                        {!canAfford ? `Need ${reward.cost - authUser.coins} more` : isDonation ? '💚 Contribute' : 'Claim →'}
-                                                    </motion.button>
-                                                )}
-                                            </div>
+                                {/* Content */}
+                                <div className="flex-grow p-4 pr-6 flex justify-between items-center">
+                                    <div>
+                                        <h4 className="text-lg font-bold text-on-surface tracking-tight leading-tight">{reward.title}</h4>
+                                        <p className="text-sm text-on-surface-variant mt-0.5">{reward.description}</p>
+                                        <div className="mt-2 flex items-center gap-1.5">
+                                            <span className="material-symbols-outlined text-primary text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>stars</span>
+                                            <span className="text-sm font-extrabold text-primary">{reward.cost} Coins</span>
                                         </div>
                                     </div>
+
+                                    {isRedeemed ? (
+                                        <span className="bg-green-100 text-green-700 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-1 flex-shrink-0">
+                                            <span className="material-symbols-outlined text-base">check_circle</span>
+                                            Claimed
+                                        </span>
+                                    ) : (
+                                        <button
+                                            onClick={() => handleRedeem(reward)}
+                                            disabled={!canAfford || !reward.available || isRedeeming}
+                                            className={`px-5 py-2 rounded-lg font-bold text-sm shadow-sm active:scale-95 transition-transform flex-shrink-0 ${
+                                                canAfford && reward.available
+                                                    ? 'bg-primary text-on-primary'
+                                                    : 'bg-surface-container-high text-on-surface-variant/40 cursor-not-allowed'
+                                            }`}
+                                        >
+                                            {canAfford ? 'Claim' : `Need ${reward.cost - authUser.coins}`}
+                                        </button>
+                                    )}
                                 </div>
                             </motion.div>
                         );
                     })}
-                </motion.div>
+                </motion.section>
 
-                {/* How to Earn Section */}
-                <motion.div variants={itemVariants}>
-                    <motion.button
-                        onClick={() => setShowHowToEarn(!showHowToEarn)}
-                        whileTap={{ scale: 0.98 }}
-                        className="w-full bg-gradient-to-r from-card-blue to-blue-200 rounded-2xl border border-outline-variant/10 shadow-sm p-4 flex items-center justify-between"
-                    >
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center border border-outline-variant/10">
-                                <span className="material-symbols-outlined text-white">tips_and_updates</span>
-                            </div>
-                            <span className="font-extrabold text-dark">How to Earn More Coins</span>
-                        </div>
-                        <motion.span
-                            className="material-symbols-outlined text-dark text-2xl"
-                            animate={{ rotate: showHowToEarn ? 180 : 0 }}
-                        >
-                            expand_more
-                        </motion.span>
-                    </motion.button>
-                    <AnimatePresence>
-                        {showHowToEarn && (
-                            <motion.div
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: 'auto', opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                className="overflow-hidden"
-                            >
-                                <div className="bg-white rounded-b-2xl border-3 border-t-0 border-outline-variant/20 p-4 space-y-3">
-                                    {[
-                                        { icon: 'photo_camera', text: 'Scan recyclable items', coins: '10-45', color: 'bg-green-100' },
-                                        { icon: 'swap_horiz', text: 'Complete trades', coins: '25-100', color: 'bg-blue-100' },
-                                        { icon: 'flag', text: 'Finish daily missions', coins: 'Bonus', color: 'bg-amber-100' },
-                                        { icon: 'group', text: 'Refer friends', coins: '200', color: 'bg-pink-100' },
-                                    ].map((item, i) => (
-                                        <motion.div
-                                            key={i}
-                                            className={`flex items-center gap-3 ${item.color} p-3 rounded-xl`}
-                                            initial={{ x: -20, opacity: 0 }}
-                                            animate={{ x: 0, opacity: 1 }}
-                                            transition={{ delay: i * 0.1 }}
-                                        >
-                                            <span className="material-symbols-outlined text-dark/70">{item.icon}</span>
-                                            <p className="flex-1 text-sm text-dark font-bold">{item.text}</p>
-                                            <span className="text-xs font-extrabold text-dark bg-white px-2 py-1 rounded-lg">+{item.coins}</span>
-                                        </motion.div>
-                                    ))}
-                                </div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+                {/* Donate CTA */}
+                <motion.div
+                    variants={itemVariants}
+                    className="bg-surface-container-low rounded-xl p-6 flex items-center gap-6"
+                >
+                    <div className="w-16 h-16 flex-shrink-0 rounded-lg bg-white flex items-center justify-center">
+                        <span className="material-symbols-outlined text-primary text-4xl">volunteer_activism</span>
+                    </div>
+                    <div>
+                        <h5 className="text-sm font-extrabold uppercase tracking-widest text-primary mb-1">Make a Difference</h5>
+                        <p className="text-sm text-on-surface-variant font-medium leading-relaxed">Don't need a voucher? Donate your coins to local reforestation projects.</p>
+                    </div>
                 </motion.div>
-            </motion.div>
+            </motion.main>
 
             {/* Redemption Modals */}
             <AnimatePresence>
