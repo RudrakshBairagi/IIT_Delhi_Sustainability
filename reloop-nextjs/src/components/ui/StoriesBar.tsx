@@ -5,10 +5,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 const STORIES = [
-    { id: '4', name: 'Ankush', image: '/images/ankush.png?v=2', hasStory: true },
-    { id: '1', name: 'Unnati', image: '/images/unnati.png?v=2', hasStory: true },
-    { id: '2', name: 'Uransh', image: '/images/uransh.png?v=2', hasStory: true },
-    { id: '3', name: 'Rudraksh', image: '/images/rudraksh.png?v=2', hasStory: true },
+    { id: '4', name: 'Ankush', image: '/images/ankush.png', hasStory: true },
+    { id: '1', name: 'Unnati', image: '/images/unnati.png', hasStory: true },
+    { id: '2', name: 'Uransh', image: '/images/uransh.png', hasStory: true },
+    { id: '3', name: 'Rudraksh', image: '/images/rudraksh.png', hasStory: true },
     { id: '5', name: 'You', image: '', isAdd: true },
 ];
 
@@ -28,11 +28,10 @@ export function StoriesBar() {
                                     <span className="material-symbols-outlined text-dark dark:text-white">add</span>
                                 </div>
                             ) : (
-                                <Image
+                                <img
                                     src={story.image}
                                     alt={story.name}
-                                    fill
-                                    className="object-cover"
+                                    className="w-full h-full object-cover"
                                 />
                             )}
                         </div>
