@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import DemoManager from '@/lib/demo-manager';
 import { DBService } from '@/lib/firebase/db';
@@ -201,9 +200,9 @@ export default function ChatPage() {
             <header className="fixed top-0 w-full z-50 bg-[#f1f8f6]/80 backdrop-blur-xl shadow-[0_40px_64px_-10px_rgba(41,48,47,0.06)]">
                 <div className="flex justify-between items-center px-6 py-4 w-full">
                     <div className="flex items-center gap-4">
-                        <Link href="/messages" className="hover:bg-[#eaf2f0] transition-colors p-2 rounded-full active:scale-95 duration-200">
+                        <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center hover:bg-[#eaf2f0] transition-colors rounded-full active:scale-95 duration-200">
                             <span className="material-symbols-outlined text-[#29664c]">arrow_back</span>
-                        </Link>
+                        </button>
                         {contact && (
                             <div className="flex items-center gap-3">
                                 <div className="relative">
