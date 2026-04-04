@@ -57,7 +57,7 @@ export function CreateListingWizard({ isOpen, onClose, onSuccess }: CreateListin
         images: [] as File[]
     });
 
-    const [imagePreviews, setImagePreviews] = useState<string[]>();
+    const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
     // Reset form when modal closes
     useEffect(() => {
