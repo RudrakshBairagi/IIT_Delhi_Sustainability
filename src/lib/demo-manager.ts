@@ -633,11 +633,11 @@ class DemoManagerService {
                 charityName: 'Local Food Bank',
                 charityLogo: '🍎',
                 thumbnail: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=400&h=400&fit=crop',
-                title: 'Thanks to Ankush! 🙏',
+                title: 'Thanks to Rudraksh! 🙏',
                 subtitle: 'Your meal donation fed a family today',
                 timeAgo: '1h ago',
                 viewed: false,
-                donorName: 'Ankush J.',
+                donorName: 'Rudraksh J.',
                 impactImage: 'https://images.unsplash.com/photo-1593113598332-cd288d649433?w=800&h=600&fit=crop',
             },
             {

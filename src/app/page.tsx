@@ -26,6 +26,8 @@ const itemVariants = {
   }
 };
 
+import { PageHeader } from '@/components/ui/PageHeader';
+
 export default function HomePage() {
   const { user, isLoading, isDemo } = useAuth();
   const router = useRouter();
@@ -77,17 +79,9 @@ export default function HomePage() {
       animate="visible"
       variants={containerVariants}
     >
-      {/* TopAppBar */}
-      <motion.header variants={itemVariants} className="w-full sticky top-0 z-50 bg-[#f1f8f6]/80 backdrop-blur-xl flex justify-between items-center px-6 py-4 shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
-        <div className="flex items-center gap-3">
-          <span className="material-symbols-outlined text-[#29664c]" style={{ fontVariationSettings: "'FILL' 1" }}>eco</span>
-          <h1 className="text-2xl font-extrabold tracking-tight text-[#29664c]">RELOOP</h1>
-        </div>
-        <div className="bg-primary-container px-4 py-1.5 rounded-full flex items-center gap-2 hover:bg-surface-container-low transition-colors duration-300 cursor-pointer">
-          <span className="text-[#29664c] font-bold text-sm">{user.coins} Coins</span>
-          <span className="material-symbols-outlined text-xs">monetization_on</span>
-        </div>
-      </motion.header>
+      <motion.div variants={itemVariants}>
+        <PageHeader showBackButton={false} />
+      </motion.div>
 
       <main className="px-6 py-8 space-y-10">
         {/* Stories Section */}

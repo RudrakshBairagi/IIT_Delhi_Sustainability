@@ -20,6 +20,8 @@ const WebcamCapture = dynamic(
 
 type CameraState = 'idle' | 'requesting' | 'ready' | 'denied' | 'error';
 
+import { PageHeader } from '@/components/ui/PageHeader';
+
 export default function ScannerPage() {
     const router = useRouter();
     const { user } = useAuth();
@@ -171,14 +173,7 @@ export default function ScannerPage() {
                 }
             `}</style>
             
-            {/* TopAppBar */}
-            <header className="fixed top-0 w-full z-50 bg-[#f1f8f6]/80 backdrop-blur-xl shadow-[0px_40px_64px_-10px_rgba(41,48,47,0.06)] flex items-center justify-between px-6 h-16 max-w-md left-1/2 -translate-x-1/2">
-                <button onClick={() => router.push('/')} className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-[#eaf2f0] transition-colors active:scale-95 duration-200 text-[#29664c]">
-                    <span className="material-symbols-outlined whitespace-nowrap align-middle">arrow_back</span>
-                </button>
-                <h1 className="text-[#29664c] font-['Plus_Jakarta_Sans'] font-extrabold tracking-tight uppercase">SCAN ITEM</h1>
-                <div className="w-10"></div> {/* Spacer for centering */}
-            </header>
+            <PageHeader title="SCAN ITEM" backHref="/" hideUserProfile={true} />
 
             <main className="min-h-screen pt-20 pb-32 px-6 flex flex-col items-center">
                 {/* Main Camera Viewport */}

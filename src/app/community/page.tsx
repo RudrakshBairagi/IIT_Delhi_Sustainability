@@ -6,7 +6,7 @@ import { useState } from 'react';
 import VideoModal from '@/components/ui/VideoModal';
 
 const trendingCreators = [
-    { id: '1', username: '@ANKUSH', image: '/images/ankush.png', border: 'border-[#29664c]' },
+    { id: '1', username: '@RUDRAKSH', image: 'https://ui-avatars.com/api/?name=Rudraksh&background=random', border: 'border-[#29664c]' },
     { id: '2', username: '@UNNATI', image: '/images/unnati.png', border: 'border-[#006946]' },
     { id: '3', username: '@URANSH', image: '/images/uransh.png', border: 'border-[#29664c]' },
     { id: '4', username: '@RUDRAKSH', image: '/images/rudraksh.png', border: 'border-[#006946]' },
@@ -16,8 +16,8 @@ const projects = [
     {
         id: 'new-pista',
         title: 'DIY BOTTLE PAINTING',
-        author: '@ANKUSH',
-        authorImage: '/images/ankush.png',
+        author: '@RUDRAKSH',
+        authorImage: 'https://ui-avatars.com/api/?name=Rudraksh&background=random',
         image: '/videos/thumb-pista.png',
         time: 'Just now',
         videoId: 'pista-tulip',
@@ -26,8 +26,8 @@ const projects = [
     {
         id: '4',
         title: 'CARDBOARD BANGLE BOX',
-        author: '@ANKUSH',
-        authorImage: '/images/ankush.png',
+        author: '@RUDRAKSH',
+        authorImage: 'https://ui-avatars.com/api/?name=Rudraksh&background=random',
         image: '/videos/thumb-2.png',
         time: '#Tulip',
         videoId: 'DTc9Um6EUJO',
@@ -65,6 +65,8 @@ const itemVariants = {
     visible: { y: 0, opacity: 1, transition: { type: 'spring' as const, stiffness: 300, damping: 24 } }
 };
 
+import { PageHeader } from '@/components/ui/PageHeader';
+
 export default function CommunityPage() {
     const [selectedVideo, setSelectedVideo] = useState<{ videoId?: string; videoSrc?: string } | null>(null);
 
@@ -78,19 +80,7 @@ export default function CommunityPage() {
             />
 
             {/* Header */}
-            <header className="w-full sticky top-0 z-50 bg-[#f9f6f1]/80 backdrop-blur-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
-                <div className="flex justify-between items-center px-6 py-4 w-full">
-                    <div className="flex items-center gap-2">
-                        <span className="material-symbols-outlined text-[#29664c]">eco</span>
-                        <h1 className="text-2xl font-extrabold text-[#29664c] uppercase tracking-widest font-['Plus_Jakarta_Sans']">RELOOP</h1>
-                    </div>
-                    <div className="flex items-center gap-2 bg-[#b9f9d6]/40 px-4 py-2 rounded-full cursor-pointer active:scale-95 duration-200">
-                        <span className="material-symbols-outlined text-[#29664c] text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>payments</span>
-                        <span className="text-[#29664c] font-bold text-sm">1,250 Coins</span>
-                    </div>
-                </div>
-                <div className="bg-[#e5e1da] h-px" />
-            </header>
+            <PageHeader title="COMMUNITY" />
 
             <main className="px-6 pt-6 space-y-10">
                 {/* Hero: Scan to DIY */}
