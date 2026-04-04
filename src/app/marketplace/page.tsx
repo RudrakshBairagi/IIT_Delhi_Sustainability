@@ -93,19 +93,15 @@ export default function MarketplacePage() {
             {/* TopAppBar */}
             <PageHeader title="MARKET HUB" />
 
-            <main className="pt-24 px-6 max-w-5xl mx-auto">
-                {/* Marketplace Hero / Search Section */}
-                <section className="mt-4 mb-6">
-                    <div className="flex flex-col mb-4">
-                        <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-on-surface">MARKET HUB</h2>
-                    </div>
-                    
+            <main className="pt-2 px-6 max-w-5xl mx-auto">
+                {/* Search Section */}
+                <section className="mb-3">
                     <div className="relative group">
                         <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
                             <span className="material-symbols-outlined text-outline">search</span>
                         </div>
                         <input 
-                            className="w-full h-16 pl-14 pr-6 bg-surface-container-high border-none rounded-xl font-bold text-sm tracking-wide focus:ring-2 focus:ring-primary-container transition-all placeholder:text-outline/60" 
+                            className="w-full h-14 pl-14 pr-6 bg-surface-container-high border-none rounded-xl font-bold text-sm tracking-wide focus:ring-2 focus:ring-primary-container transition-all placeholder:text-outline/60" 
                             placeholder="SEARCH ECO ITEMS..." 
                             type="text"
                         />

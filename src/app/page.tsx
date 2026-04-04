@@ -83,7 +83,7 @@ export default function HomePage() {
         <PageHeader showBackButton={false} />
       </motion.div>
 
-      <main className="px-6 py-8 space-y-10">
+      <main className="px-6 pt-2 pb-8 space-y-10">
         {/* Stories Section */}
         <motion.section variants={itemVariants} className="space-y-4">
           <div className="flex items-center justify-between">
@@ -99,9 +99,11 @@ export default function HomePage() {
             </div>
             {/* Mock Stories */}
             {[
-              { name: 'Marcus', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC9OHkGtOCLS2lRmMUoiTD1oMerBkIPtgXTL-n5dogfoCYeafF8pF8_v5bSFYTbtNOE8RH9g3ahdG2VC8PXjnorr62U6E60A5Tko7p5Sl82aPANJS6lQ0b0Eysz5rOZo3Fl_vwTDx7LQbi763F0li176zl4aF48bW9NMVKYP2Rw9dTdOJO8Rq358P9_4Q8zFIvckQA-pGBNYzjMszRo3IIdBTzUZC0kodOAIwOJSjbFZU54TLEbiHxeMuUYaE0-WiWAhEppc8PO814' },
-              { name: 'Elena', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAUimW4oGSvGjJ3TJwdBbTtgNi2VTvfEU6ZhqQAaLglT6Os_0SEdsatve9ze4391RXMYiNKHHgmevMp1hPoP428VwARW2RKUfm-ky4TFNGzIpcBW4TIRie8t9zn6ujz7YzorjH0mTGtrOwlyGtg069PyblscrrITegYVgt_BgI6ggXIT616B8N_-pvfThpFcVi_-XOFsxJh5aynlLksqqos_ScuXN_z1tUcWff0IXefgoajBdyab4EufN_p3U8SEVEDf7ddrjPr8p4' },
-              { name: 'Julian', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCXd8r9bEu9_iz_CLI5qYB_7uF3kgKHuozs9dV3y5tKvC2mk5ML547DTVIJCOZfQ4QqRXC174b0weFeL5DbOMbK7Myk9X6OeCANigbMmTiiKl4oiLwK8cth6lNQTacl7XI5UWAmwfteEwptdMtrpQu8AYF9tT1D-mBK_l-glg9CnGJUOmtOWlt9H-ujJmc4JO3ZXlxsRyKG29OIoRoIt5o10_vE-5VWvO_p_v15SJ5ylNMEx5urmbFbu1OMNgBAhH0w5hcVHFi5OIM' }
+              { name: 'Shaolin', img: '/images/stories/shaolin.jpg' },
+              { name: 'Rudraksh', img: '/images/stories/rudraksh.jpg' },
+              { name: 'Mihir', img: '/images/stories/mihir.jpg' },
+              { name: 'Arjun', img: '/images/stories/arjun.jpg' },
+              { name: 'Charu', img: '/images/stories/charu.jpg' }
             ].map((story, i) => (
               <div key={i} className="flex flex-col items-center gap-2 flex-shrink-0 opacity-80 cursor-pointer">
                 <div className="p-1 rounded-full border-2 border-primary/30">
@@ -209,24 +211,24 @@ export default function HomePage() {
               </div>
               <p className="font-extrabold text-lg leading-tight uppercase tracking-tighter">Sorted<br/>Waste</p>
             </div>
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-outline-variant/10 space-y-4 group cursor-pointer transition-shadow hover:shadow-md">
+            <Link href="/rewards" className="bg-white p-6 rounded-xl shadow-sm border border-outline-variant/10 space-y-4 group cursor-pointer transition-shadow hover:shadow-md block">
               <div className="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center group-hover:bg-primary-container transition-colors">
-                <span className="material-symbols-outlined text-primary">local_drink</span>
+                <span className="material-symbols-outlined text-primary">redeem</span>
               </div>
-              <p className="font-extrabold text-lg leading-tight uppercase tracking-tighter">Zero<br/>Plastic</p>
-            </div>
+              <p className="font-extrabold text-lg leading-tight uppercase tracking-tighter">My<br/>Rewards</p>
+            </Link>
             <div className="bg-white p-6 rounded-xl shadow-sm border border-outline-variant/10 space-y-4 group cursor-pointer transition-shadow hover:shadow-md">
               <div className="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center group-hover:bg-primary-container transition-colors">
                 <span className="material-symbols-outlined text-primary">electric_bike</span>
               </div>
               <p className="font-extrabold text-lg leading-tight uppercase tracking-tighter">Green<br/>Travel</p>
             </div>
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-outline-variant/10 space-y-4 group cursor-pointer transition-shadow hover:shadow-md">
+            <Link href="/charity" className="bg-white p-6 rounded-xl shadow-sm border border-outline-variant/10 space-y-4 group cursor-pointer transition-shadow hover:shadow-md block">
               <div className="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center group-hover:bg-primary-container transition-colors">
                 <span className="material-symbols-outlined text-primary">volunteer_activism</span>
               </div>
               <p className="font-extrabold text-lg leading-tight uppercase tracking-tighter">Donated<br/>Items</p>
-            </div>
+            </Link>
           </div>
         </motion.section>
 
