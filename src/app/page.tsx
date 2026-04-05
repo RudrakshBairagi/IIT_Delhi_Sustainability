@@ -205,12 +205,12 @@ export default function HomePage() {
         <motion.section variants={itemVariants} className="space-y-6">
           <h2 className="text-xl font-extrabold tracking-tight uppercase text-primary">DAILY ACTIONS</h2>
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-outline-variant/10 space-y-4 group cursor-pointer transition-shadow hover:shadow-md">
+            <Link href="/missions" className="bg-white p-6 rounded-xl shadow-sm border border-outline-variant/10 space-y-4 group cursor-pointer transition-shadow hover:shadow-md block">
               <div className="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center group-hover:bg-primary-container transition-colors">
-                <span className="material-symbols-outlined text-primary">recycling</span>
+                <span className="material-symbols-outlined text-primary">task_alt</span>
               </div>
-              <p className="font-extrabold text-lg leading-tight uppercase tracking-tighter">Sorted<br/>Waste</p>
-            </div>
+              <p className="font-extrabold text-lg leading-tight uppercase tracking-tighter">Missions</p>
+            </Link>
             <Link href="/rewards" className="bg-white p-6 rounded-xl shadow-sm border border-outline-variant/10 space-y-4 group cursor-pointer transition-shadow hover:shadow-md block">
               <div className="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center group-hover:bg-primary-container transition-colors">
                 <span className="material-symbols-outlined text-primary">redeem</span>
