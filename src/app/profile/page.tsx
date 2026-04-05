@@ -2,19 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import { PageHeader } from '@/components/ui/PageHeader';
-import { StreakBadge } from '@/components/ui/StreakBadge';
 import { BadgeRevealModal } from '@/components/ui/BadgeRevealModal';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { EditProfileModal } from '@/components/profile/EditProfileModal';
 import { formatRupeeValue } from '@/lib/eco-coins';
-
-const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
-};
 
 const itemVariants = {
     hidden: { y: 15, opacity: 0 },
@@ -29,21 +23,16 @@ const BADGE_META: Record<string, { name: string; description: string; icon: stri
 };
 
 export default function ProfilePage() {
+    const router = useRouter();
     const { user, updateProfile } = useAuth();
-    const [streak, setStreak] = useState(1);
     const [showBadgeReveal, setShowBadgeReveal] = useState(false);
     const [selectedBadge, setSelectedBadge] = useState<any>(null);
     const [showEditModal, setShowEditModal] = useState(false);
     const [toast, setToast] = useState('');
 
-    useEffect(() => {
-        // Keep independent streak logic for now if it's separate in DemoManager
-        setStreak(user?.badges?.length || 1);
-    }, []);
-
     if (!user) {
         return (
-            <div className="min-h-screen bg-background flex items-center justify-center">
+            <div className="min-h-screen bg-surface flex items-center justify-center">
                 <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
             </div>
         );
@@ -55,179 +44,198 @@ export default function ProfilePage() {
         setTimeout(() => setToast(''), 2000);
     };
 
+    const getInitials = (name: string) => {
+        return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    };
+
     return (
-        <div className="min-h-screen bg-background">
-            <PageHeader
-                title="PROFILE"
-                backHref="/"
-                hideUserProfile={true}
-                rightAction={
-                    <Link href="/settings" className="w-10 h-10 flex items-center justify-center bg-white dark:bg-dark-surface rounded-xl border border-outline-variant/10 dark:border-gray-600 shadow-sm">
-                        <span className="material-symbols-outlined text-dark dark:text-white">settings</span>
-                    </Link>
-                }
-            />
-
-            <motion.div
-                className="px-5 pb-28 space-y-4"
-                initial="hidden"
-                animate="visible"
-                variants={containerVariants}
-            >
-                {/* Profile Card - Compact */}
-                <motion.div variants={itemVariants} className="bg-white dark:bg-dark-surface rounded-2xl border border-outline-variant/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] p-5 flex items-center gap-4">
-                    <div className="relative">
-                        <div className="w-20 h-20 rounded-full border border-outline-variant/10 overflow-hidden bg-gray-200">
-                            <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
-                        </div>
-                        <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-primary rounded-full border border-outline-variant/10 flex items-center justify-center">
-                            <span className="text-sm font-extrabold text-dark">{user.level}</span>
-                        </div>
-                    </div>
-                    <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                            <h2 className="text-xl font-extrabold text-dark dark:text-white">{user.name}</h2>
-                            <StreakBadge streak={streak} />
-                        </div>
-                        <p className="text-dark/50 dark:text-white/50 font-medium text-sm">{user.levelTitle}</p>
-                        {/* XP Progress inline */}
-                        <div className="mt-2">
-                            <div className="h-2 bg-gray-100 dark:bg-dark-bg rounded-full overflow-hidden border border-dark/20">
-                                <div className="h-full bg-primary" style={{ width: `${(user.xp % 500) / 5}%` }} />
-                            </div>
-                            <p className="text-[10px] text-dark/40 dark:text-white/40 font-bold mt-1">{500 - (user.xp % 500)} XP to Level {user.level + 1}</p>
-                        </div>
-                    </div>
-                </motion.div>
-
-                {/* Stats - 3 Column */}
-                <motion.div variants={itemVariants} className="grid grid-cols-3 gap-2">
-                    <Link href="/impact" className="bg-surface-container-low rounded-xl border border-outline-variant/10 shadow-sm p-3 text-center block transition-transform active:scale-95 hover:scale-105">
-                        <p className="text-xl font-extrabold text-dark dark:text-gray-900">{user.co2Saved}</p>
-                        <p className="text-[10px] font-bold text-dark/60 dark:text-gray-900/70">kg CO₂</p>
-                    </Link>
-                    <Link href="/trade-history" className="bg-surface-container-low rounded-xl border border-outline-variant/10 shadow-sm p-3 text-center block transition-transform active:scale-95 hover:scale-105">
-                        <p className="text-xl font-extrabold text-dark dark:text-gray-900">{user.itemsTraded}</p>
-                        <p className="text-[10px] font-bold text-dark/60 dark:text-gray-900/70">Items</p>
-                    </Link>
-                    <Link href="/rewards" className="bg-card-pink rounded-xl border border-outline-variant/10 shadow-sm p-3 text-center block transition-transform active:scale-95 hover:scale-105">
-                        <p className="text-xl font-extrabold text-dark dark:text-gray-900">{user.coins}</p>
-                        <p className="text-[10px] font-bold text-dark/60 dark:text-gray-900/70">{formatRupeeValue(user.coins)}</p>
-                    </Link>
-                </motion.div>
-
-                {/* Badges - Horizontal scroll */}
-                <motion.div variants={itemVariants}>
-                    <p className="text-xs font-bold text-dark/50 dark:text-white/50 mb-2 ml-1">Badges Earned</p>
-                    <div className="bg-white dark:bg-dark-surface rounded-xl border border-outline-variant/10 shadow-sm p-3">
-                        <div className="flex gap-2 overflow-x-auto no-scrollbar">
-                            {user.badges.map((badgeId) => {
-                                const meta = BADGE_META[badgeId] || { name: badgeId, icon: '🏆', color: '#e5e7eb', description: 'Badge' };
-                                return (
-                                    <button
-                                        key={badgeId}
-                                        onClick={() => { setSelectedBadge({ id: badgeId, ...meta }); setShowBadgeReveal(true); }}
-                                        className="w-12 h-12 rounded-xl border border-outline-variant/10 flex items-center justify-center shrink-0 hover:scale-110 transition-transform"
-                                        style={{ backgroundColor: meta.color }}
-                                    >
-                                        <span className="text-xl">{meta.icon}</span>
-                                    </button>
-                                );
-                            })}
-
-                            {/* Locked Badge Slots */}
-                            <button
-                                onClick={() => {
-                                    setSelectedBadge({
-                                        name: "Locked Badge",
-                                        description: "Keep trading and saving CO₂ to unlock this mystery badge! 🚀",
-                                        icon: "🔒",
-                                        color: "#f3f4f6"
-                                    });
-                                    setShowBadgeReveal(true);
-                                }}
-                                className="w-12 h-12 bg-gray-100 dark:bg-dark-bg rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center shrink-0 hover:scale-105 transition-transform"
-                            >
-                                <span className="text-gray-300 dark:text-gray-500 text-xl">?</span>
-                            </button>
-                            <button
-                                onClick={() => {
-                                    setSelectedBadge({
-                                        name: "Locked Badge",
-                                        description: "Complete daily missions to reveal this badge!",
-                                        icon: "🔒",
-                                        color: "#f3f4f6"
-                                    });
-                                    setShowBadgeReveal(true);
-                                }}
-                                className="w-12 h-12 bg-gray-100 dark:bg-dark-bg rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center shrink-0 hover:scale-105 transition-transform"
-                            >
-                                <span className="text-gray-300 dark:text-gray-500 text-xl">?</span>
-                            </button>
-                        </div>
-                    </div>
-                </motion.div>
-
-                {/* Quick Links - 4-Column Icon Grid */}
-                <motion.div variants={itemVariants}>
-                    <p className="text-xs font-bold text-dark/50 dark:text-white/50 mb-2 ml-1">Quick Links</p>
-                    <div className="grid grid-cols-4 gap-2">
-
-                        <Link href="/trade-history" className="bg-surface-container-low rounded-xl border border-outline-variant/10 shadow-sm p-3 flex flex-col items-center gap-1 hover:-translate-y-1 transition-transform">
-                            <span className="material-symbols-outlined text-xl text-dark">history</span>
-                            <span className="text-[10px] font-[800] text-dark uppercase">Trades</span>
-                        </Link>
-                        <Link href="/messages" className="bg-card-blue rounded-xl border border-outline-variant/10 shadow-sm p-3 flex flex-col items-center gap-1 hover:-translate-y-1 transition-transform">
-                            <span className="material-symbols-outlined text-xl text-dark">chat</span>
-                            <span className="text-[10px] font-[800] text-dark uppercase">Chat</span>
-                        </Link>
-                        <Link href="/rewards" className="bg-card-pink rounded-xl border border-outline-variant/10 shadow-sm p-3 flex flex-col items-center gap-1 hover:-translate-y-1 transition-transform">
-                            <span className="material-symbols-outlined text-xl text-dark">redeem</span>
-                            <span className="text-[10px] font-[800] text-dark uppercase">Rewards</span>
-                        </Link>
-                        <Link href="/impact" className="bg-surface-container-low rounded-xl border border-outline-variant/10 shadow-sm p-3 flex flex-col items-center gap-1 hover:-translate-y-1 transition-transform">
-                            <span className="material-symbols-outlined text-xl text-dark">eco</span>
-                            <span className="text-[10px] font-[800] text-dark uppercase">Impact</span>
-                        </Link>
-                    </div>
-                </motion.div>
-
-                {/* Actions Row */}
-                <motion.div variants={itemVariants} className="grid grid-cols-2 gap-2">
-                    <button
-                        onClick={() => setShowEditModal(true)}
-                        className="bg-dark text-white py-3 rounded-xl font-bold shadow-sm flex items-center justify-center gap-2 active:scale-95 transition-transform"
+        <div className="bg-surface text-on-surface min-h-screen pb-32 font-['Plus_Jakarta_Sans']">
+            {/* TopAppBar */}
+            <header className="fixed top-0 left-0 right-0 z-50 bg-[#f1f8f6]/80 backdrop-blur-xl flex justify-between items-center px-6 py-4 shadow-[0_40px_64px_-10px_rgba(41,48,47,0.06)]">
+                <div className="flex items-center gap-4">
+                    <button 
+                        onClick={() => router.back()}
+                        className="material-symbols-outlined text-[#29664c] hover:bg-[#eaf2f0] p-2 -ml-2 rounded-full transition-colors active:scale-95 duration-200"
                     >
-                        <span className="material-symbols-outlined text-lg">edit</span>
+                        arrow_back
+                    </button>
+                    <h1 className="font-extrabold tracking-tight text-xl text-[#29664c]">Impact Profile</h1>
+                </div>
+                <Link href="/settings" className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container cursor-pointer transition-transform hover:scale-105 active:scale-95">
+                    <img alt={user.name} className="w-full h-full object-cover" src={user.avatar} />
+                </Link>
+            </header>
+
+            <main className="pt-24 px-6 max-w-2xl mx-auto space-y-8">
+                {/* Header Card Section */}
+                <motion.section 
+                    initial="hidden" animate="visible" variants={itemVariants}
+                    className="bg-surface-container-lowest rounded-lg p-8 shadow-[0_40px_64px_-10px_rgba(41,48,47,0.06)] relative overflow-hidden border-2 border-primary/10" 
+                    style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E\")" }}
+                >
+                    <div className="flex items-start justify-between">
+                        <div className="flex gap-6 items-center">
+                            <div className="relative">
+                                <div className="w-24 h-24 bg-primary-container border-4 border-primary rounded-lg flex items-center justify-center text-on-primary-container text-3xl font-black shadow-[8px_8px_0px_0px_rgba(41,97,71,0.2)]">
+                                    {getInitials(user.name)}
+                                </div>
+                                <div className="absolute -bottom-1 -right-1 bg-primary text-white px-3 py-1 rounded-full text-xs font-black shadow-lg border-2 border-surface-container-lowest">
+                                    LVL {user.level}
+                                </div>
+                            </div>
+                            <div>
+                                <h2 className="text-2xl font-extrabold tracking-tight text-on-surface">{user.name}</h2>
+                                <div className="flex items-center gap-2 mt-1">
+                                    <span className="material-symbols-outlined text-primary text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>potted_plant</span>
+                                    <span className="text-xs font-black text-primary uppercase tracking-[0.15em] bg-primary/10 px-2 py-0.5 rounded-full">{user.levelTitle}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="mt-10 space-y-3">
+                        <div className="flex justify-between items-center px-1">
+                            <span className="text-xs font-black uppercase tracking-widest text-on-surface">{500 - (user.xp % 500)} XP to Level {user.level + 1}</span>
+                            <span className="text-xs font-black text-primary bg-primary-container px-2 py-0.5 rounded-full">{Math.round(((user.xp % 500) / 500) * 100)}%</span>
+                        </div>
+                        <div className="h-6 w-full bg-surface-container border-2 border-on-surface rounded-full overflow-hidden p-1">
+                            <div className="h-full bg-primary rounded-full transition-all duration-1000" style={{ width: `${(user.xp % 500) / 5}%` }}></div>
+                        </div>
+                    </div>
+                </motion.section>
+
+                {/* Statistics Grid */}
+                <motion.section initial="hidden" animate="visible" variants={itemVariants} className="grid grid-cols-3 gap-4">
+                    <Link href="/impact" className="bg-surface-container-low p-6 rounded-lg flex flex-col items-center justify-center text-center transition-transform hover:scale-105 active:scale-95 cursor-pointer">
+                        <span className="text-xl font-extrabold text-primary">{user.co2Saved} kg</span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mt-1">CO2 Saved</span>
+                    </Link>
+                    <Link href="/trade-history" className="bg-surface-container-low p-6 rounded-lg flex flex-col items-center justify-center text-center transition-transform hover:scale-105 active:scale-95 cursor-pointer">
+                        <span className="text-xl font-extrabold text-primary">{user.itemsTraded}</span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mt-1">Items</span>
+                    </Link>
+                    <Link href="/rewards" className="bg-surface-container-low p-6 rounded-lg flex flex-col items-center justify-center text-center transition-transform hover:scale-105 active:scale-95 cursor-pointer">
+                        <div className="flex flex-col">
+                            <span className="text-xl font-extrabold text-primary">{user.coins}</span>
+                            <span className="text-sm font-bold text-secondary-dim">{formatRupeeValue(user.coins)}</span>
+                        </div>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mt-1">Earned</span>
+                    </Link>
+                </motion.section>
+
+                {/* Badges Section */}
+                <motion.section initial="hidden" animate="visible" variants={itemVariants} className="space-y-6">
+                    <h3 className="text-sm font-extrabold uppercase tracking-[0.2em] text-on-surface-variant">Badges Earned</h3>
+                    <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
+                        {user.badges.map((badgeId) => {
+                            const meta = BADGE_META[badgeId] || { name: badgeId, icon: '🏆', color: '#e5e7eb', description: 'Badge' };
+                            return (
+                                <button
+                                    key={badgeId}
+                                    onClick={() => { setSelectedBadge({ id: badgeId, ...meta }); setShowBadgeReveal(true); }}
+                                    className="flex-shrink-0 w-20 h-20 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
+                                    style={{ backgroundColor: meta.color }}
+                                >
+                                    <span className="text-3xl">{meta.icon}</span>
+                                </button>
+                            );
+                        })}
+
+                        {/* Locked Badges */}
+                        <button
+                            onClick={() => {
+                                setSelectedBadge({
+                                    name: "Locked Badge",
+                                    description: "Keep trading and saving CO₂ to unlock this mystery badge! 🚀",
+                                    icon: "🔒",
+                                    color: "#f3f4f6"
+                                });
+                                setShowBadgeReveal(true);
+                            }}
+                            className="flex-shrink-0 w-20 h-20 bg-surface-container-high rounded-full flex items-center justify-center border-4 border-dashed border-outline-variant/30 hover:scale-105 transition-transform"
+                        >
+                            <span className="material-symbols-outlined text-outline-variant text-2xl">question_mark</span>
+                        </button>
+                        <button
+                            onClick={() => {
+                                setSelectedBadge({
+                                    name: "Locked Badge",
+                                    description: "Complete daily missions to reveal this badge!",
+                                    icon: "🔒",
+                                    color: "#f3f4f6"
+                                });
+                                setShowBadgeReveal(true);
+                            }}
+                            className="flex-shrink-0 w-20 h-20 bg-surface-container-high rounded-full flex items-center justify-center border-4 border-dashed border-outline-variant/30 hover:scale-105 transition-transform"
+                        >
+                            <span className="material-symbols-outlined text-outline-variant text-2xl">question_mark</span>
+                        </button>
+                    </div>
+                </motion.section>
+
+                {/* Quick Links */}
+                <motion.section initial="hidden" animate="visible" variants={itemVariants} className="space-y-6">
+                    <h3 className="text-sm font-extrabold uppercase tracking-[0.2em] text-on-surface-variant">Quick Links</h3>
+                    <div className="grid grid-cols-4 gap-6">
+                        <Link href="/trade-history" className="flex flex-col items-center gap-3 group">
+                            <button className="w-16 h-16 bg-surface-container-highest rounded-full flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-all active:scale-90">
+                                <span className="material-symbols-outlined text-2xl">swap_horiz</span>
+                            </button>
+                            <span className="text-[10px] font-black tracking-widest uppercase text-on-surface text-center">Trades</span>
+                        </Link>
+                        <Link href="/messages" className="flex flex-col items-center gap-3 group">
+                            <button className="w-16 h-16 bg-surface-container-highest rounded-full flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-all active:scale-90">
+                                <span className="material-symbols-outlined text-2xl">chat_bubble</span>
+                            </button>
+                            <span className="text-[10px] font-black tracking-widest uppercase text-on-surface text-center">Chat</span>
+                        </Link>
+                        <Link href="/rewards" className="flex flex-col items-center gap-3 group">
+                            <button className="w-16 h-16 bg-surface-container-highest rounded-full flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-all active:scale-90">
+                                <span className="material-symbols-outlined text-2xl">redeem</span>
+                            </button>
+                            <span className="text-[10px] font-black tracking-widest uppercase text-on-surface text-center">Rewards</span>
+                        </Link>
+                        <Link href="/impact" className="flex flex-col items-center gap-3 group">
+                            <button className="w-16 h-16 bg-surface-container-highest rounded-full flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-all active:scale-90">
+                                <span className="material-symbols-outlined text-2xl">monitoring</span>
+                            </button>
+                            <span className="text-[10px] font-black tracking-widest uppercase text-on-surface text-center">Impact</span>
+                        </Link>
+                    </div>
+                </motion.section>
+
+                {/* Action Buttons */}
+                <motion.section initial="hidden" animate="visible" variants={itemVariants} className="flex gap-4 pt-4">
+                    <button 
+                        onClick={() => setShowEditModal(true)}
+                        className="flex-1 bg-primary text-on-primary py-4 px-6 rounded-lg font-bold flex items-center justify-center gap-3 active:scale-95 transition-transform"
+                    >
+                        <span className="material-symbols-outlined text-xl">edit</span>
                         Edit Profile
                     </button>
-                    <button
+                    <button 
                         onClick={() => {
                             const text = `I've saved ${user.co2Saved}kg CO₂ on ReLoop! 🌱`;
                             navigator.clipboard.writeText(text);
                             setToast('Copied!');
                             setTimeout(() => setToast(''), 2000);
                         }}
-                        className="bg-surface-container-low text-dark py-3 rounded-xl font-bold border border-outline-variant/10 shadow-sm flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                        className="flex-1 bg-surface-container-highest text-on-surface py-4 px-6 rounded-lg font-bold flex items-center justify-center gap-3 active:scale-95 transition-transform"
                     >
-                        <span className="material-symbols-outlined text-lg">share</span>
+                        <span className="material-symbols-outlined text-xl">share</span>
                         Share
                     </button>
-                </motion.div>
-            </motion.div>
+                </motion.section>
+            </main>
 
-            {/* Badge Modal */}
-            {
-                selectedBadge && (
-                    <BadgeRevealModal
-                        isOpen={showBadgeReveal}
-                        onClose={() => setShowBadgeReveal(false)}
-                        badge={selectedBadge}
-                    />
-                )
-            }
+            {/* Modals and Toasts */}
+            {selectedBadge && (
+                <BadgeRevealModal
+                    isOpen={showBadgeReveal}
+                    onClose={() => setShowBadgeReveal(false)}
+                    badge={selectedBadge}
+                />
+            )}
 
-            {/* Edit Modal */}
             <AnimatePresence>
                 {showEditModal && (
                     <EditProfileModal
@@ -238,19 +246,18 @@ export default function ProfilePage() {
                 )}
             </AnimatePresence>
 
-            {/* Toast */}
             <AnimatePresence>
                 {toast && (
                     <motion.div
                         initial={{ opacity: 0, y: 50 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 50 }}
-                        className="fixed bottom-28 left-1/2 -translate-x-1/2 bg-dark text-white px-6 py-3 rounded-full font-bold text-sm shadow-xl z-50"
+                        className="fixed bottom-28 left-1/2 -translate-x-1/2 bg-on-surface text-surface px-6 py-3 rounded-full font-bold text-sm shadow-xl z-50 whitespace-nowrap"
                     >
                         {toast}
                     </motion.div>
                 )}
             </AnimatePresence>
-        </div >
+        </div>
     );
 }
