@@ -60,18 +60,6 @@ const SCAN_IMAGE_KEY = 'reloop_scan_image';
 export const ScannerService = {
     // Main analysis function
     async analyzeImage(imageData: string): Promise<ScanResult> {
-        // Demo mode bypass
-        // Demo mode bypass - DISABLED for Phase 2 API Testing
-        // if (DemoManager.isEnabled) {
-        //     console.log('🤖 [Demo Mode] Simulating AI analysis...');
-        //     await DemoManager.simulateDelay(2000);
-        //     const result = DemoManager.getMockScanResult();
-        //     this.storeResult(result, imageData);
-        //     DemoManager.saveScan(result);
-        //     return result;
-        // }
-
-        // Real AI analysis
         try {
             console.log('Analyzing image with API...');
             const resized = await this.resizeImage(imageData, 800);
@@ -81,10 +69,7 @@ export const ScannerService = {
             return result;
         } catch (error) {
             console.error('AI Analysis failed:', error);
-            // Fallback to local analysis
-            const result = this.localFallbackAnalysis();
-            this.storeResult(result, imageData);
-            return result;
+            throw error instanceof Error ? error : new Error('Unable to analyze this image right now.');
         }
     },
 
@@ -96,7 +81,23 @@ export const ScannerService = {
             body: JSON.stringify({ image: imageData })
         });
 
-        const data = await response.json();
+        const responseText = await response.text();
+        let data: any = null;
+
+        try {
+            data = responseText ? JSON.parse(responseText) : null;
+        } catch (error) {
+            console.error('Scanner API returned non-JSON:', responseText, error);
+            throw new Error(
+                response.ok
+                    ? 'Scanner API returned an invalid response.'
+                    : `Scanner API failed with status ${response.status}.`
+            );
+        }
+
+        if (!response.ok) {
+            throw new Error(data?.error || `Scanner API failed with status ${response.status}.`);
+        }
 
         if (data.success && data.item) {
             const categoryKey = (data.item.category || 'other').toLowerCase();

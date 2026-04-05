@@ -75,28 +75,28 @@ export async function GET(request: Request) {
             {
                 id: 'pin_fallback_1',
                 title: `${query} DIY Ideas`,
-                image: 'https://i.pinimg.com/736x/0a/63/fc/0a63fc65551927c3fe3f699042223877.jpg',
+                image: 'https://images.unsplash.com/photo-1610444585149-1d37ac772b22?w=400&q=80',
                 saves: '12k',
                 link: `https://www.pinterest.com/search/pins/?q=${encodeURIComponent(query)}`
             },
             {
                 id: 'pin_fallback_2',
                 title: `Easy ${query} Crafts`,
-                image: 'https://i.pinimg.com/736x/d4/d2/d0/d4d2d0577d338ce245a443720745582c.jpg',
+                image: 'https://images.unsplash.com/photo-1540569014015-19a7be504e3a?w=400&q=80',
                 saves: '8.4k',
                 link: `https://www.pinterest.com/search/pins/?q=${encodeURIComponent(query)}`
             },
             {
                 id: 'pin_fallback_3',
                 title: `${query} Recycling`,
-                image: 'https://i.pinimg.com/236x/88/2c/3f/882c3f46215320505b82218041498b0d.jpg',
+                image: 'https://images.unsplash.com/photo-1516738901171-8eb4a696eeae?w=400&q=80',
                 saves: '5.6k',
                 link: `https://www.pinterest.com/search/pins/?q=${encodeURIComponent(query)}`
             },
             {
                 id: 'pin_fallback_4',
                 title: `Upcycled ${query}`,
-                image: 'https://i.pinimg.com/236x/2b/95/9b/2b959b89791845184646700877907577.jpg',
+                image: 'https://images.unsplash.com/photo-1584482937768-e69cbfcce2dc?w=400&q=80',
                 saves: '15k',
                 link: `https://www.pinterest.com/search/pins/?q=${encodeURIComponent(query)}`
             }

@@ -257,7 +257,7 @@ export default function ReuseIdeasPage() {
                                         onClick={() => window.open(pin.link || `https://www.pinterest.com/search/pins/?q=${encodeURIComponent(pin.title)}`, '_blank')}
                                     >
                                         <div className="overflow-hidden">
-                                            <img src={pin.image} alt={pin.title} className="w-full object-cover group-hover:scale-105 transition-transform duration-500" style={{ minHeight: '100px' }} />
+                                            <img src={pin.image} alt={pin.title} referrerPolicy="no-referrer" className="w-full object-cover group-hover:scale-105 transition-transform duration-500" style={{ minHeight: '100px' }} />
                                         </div>
                                         <div className="p-3">
                                             <h4 className="font-extrabold text-[#29302f] text-xs leading-tight line-clamp-2">{pin.title}</h4>

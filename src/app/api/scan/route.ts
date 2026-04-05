@@ -1,42 +1,141 @@
+import { Buffer } from 'node:buffer';
 import { NextResponse } from 'next/server';
 
-// ☁️ CLOUDFLARE AI CONFIGURATION
-// Credentials loaded from environment variables (set in .env.local)
-const ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID || '';
-const API_TOKEN = process.env.CLOUDFLARE_API_TOKEN || '';
-const MODEL_ID = '@cf/meta/llama-3.2-11b-vision-instruct';
+const MODEL_ID = process.env.CLOUDFLARE_MODEL_ID || '@cf/meta/llama-3.2-11b-vision-instruct';
 
-export const maxDuration = 60; // Increase Vercel timeout to 60 seconds
+export const runtime = 'nodejs';
+export const maxDuration = 60;
+
+type ParsedItem = {
+    objectName: string;
+    category: string;
+    material: string;
+    condition: string;
+    estimatedCoins: number;
+    recyclable: boolean;
+    upcycleIdeas: Array<{ title: string; description: string; difficulty: string }>;
+};
+
+const DEFAULT_ITEM: ParsedItem = {
+    objectName: 'Unknown Item',
+    category: 'Other',
+    material: 'Mixed',
+    condition: 'Good',
+    estimatedCoins: 50,
+    recyclable: true,
+    upcycleIdeas: []
+};
+
+function getCloudflareConfig() {
+    const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+    const apiToken = process.env.CLOUDFLARE_API_TOKEN;
+
+    if (!accountId || !apiToken) {
+        throw new Error(
+            'AI scanner is not configured on the server. Add CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN to your Vercel project settings, then redeploy.'
+        );
+    }
+
+    return { accountId, apiToken };
+}
+
+function normalizeCategory(category: string) {
+    const normalized = category.trim().toLowerCase();
+    const allowedCategories = new Set([
+        'electronics',
+        'books',
+        'furniture',
+        'clothing',
+        'kitchen',
+        'sports',
+        'other'
+    ]);
+
+    if (!allowedCategories.has(normalized)) {
+        return 'Other';
+    }
+
+    return normalized.charAt(0).toUpperCase() + normalized.slice(1);
+}
+
+function parseCloudflareItem(aiResult: any): ParsedItem {
+    const rawText =
+        aiResult?.result?.response ??
+        aiResult?.result?.description ??
+        aiResult?.result;
+
+    let parsedItem: ParsedItem = { ...DEFAULT_ITEM };
+
+    if (rawText && typeof rawText === 'object') {
+        parsedItem = { ...parsedItem, ...rawText };
+    } else if (typeof rawText === 'string') {
+        let cleanText = rawText.trim();
+
+        if (cleanText.includes('```json')) {
+            cleanText = cleanText.split('```json')[1]?.split('```')[0]?.trim() || cleanText;
+        } else if (cleanText.includes('```')) {
+            cleanText = cleanText.split('```')[1]?.split('```')[0]?.trim() || cleanText;
+        }
+
+        try {
+            parsedItem = { ...parsedItem, ...JSON.parse(cleanText) };
+        } catch (error) {
+            console.warn('JSON Parse Failed, using fallback extraction', error);
+            parsedItem.objectName =
+                cleanText.substring(0, 50).split('\n')[0].replace(/[{"},]/g, '').trim() ||
+                DEFAULT_ITEM.objectName;
+        }
+    }
+
+    return {
+        ...parsedItem,
+        category: normalizeCategory(parsedItem.category || DEFAULT_ITEM.category),
+        estimatedCoins:
+            typeof parsedItem.estimatedCoins === 'number' && Number.isFinite(parsedItem.estimatedCoins)
+                ? parsedItem.estimatedCoins
+                : DEFAULT_ITEM.estimatedCoins
+    };
+}
 
 export async function POST(request: Request) {
     try {
         const body = await request.json();
         const { image } = body;
+        const { accountId, apiToken } = getCloudflareConfig();
 
-        if (!image) {
+        if (typeof image !== 'string' || !image) {
             return NextResponse.json(
                 { success: false, error: 'No image data provided' },
                 { status: 400 }
             );
         }
 
-        console.log("☁️ Calling Cloudflare AI...");
+        const imageMatch = image.match(/^data:image\/[\w.+-]+;base64,(.+)$/);
+        if (!imageMatch?.[1]) {
+            return NextResponse.json(
+                { success: false, error: 'Invalid image format. Expected a base64 data URL.' },
+                { status: 400 }
+            );
+        }
 
-        // 1. Prepare Image Data (Base64 -> Array of Integers)
-        // Cloudflare AI expects an array of integers for the image bytes
-        const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
-        
-        // Use Node.js Buffer instead of atob for better memory performance on Vercel
-        const imageBuffer = Buffer.from(base64Data, 'base64');
+        console.log('Calling Cloudflare AI...');
+
+        const imageBuffer = Buffer.from(imageMatch[1], 'base64');
+        if (!imageBuffer.length) {
+            return NextResponse.json(
+                { success: false, error: 'Image could not be decoded.' },
+                { status: 400 }
+            );
+        }
+
         const bytes = new Uint8Array(imageBuffer);
 
-        // 2. Call Cloudflare API
         const cfResponse = await fetch(
-            `https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/ai/run/${MODEL_ID}`,
+            `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/${MODEL_ID}`,
             {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${API_TOKEN}`,
+                    'Authorization': `Bearer ${apiToken}`,
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
@@ -60,64 +159,19 @@ export async function POST(request: Request) {
         if (!cfResponse.ok) {
             const errorText = await cfResponse.text();
             console.error('Cloudflare API Error:', errorText);
-            throw new Error(`Cloudflare Error (${cfResponse.status}): ${errorText}`);
+
+            const errorMessage =
+                cfResponse.status === 401 || cfResponse.status === 403
+                    ? 'Cloudflare rejected the scanner credentials. Verify the Vercel env vars and make sure the token has Workers AI permissions.'
+                    : cfResponse.status === 429
+                        ? 'Cloudflare rate-limited the scanner request. Please try again in a moment.'
+                        : `Cloudflare AI request failed with status ${cfResponse.status}.`;
+
+            throw new Error(errorMessage);
         }
 
         const aiResult = await cfResponse.json();
-
-        // 🚨 DEBUG: Log the EXACT response structure
-        console.log("🤖 Raw AI Result:", JSON.stringify(aiResult, null, 2).substring(0, 500) + "...");
-
-        // 3. Parse Result
-        // Cloudflare returns { result: { response: "..." } } or { result: { description: "..." } }
-        const rawText = aiResult.result?.response || aiResult.result?.description;
-
-        let parsedItem = {
-            objectName: 'Unknown Item',
-            category: 'Other',
-            material: 'Mixed',
-            condition: 'Good',
-            estimatedCoins: 50,
-            recyclable: true,
-            upcycleIdeas: []
-        };
-
-        if (rawText) {
-            // 🛡️ HANDLE OBJECT vs STRING
-            if (typeof rawText === 'object') {
-                console.log("ℹ️ Response is already an Object");
-                parsedItem = { ...parsedItem, ...rawText };
-            }
-            else if (typeof rawText === 'string') {
-                console.log("ℹ️ Response is a String, parsing...");
-                let cleanText = rawText;
-                // Remove markdown code blocks if present
-                if (cleanText.includes("```json")) {
-                    cleanText = cleanText.split("```json")[1].split("```")[0].trim();
-                } else if (cleanText.includes("```")) {
-                    cleanText = cleanText.split("```")[1].split("```")[0].trim();
-                }
-
-                try {
-                    const parsed = JSON.parse(cleanText);
-                    parsedItem = { ...parsedItem, ...parsed };
-                } catch (e) {
-                    console.warn("JSON Parse Failed, using fallback extraction", e);
-                    parsedItem.objectName = cleanText.substring(0, 50).split('\n')[0].replace(/[{"},]/g, '').trim();
-                }
-            }
-            else {
-                console.warn("⚠️ Unexpected response type:", typeof rawText);
-                parsedItem.objectName = String(rawText);
-            }
-
-            // Normalize Category
-            if (parsedItem.category) {
-                parsedItem.category = parsedItem.category.charAt(0).toUpperCase() + parsedItem.category.slice(1);
-            }
-        } else {
-            console.warn("⚠️ No response/description found in result");
-        }
+        const parsedItem = parseCloudflareItem(aiResult);
 
         return NextResponse.json({
             success: true,
