@@ -86,11 +86,11 @@ export default function ScannerPage() {
                 params.set('result', JSON.stringify(result));
                 router.push(`/scanner/ideas?${params.toString()}`);
             } else {
-                setErrorMessage('Unable to analyze item. Please try again.');
+                setErrorMessage(`AI Error: ${(result as any).error || 'Unable to analyze item.'}`);
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error('Scan error:', err);
-            setErrorMessage('An error occurred. Please try again.');
+            setErrorMessage(`Scan Error: ${err?.message || 'An error occurred. Please try again.'}`);
         } finally {
             setIsAnalyzing(false);
         }
@@ -141,11 +141,11 @@ export default function ScannerPage() {
                     params.set('result', JSON.stringify(result));
                     router.push(`/scanner/ideas?${params.toString()}`);
                 } else {
-                    setErrorMessage('Unable to analyze item. Please try again.');
+                    setErrorMessage(`AI Error: ${(result as any).error || 'Unable to analyze item.'}`);
                 }
-            } catch (err) {
+            } catch (err: any) {
                 console.error('Scan error:', err);
-                setErrorMessage('An error occurred. Please try again.');
+                setErrorMessage(`Scan Error: ${err?.message || 'An error occurred. Please try again.'}`);
             } finally {
                 setIsAnalyzing(false);
             }
