@@ -6,6 +6,8 @@ const ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID || '';
 const API_TOKEN = process.env.CLOUDFLARE_API_TOKEN || '';
 const MODEL_ID = '@cf/meta/llama-3.2-11b-vision-instruct';
 
+export const maxDuration = 60; // Increase Vercel timeout to 60 seconds
+
 export async function POST(request: Request) {
     try {
         const body = await request.json();
@@ -23,11 +25,10 @@ export async function POST(request: Request) {
         // 1. Prepare Image Data (Base64 -> Array of Integers)
         // Cloudflare AI expects an array of integers for the image bytes
         const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
-        const binaryString = atob(base64Data);
-        const bytes = new Uint8Array(binaryString.length);
-        for (let i = 0; i < binaryString.length; i++) {
-            bytes[i] = binaryString.charCodeAt(i);
-        }
+        
+        // Use Node.js Buffer instead of atob for better memory performance on Vercel
+        const imageBuffer = Buffer.from(base64Data, 'base64');
+        const bytes = new Uint8Array(imageBuffer);
 
         // 2. Call Cloudflare API
         const cfResponse = await fetch(
