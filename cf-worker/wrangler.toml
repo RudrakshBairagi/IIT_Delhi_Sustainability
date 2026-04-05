@@ -1,0 +1,6 @@
+name = "reloop-ai-scanner"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+ACCOUNT_ID = "e122a6e8bae7e0a4eb0bd95745bf83a2"
